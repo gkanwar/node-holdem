@@ -2,6 +2,7 @@
   "name": "node-holdem",
   "version": "0.0.1",
   "description": "Holdem table with simple user reg and cash game play",
+  "author": "Gurtej Kanwar <gurtejkanwar@gmail.com>",
   "main": "start.js",
   "scripts": {
     "start": "node src/start.js",
