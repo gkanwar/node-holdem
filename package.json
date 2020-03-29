@@ -4,7 +4,7 @@
   "description": "Holdem table with simple user reg and cash game play",
   "main": "start.js",
   "scripts": {
-    "start": "node start.js"
+    "start": "node src/start.js"
   },
   "repository": {
     "type": "git"
