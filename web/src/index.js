@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
-import TestForm from './components/TestForm';
+import Game from './components/Game';
+import './style.css';
 
 const root = document.getElementById('root');
-render(<TestForm/>, root);
+render(<Game/>, root);
