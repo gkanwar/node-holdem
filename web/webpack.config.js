@@ -21,11 +21,15 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
+      },
+      {
+        test: /\.opt\.svg$/,
+        use: ["@svgr/webpack", "url-loader"]
       }
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
     new HtmlWebPackPlugin({
       template: "./public/index.html",
       filename: "./index.html",

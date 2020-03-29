@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Canvas from './Canvas';
 
 class Game extends Component {
   constructor() {
@@ -6,7 +7,7 @@ class Game extends Component {
   }
 
   render() {
-    return <canvas></canvas>;
+    return <Canvas/>;
   }
 }
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="800" height="600" version="1.1" viewBox="0 0 211.67 158.75" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient4560">
+   <stop stop-color="#75db63" offset="0"/>
+   <stop stop-color="#167b38" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3719">
+   <stop stop-color="#e7b65e" offset="0"/>
+   <stop stop-color="#e7b65e" offset=".64685"/>
+   <stop stop-color="#a05a2c" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient3721-3-1" cx="105.83" cy="230.05" r="79.563" gradientTransform="matrix(.90974 0 0 .4709 9.5528 121.72)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient4560"/>
+  <filter id="filter4986-9-0" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="out" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="1"/>
+   <feOffset dx="0" dy="0" result="offset"/>
+   <feComposite in="offset" in2="SourceGraphic" operator="atop" result="fbSourceGraphic"/>
+   <feColorMatrix in="fbSourceGraphic" result="fbSourceGraphicAlpha" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".50196" in="fbSourceGraphic" result="flood"/>
+   <feComposite in="flood" in2="fbSourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="1.5"/>
+   <feOffset dx="0" dy="0" result="offset"/>
+   <feComposite in="fbSourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+  <radialGradient id="radialGradient3721-3" cx="105.83" cy="230.05" r="79.563" gradientTransform="matrix(.90974 0 0 .4709 9.5528 121.72)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient4560"/>
+  <filter id="filter4986-0" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="out" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="1"/>
+   <feOffset dx="0" dy="0" result="offset"/>
+   <feComposite in="offset" in2="SourceGraphic" operator="atop" result="fbSourceGraphic"/>
+   <feColorMatrix in="fbSourceGraphic" result="fbSourceGraphicAlpha" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".50196" in="fbSourceGraphic" result="flood"/>
+   <feComposite in="flood" in2="fbSourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="1.5"/>
+   <feOffset dx="0" dy="0" result="offset"/>
+   <feComposite in="fbSourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+  <radialGradient id="radialGradient3721" cx="105.83" cy="230.05" r="79.563" gradientTransform="matrix(1.1853 0 0 .66088 -19.615 78.016)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3719"/>
+  <filter id="filter4962-7" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="out" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="1"/>
+   <feOffset dx="0" dy="0" result="offset"/>
+   <feComposite in="offset" in2="SourceGraphic" operator="atop" result="composite2"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -138.25)">
+  <rect x="26.271" y="186.16" width="159.13" height="87.783" rx="36.539" ry="43.892" fill="url(#radialGradient3721)" filter="url(#filter4962-7)" stroke-width=".26458"/>
+  <rect x="33.452" y="192.59" width="144.76" height="74.932" rx="33.241" ry="37.466" fill="url(#radialGradient3721-3)" filter="url(#filter4986-0)" stroke-width=".23316"/>
+  <rect x="33.452" y="192.59" width="144.76" height="74.932" rx="33.241" ry="37.466" fill="url(#radialGradient3721-3-1)" filter="url(#filter4986-9-0)" stroke-width=".23316"/>
+  <rect x="26.271" y="186.16" width="159.13" height="87.783" rx="36.539" ry="43.892" fill="url(#radialGradient3721)" filter="url(#filter4962-7)" stroke-width=".26458"/>
+  <rect x="33.452" y="192.59" width="144.76" height="74.932" rx="33.241" ry="37.466" fill="url(#radialGradient3721-3)" filter="url(#filter4986-0)" stroke-width=".23316"/>
+  <rect x="33.452" y="192.59" width="144.76" height="74.932" rx="33.241" ry="37.466" fill="url(#radialGradient3721-3-1)" filter="url(#filter4986-9-0)" stroke-width=".23316"/>
+ </g>
+</svg>
