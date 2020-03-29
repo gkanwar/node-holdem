@@ -1,0 +1,16 @@
+{
+  "name": "node-holdem",
+  "version": "0.0.1",
+  "description": "Holdem table with simple user reg and cash game play",
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": ">=3.0.1"
+  }
+}
