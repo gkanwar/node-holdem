@@ -7,8 +7,9 @@ defineTypes(Card, {
 });
 
 export class PlayerState extends Schema {
-  constructor() {
+  constructor(username) {
     super();
+    this.username = username;
     this.connected = true;
     this.sitting = false;
     this.folded = false;
@@ -17,6 +18,7 @@ export class PlayerState extends Schema {
   }
 }
 defineTypes(PlayerState, {
+  username: 'string',
   connected: 'boolean',
   sitting: 'boolean',
   stack: 'uint64',
@@ -30,6 +32,8 @@ export class HoldemState extends Schema {
     this.players = new MapSchema();
     this.playerOrder = new ArraySchema();
     this.board = new ArraySchema();
+    this.smallBlind = 1;
+    this.bigBlind = 2;
   }
 }
 defineTypes(HoldemState, {
@@ -37,5 +41,7 @@ defineTypes(HoldemState, {
   playerOrder: ['string'],
   board: [Card],
   button: 'uint8',
-  pot: 'uint64'
+  pot: 'uint64',
+  smallBlind: 'uint64',
+  bigBlind: 'uint64'
 });

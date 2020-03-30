@@ -4,8 +4,8 @@
   "description": "Web client for node-based holdem app",
   "main": "start.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "build-dev": "webpack --mode development --display-modules",
+    "build-prod": "webpack --mode production",
+    "build": "webpack --mode development --display-modules",
     "start": "webpack-dev-server"
   },
   "author": "",

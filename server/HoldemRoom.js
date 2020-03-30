@@ -8,7 +8,7 @@ class HoldemRoom extends Room {
   constructor() {
     super();
   }
-  
+
   onCreate(options) {
     // Only need to patch every 1s
     this.setPatchRate(1000);
@@ -16,7 +16,7 @@ class HoldemRoom extends Room {
   }
 
   onJoin(client, options) {
-    this.state.players[client.sessionId] = new PlayerState();
+    this.state.players[client.sessionId] = new PlayerState(options.username);
     this.state.playerOrder.push(client.sessionId);
   }
 

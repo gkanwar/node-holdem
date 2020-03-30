@@ -24,6 +24,12 @@ class Connector extends Component {
     if (hostInfo !== null) {
       this.setState(hostInfo);
     }
+    else {
+      this.setState({
+        server: window.location.hostname,
+        port: window.location.port
+      });
+    }
     const sessionInfo = JSON.parse(localStorage.getItem('sessionInfo'));
     if (sessionInfo !== null) {
       this.setState(sessionInfo, () => {
@@ -41,11 +47,12 @@ class Connector extends Component {
   }
 
   onSubmit(event) {
-    const {server, port} = this.state;
+    const {server, port, username} = this.state;
     console.log('Setting local storage hostInfo', this.state);
     localStorage.setItem('hostInfo', JSON.stringify({
       server: server,
-      port: port
+      port: port,
+      username: username
     }));
     this.tryConnect();
     event.preventDefault();
@@ -53,56 +60,46 @@ class Connector extends Component {
 
   makeConnection() {
     console.log('makeConnection', this.state);
-    const {server, port, sessionId, roomId} = this.state;
+    const {server, port, username, sessionId, roomId} = this.state;
     const client = new Colyseus.Client(`ws://${server}:${port}`);
     if (sessionId !== '') {
       return client.reconnect(roomId, sessionId);
     }
     else if (roomId !== '') {
-      return client.joinById(roomId);
+      return client.joinById(roomId, {username: username});
     }
     else {
-      return client.joinOrCreate('lobby');
+      return client.joinOrCreate('lobby', {username: username});
     }
   }
 
   tryConnect() {
     console.log('tryConnect');
-    const {server, port} = this.state;
-    if (server === undefined) {
-      this.setState({err: 'Must set server'});
-    }
-    else if (port === undefined) {
-      this.setState({err: 'Must set port'});
-    }
-    else {
-      this.setState({trying: true});
-      const {onConnect} = this.props;
-      this.makeConnection(server, port)
-        .then(room => {
-          this.setState({
-            trying: false,
-            roomId: room.id,
-            sessionId: room.sessionId
-          });
-          console.log('Setting local storage sessionInfo', room);
-          localStorage.setItem('sessionInfo', JSON.stringify({
-            roomId: room.id,
-            sessionId: room.sessionId
-          }));
-          onConnect(room)
-        })
-        .catch(e => {
-          this.setState({
-            trying: false,
-            roomId: '',
-            sessionId: '',
-            server: '',
-            port: '',
-            err: `Failed to connect to ${server}:${port}: ${e.toString()}`
-          });
+    const {server, port, username} = this.state;
+    this.setState({trying: true});
+    const {onConnect} = this.props;
+    this.makeConnection()
+      .then(room => {
+        this.setState({
+          trying: false,
+          roomId: room.id,
+          sessionId: room.sessionId
         });
-    }
+        console.log('Setting local storage sessionInfo', room);
+        localStorage.setItem('sessionInfo', JSON.stringify({
+          roomId: room.id,
+          sessionId: room.sessionId
+        }));
+        onConnect(room);
+      })
+      .catch(e => {
+        this.setState({
+          trying: false,
+          roomId: '',
+          sessionId: '',
+          err: `Failed to connect to ${server}:${port}: ${e.toString()}`
+        });
+      });
   }
 
   render() {
@@ -118,14 +115,18 @@ class Connector extends Component {
       );
     }
     else {
+      const {server, port, username} = this.state;
       const form = (
         <div id="connector">
           <form onSubmit={this.onSubmit}>
             <label> <span className="label">Host</span>
-              <input type="text" name="server" value={this.state.server} onChange={this.handleChange}/>
+              <input type="text" name="server" value={server} onChange={this.handleChange}/>
             </label>
             <label> <span className="label">Port</span>
-              <input type="text" name="port" value={this.state.port} onChange={this.handleChange}/>
+              <input type="text" name="port" value={port} onChange={this.handleChange}/>
+            </label>
+            <label> <span className="label">Nick</span>
+              <input type="text" name="username" value={username} onChange={this.handleChange}/>
             </label>
             <div id="submit-container"><input type="submit" value="Connect"/></div>
           </form>

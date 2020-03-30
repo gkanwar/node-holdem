@@ -3,9 +3,63 @@ body {
     background-color: #080808;
 }
 
+#game-controls {
+    position: absolute;
+    width: 250px;
+    left: 25px;
+    top: 200px;
+    padding-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: .2em;
+    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background-color: #202020;
+}
+
+#game-control-header {
+    border-bottom: 1px solid #cccccc;
+    font-size: 0.7em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#game-controls label {
+    display: block;
+    margin-bottom: 10px;
+}
+#game-controls .label {
+    display: inline-block;
+    text-align: right;
+    margin-left: 30px;
+    margin-right: 30px;
+    width: 50px;
+    font-size: 1.0em;
+}
+#game-controls input[type=text] {
+    width: 100px;
+    height: 20px;
+    background-color: #ced4da;
+    color: #202020;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 3px 0px 3px 10px;
+    outline: none;
+}
+#game-controls input[type=text]:focus {
+    box-shadow: 0 0 5px #d07030;
+    border: 1px solid #d07030;
+}
+
 #game-canvas {
     width: 100%;
     height: 100%;
+    min-width: 800px;
+    min-height: 600px;
+}
+
+#root-container {
+    min-width: 800px;
+    padding-right: 300px;
+    padding-left: 300px;
 }
 
 #root {

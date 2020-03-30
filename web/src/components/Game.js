@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Connector from './Connector';
+import Controller from './Controller';
 import Table from './Table';
 
 class Game extends Component {
@@ -33,9 +34,10 @@ class Game extends Component {
     else {
       const {room} = this.state;
       return (
-        <svg id="game-canvas">
+        <>
+          <Controller room={room}/>
           <Table room={room}/>
-        </svg>
+        </>
       );
     }
   }

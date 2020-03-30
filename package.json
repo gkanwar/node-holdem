@@ -6,14 +6,14 @@
   "main": "start.js",
   "scripts": {
     "start": "node server/start.js",
-    "lint": "eslint --ext .js server"
+    "lint": "eslint --ext .js server",
+    "build": "cd ./web && npm run build"
   },
   "repository": {
     "type": "git"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.11.0",
-    "@colyseus/social": "^0.10.2",
     "colyseus": "^0.12.0",
     "esm": "^3.2.25",
     "express": ">=3.0.1"

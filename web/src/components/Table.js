@@ -6,11 +6,11 @@ const VIEW_HEIGHT = 600;
 const positions6 = [
   {
     index: 0,
-    seat: [70, 258]
+    seat: [60, 258]
   },
   {
     index: 3,
-    seat: [730, 258]
+    seat: [740, 258]
   },
   {
     index: 1,
@@ -89,8 +89,8 @@ class Table extends Component {
         return <Player pos={pos} player={player} isMe={isMe} />;
       }
     });
-    elements.push(<TableBg/>);
-    return elements;
+    elements.unshift(<TableBg/>);
+    return <svg id="game-canvas">{elements}</svg>;
   }
 }
 
