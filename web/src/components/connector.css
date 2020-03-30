@@ -1,0 +1,77 @@
+#connector-container1 {
+    background-color: #202020;
+    margin:auto;
+    margin-top: 100px;
+    padding-top: 75px;
+    padding-bottom: 75px;
+    width: 450px;
+    height: 150px;
+    box-shadow: 0 0 5px #cccccc;
+    border-radius: .2em;
+}
+
+#connector-container2 {
+    position: relative;
+    height: 225px;
+}
+
+#connector {
+    margin: auto;
+    width: 300px;
+    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+}
+#connector label {
+    display: block;
+    margin-bottom: 20px;
+}
+#connector .label {
+    display: inline-block;
+    text-align: right;
+    margin-right: 40px;
+    width: 50px;
+    font-size: 1.5em;
+}
+#connector input[type=text] {
+    width: 150px;
+    height: 30px;
+    background-color: #ced4da;
+    color: #202020;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 3px 0px 3px 10px;
+    outline: none;
+}
+#connector input[type=text]:focus {
+    box-shadow: 0 0 5px #d07030;
+    border: 1px solid #d07030;
+}
+#connector input[type=submit] {
+    color: #cccccc;
+    border: 1px solid #cccccc;
+    background-color: #202020;
+    padding: 5px 15px 5px 15px;
+    font-size: 1em;
+}
+#connector input[type=submit]:hover {
+    border: 1px solid #d07030;
+    box-shadow: 0 0 5px #d07030;
+}
+#submit-container {
+    text-align: center;
+    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+}
+
+#message {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+#message .info {
+    text-align: center;
+}
+#message .error {
+    text-align: center;
+    color: #d07030;
+    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+    font-size: 0.8em;
+}

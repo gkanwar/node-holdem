@@ -22,7 +22,13 @@ class Game extends Component {
   render() {
     const {connected} = this.state;
     if (!connected) {
-      return <Connector onConnect={this.onConnect}/>;
+      return (
+        <div id="connector-container1">
+          <div id="connector-container2">
+            <Connector onConnect={this.onConnect}/>
+          </div>
+        </div>
+      );
     }
     else {
       const {room} = this.state;

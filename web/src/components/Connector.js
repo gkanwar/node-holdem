@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import * as Colyseus from 'colyseus.js';
+import './connector.css';
 
 class Connector extends Component {
   constructor(props) {
@@ -107,25 +108,38 @@ class Connector extends Component {
   render() {
     const {trying, err} = this.state;
     if (trying) {
-      return <div className="info">Connecting...</div>;
+      return (
+        <>
+          <div id="connector"></div>
+          <div id="message">
+            <div className="info">Connecting...</div>
+          </div>
+        </>
+      );
     }
     else {
       const form = (
-        <form onSubmit={this.onSubmit}>
-          <label> Host:
-            <input type="text" name="server" value={this.state.server} onChange={this.handleChange}/>
-          </label>
-          <label> Port:
-            <input type="text" name="port" value={this.state.port} onChange={this.handleChange}/>
-          </label>
-          <input type="submit" value="Connect"/>
-        </form>
+        <div id="connector">
+          <form onSubmit={this.onSubmit}>
+            <label> <span className="label">Host</span>
+              <input type="text" name="server" value={this.state.server} onChange={this.handleChange}/>
+            </label>
+            <label> <span className="label">Port</span>
+              <input type="text" name="port" value={this.state.port} onChange={this.handleChange}/>
+            </label>
+            <div id="submit-container"><input type="submit" value="Connect"/></div>
+          </form>
+        </div>
       );
       if (err !== null) {
-        return [form, <div className="error">Error: {err.toString()}</div>];
+        return [form,
+          <div id="message">
+             <div className="error">Error: {err.toString()}</div>
+          </div>
+        ] ;
       }
       else {
-        return form;
+        return [form, <div id="message"></div>];
       }
     }
   }
