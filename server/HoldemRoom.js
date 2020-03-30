@@ -1,5 +1,5 @@
 import {Room} from 'colyseus';
-import {HoldemState, PlayerState} from '../common/HoldemState';
+import {HoldemState, PlayerState} from './HoldemState';
 
 // Wait up to 10m for reconnect
 const RECONNECT_TIMEOUT = 600;
