@@ -21,9 +21,6 @@ class HoldemRoom extends Room {
   }
 
   onMessage(client, message) {
-    if (message.sitting !== undefined) {
-      this.state.players[client.sessionId].sitting = message.sitting;
-    }
     
   }
 

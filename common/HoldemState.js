@@ -11,7 +11,6 @@ export class PlayerState extends Schema {
     super();
     this.username = username;
     this.connected = true;
-    this.sitting = false;
     this.folded = false;
     this.offering = 0;
     this.stack = 0;
@@ -20,7 +19,6 @@ export class PlayerState extends Schema {
 defineTypes(PlayerState, {
   username: 'string',
   connected: 'boolean',
-  sitting: 'boolean',
   stack: 'uint64',
   offering: 'uint64',
   folded: 'boolean'
