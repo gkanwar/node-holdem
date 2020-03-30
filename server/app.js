@@ -3,6 +3,7 @@ import * as path from 'path';
 import express from 'express';
 import {Server} from 'colyseus';
 import {monitor} from '@colyseus/monitor';
+import HoldemRoom from './HoldemRoom';
 
 const port = process.env.PORT || 9075;
 const app = express();
@@ -12,6 +13,9 @@ app.use(express.json());
 
 const server = http.createServer(app);
 const gameServer = new Server({server});
+console.log('Defining room lobby');
+gameServer.define('lobby', HoldemRoom);
+console.log('done');
 
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/../web/dist', 'index.html'));

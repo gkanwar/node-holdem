@@ -42,7 +42,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
-    port: 9075,
+    port: 9076,
     writeToDisk: true
   }
 };
