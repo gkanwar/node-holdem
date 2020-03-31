@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
 import Player from './Player';
 import ActionBar from './ActionBar';
+import Pot from './Pot';
 
 const VIEW_HEIGHT = 600;
 const positions6 = [
@@ -51,6 +52,8 @@ class Table extends Component {
   constructor() {
     super();
     this.state = {
+      pot: 0,
+      nextToAct: 0,
       myIndex: null,
       myCards: null,
       players: [],
@@ -67,24 +70,25 @@ class Table extends Component {
       }
     });
     room.onStateChange((state) => {
-      const {players, playerOrder, nextToAct} = state;
+      const {players, playerOrder, ...residualState} = state;
       const orderedPlayers = playerOrder.map((sessionId) => players[sessionId]);
       const myIndex = playerOrder.findIndex((sessionId) => sessionId == room.sessionId);
       this.setState({
-        myIndex: myIndex,
         players: orderedPlayers,
         positions: getPositions(orderedPlayers.length),
-        nextToAct: nextToAct
+        myIndex,
+        ...residualState
       });
     });
   }
 
   render() {
-    const {myIndex, myCards, players, positions, nextToAct} = this.state;
-    const elements = players.map((player, index) => {
+    const {myIndex, myCards, pot, players, positions, nextToAct} = this.state;
+    const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
       const isActive = index == nextToAct;
+      console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
           <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
            isActive={isActive} cards={isMe ? myCards : undefined}/>
@@ -92,15 +96,17 @@ class Table extends Component {
       return reactPlayer;
     });
     const {room} = this.props;
-    elements.unshift(<TableBg key="table-bg"/>);
-    console.log('players', players, 'myIndex', myIndex);
     const enableActionBar = (
       myIndex == nextToAct && players[myIndex] !== undefined
       && !players[myIndex].folded
     );
     return (
       <>
-        <svg id="game-canvas">{elements}</svg>
+        <svg id="game-canvas">
+          <TableBg/>
+          {playerElements}
+          <Pot value={pot}/>
+        </svg>
         <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>
       </>
     );

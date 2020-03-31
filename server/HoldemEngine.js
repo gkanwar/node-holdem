@@ -212,7 +212,7 @@ class HoldemEngine {
   onAction(playerId, action) {
     const {nextToAct, playerOrder} = this.state;
     if (playerOrder.findIndex((p) => p == playerId) !== nextToAct) {
-      console.warn(`Player ${player} acted out of turn`);
+      console.warn(`Player ${playerId} acted out of turn`);
       return;
     }
     

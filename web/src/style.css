@@ -83,6 +83,9 @@ body {
 svg text {
     fill: #cccccc;
 }
+svg .pot text{
+    fill: #202020;
+}
 
 #actions-bar {
     position: absolute;
