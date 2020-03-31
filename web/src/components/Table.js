@@ -66,30 +66,32 @@ class Table extends Component {
       }
     });
     room.onStateChange((state) => {
-      const {players, playerOrder} = state;
+      const {players, playerOrder, nextToAct} = state;
       const orderedPlayers = playerOrder.map((sessionId) => players[sessionId]);
       const myIndex = playerOrder.findIndex((sessionId) => sessionId == room.sessionId);
       this.setState({
         myIndex: myIndex,
         players: orderedPlayers,
-        positions: getPositions(orderedPlayers.length)
+        positions: getPositions(orderedPlayers.length),
+        nextToAct: nextToAct
       });
     });
   }
 
   render() {
-    const {myIndex, myCards, players, positions} = this.state;
+    const {myIndex, myCards, players, positions, nextToAct} = this.state;
     const elements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
-      if (index == myIndex) {
-        return <Player pos={pos} player={player} isMe={isMe} cards={myCards}/>;
-      }
-      else {
-        return <Player pos={pos} player={player} isMe={isMe} />;
-      }
+      const isActive = index == nextToAct;
+      const reactPlayer = (
+          <Player key={player.username} pos={pos} player={player} isMe={isMe}
+           isActive={isActive} cards={isMe ? myCards : undefined}/>
+      );
+      return reactPlayer;
     });
-    elements.unshift(<TableBg/>);
+    const {room} = this.props;
+    elements.unshift(<TableBg key={room}/>);
     return <svg id="game-canvas">{elements}</svg>;
   }
 }

@@ -12,6 +12,7 @@ class Connector extends Component {
     this.state = {
       server: '',
       port: '',
+      username: '',
       roomId: '',
       sessionId: '',
       trying: false,

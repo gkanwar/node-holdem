@@ -16,7 +16,8 @@
     "@colyseus/monitor": "^0.11.0",
     "colyseus": "^0.12.0",
     "esm": "^3.2.25",
-    "express": ">=3.0.1"
+    "express": ">=3.0.1",
+    "poker-hand-evaluator": "^1.0.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
