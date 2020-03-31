@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
 import Player from './Player';
-import Actions from './Actions';
+import ActionBar from './ActionBar';
 
 const VIEW_HEIGHT = 600;
 const positions6 = [
@@ -93,9 +93,17 @@ class Table extends Component {
     });
     const {room} = this.props;
     elements.unshift(<TableBg key="table-bg"/>);
-    const enableActions = myIndex == nextToAct;
-    elements.push(<Actions key="actions-bar" room={room} myIndex={myIndex} enabled={enableActions}/>);
-    return <svg id="game-canvas">{elements}</svg>;
+    console.log('players', players, 'myIndex', myIndex);
+    const enableActionBar = (
+      myIndex == nextToAct && players[myIndex] !== undefined
+      && !players[myIndex].folded
+    );
+    return (
+      <>
+        <svg id="game-canvas">{elements}</svg>
+        <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>
+      </>
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 // This is where we make all the $$$
 
+import {ArraySchema} from '@colyseus/schema';
 import {Card} from './HoldemState';
 import PokerHand from 'poker-hand-evaluator';
 
@@ -28,8 +29,8 @@ function getHandRank(board, cards) {
   // Do it the dumb way: enumerate all 5-card hands
   const allCards = board.concat(cards);
   let bestRank = null;
-  for (const skip1 in Array(7).keys()) {
-    for (const skip2 in Array(skip1).keys()) {
+  for (var skip1 = 0; skip1 < 7; skip1++) {
+    for (var skip2 = 0; skip2 < skip1; skip2++) {
       const hand = allCards.filter(
         (val, index) => (index != skip1 && index != skip2));
       const handStr = hand.map(x => x.toString());
@@ -58,7 +59,7 @@ class HoldemEngine {
       deck: makeDeck()
     };
     const {players: privatePlayers, deck} = this.privateState;
-    for (const playerId in Object.keys(privatePlayers)) {
+    for (const playerId in players) {
       const cards = [randomDraw(deck), randomDraw(deck)];
       privatePlayers[playerId] = {cards: cards};
       this.send(playerId, {cards: cards});
@@ -76,18 +77,21 @@ class HoldemEngine {
     this.state.nextToAct = (button+3) % playerOrder.length;
   }
 
-  finishRound(winners) {
+  finishRound(winnerIds) {
+    const {playerOrder, players} = this.state;
+    const winners = winnerIds.map(id => players[id]);
     // Divide up pot
-    for (const winner in winners) {
+    console.log(`Round over, dividing pot ${this.state.pot} among winners ${winners}`);
+    winners.forEach(winner => {
       winner.stack += Math.floor(this.state.pot / winners.length);
-    }
+      console.log(`New winner stack ${winner.stack}`);
+    });
     winners[randomInt(winners.length)].stack += this.state.pot % winners.length;
     // Reset/update state
-    const {playerOrder, players} = this.state;
-    this.button = (this.button+1) % playerOrder.length;
+    this.state.button = (this.state.button+1) % playerOrder.length;
     this.state.pot = 0;
-    this.state.board = [];
-    for (const playerId in Object.keys(players)) {
+    this.state.board = new ArraySchema();
+    for (const playerId in players) {
       const player = players[playerId];
       player.folded = false;
       if (player.offering !== 0) {
@@ -101,7 +105,7 @@ class HoldemEngine {
   isRoundDefaulted() {
     let active = [];
     const {players} = this.state;
-    for (const playerId in Object.keys(players)) {
+    for (const playerId in players) {
       if (!players[playerId].folded) {
         active.push(playerId);
       }
@@ -110,7 +114,8 @@ class HoldemEngine {
       return false;
     }
     else if (active.length == 1) {
-      return active.pop();
+      console.log(`isRoundDefaulted found winner ${active}`);
+      return active;
     }
     else {
       throw 'Cannot have 0 active players in a round';
@@ -120,7 +125,7 @@ class HoldemEngine {
   isStreetDone() {
     let activeOffers = [];
     const {players} = this.state;
-    for (const playerId in Object.keys(players)) {
+    for (const playerId in players) {
       const player = players[playerId];
       if (!player.folded) {
         activeOffers.push(player.offering);
@@ -131,38 +136,53 @@ class HoldemEngine {
       return true;
     }
     const firstOffer = activeOffers[0];
-    for (const offer in activeOffers) {
+    let haveUnchallengedBet = false;
+    activeOffers.forEach(offer => {
       if (offer !== firstOffer) {
-        return false;
+        haveUnchallengedBet = true;
       }
-    }
-    return true;
+    });
+    return !haveUnchallengedBet;
   }
 
   finishStreet() {
     const {players} = this.state;
-    for (const playerId in Object.keys(players)) {
+    for (const playerId in players) {
       const player = players[playerId];
       this.state.pot += player.offering;
       player.offering = 0;
     }
+  }
 
-    const {board} = this.state;
+  pushNextToAct() {
+    const {players, playerOrder} = this.state;
+    let {nextToAct} = this.state;
+    while (players[playerOrder[nextToAct]].folded) {
+      nextToAct = (nextToAct+1) % playerOrder.length;
+    }
+    this.state.nextToAct = nextToAct;
+  }
+
+  initNextStreet() {
+    const {board, button, playerOrder} = this.state;
     const {deck} = this.privateState;
+    this.state.nextToAct = (button+1) % playerOrder.length;
+    this.pushNextToAct();
     if (board.length == 5) {
-      this.runShowdown();
+      return this.runShowdown();
     }
     else if (board.length == 0) {
-      this.board.push(randomDraw(deck));
-      this.board.push(randomDraw(deck));
-      this.board.push(randomDraw(deck));
+      board.push(randomDraw(deck));
+      board.push(randomDraw(deck));
+      board.push(randomDraw(deck));
     }
     else if (board.length == 3 || board.length == 4) {
-      this.board.push(randomDraw(deck));
+      board.push(randomDraw(deck));
     }
     else {
       throw `Invalid board state, ${board.length} cards dealt`;
     }
+    return false;
   }
 
   runShowdown() {
@@ -170,7 +190,7 @@ class HoldemEngine {
     const {players, board} = this.state;
     let bestRank = null;
     let bestPlayerIds = [];
-    for (const playerId in Object.keys(players)) {
+    for (const playerId in players) {
       const player = players[playerId];
       if (player.folded) {
         continue;
@@ -185,13 +205,14 @@ class HoldemEngine {
         bestPlayerIds.push(playerId);
       }
     }
-    this.finishRound(bestPlayerIds);
+    console.log(`runShowdown winners: ${bestPlayerIds}`);
+    return bestPlayerIds;
   }
 
   onAction(playerId, action) {
     const {nextToAct, playerOrder} = this.state;
     if (playerOrder.findIndex((p) => p == playerId) !== nextToAct) {
-      console.warn(`Player {player} acted out of turn`);
+      console.warn(`Player ${player} acted out of turn`);
       return;
     }
     
@@ -202,13 +223,20 @@ class HoldemEngine {
       player.folded = true;
     }
     else if (type === 'bet') {
+      if (!Number.isInteger(value)) {
+        this.send(playerId, {
+          error: `Value must be numeric integer, received ${value}`
+        });
+      }
       if (value < player.offering) {
         this.send(playerId, {
           error: `Cannot bet less than current offerring ${value} vs ${player.offering}`
         });
         return;
       }
-      player.addOffer(player.offering - value);
+      player.addOffer(value - player.offering);
+      this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
+      this.pushNextToAct();
     }
     else {
       this.send(playerId, {
@@ -220,13 +248,19 @@ class HoldemEngine {
       message: 'Action OK'
     });
 
-    const winner = this.isRoundDefaulted();
-    if (winner !== false) {
+    const winners = this.isRoundDefaulted();
+    if (winners !== false) {
       this.finishStreet();
-      this.finishRound([winner]);
+      this.finishRound(winners);
+      this.initRound();
     }
     else if (this.isStreetDone()) {
       this.finishStreet();
+      const winners = this.initNextStreet();
+      if (winners !== false) {
+        this.finishRound(winners);
+        this.initRound();
+      }
     }
   }
 }

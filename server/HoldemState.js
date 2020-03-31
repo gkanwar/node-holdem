@@ -44,8 +44,8 @@ export class PlayerState extends Schema {
 defineTypes(PlayerState, {
   username: 'string',
   connected: 'boolean',
-  stack: 'uint64',
-  offering: 'uint64',
+  stack: 'int64',
+  offering: 'int64',
   folded: 'boolean'
 });
 
@@ -67,9 +67,9 @@ defineTypes(HoldemState, {
   playerOrder: ['string'],
   board: [Card],
   button: 'uint8',
-  pot: 'uint64',
+  pot: 'int64',
   nextToAct: 'uint8',
-  smallBlind: 'uint64',
-  bigBlind: 'uint64',
+  smallBlind: 'int64',
+  bigBlind: 'int64',
   running: 'boolean'
 });
