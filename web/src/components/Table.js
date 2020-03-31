@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
 import Player from './Player';
+import Actions from './Actions';
 
 const VIEW_HEIGHT = 600;
 const positions6 = [
@@ -85,13 +86,15 @@ class Table extends Component {
       const isMe = index == myIndex;
       const isActive = index == nextToAct;
       const reactPlayer = (
-          <Player key={player.username} pos={pos} player={player} isMe={isMe}
+          <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
            isActive={isActive} cards={isMe ? myCards : undefined}/>
       );
       return reactPlayer;
     });
     const {room} = this.props;
-    elements.unshift(<TableBg key={room}/>);
+    elements.unshift(<TableBg key="table-bg"/>);
+    const enableActions = myIndex == nextToAct;
+    elements.push(<Actions key="actions-bar" room={room} myIndex={myIndex} enabled={enableActions}/>);
     return <svg id="game-canvas">{elements}</svg>;
   }
 }

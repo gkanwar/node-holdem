@@ -71,8 +71,6 @@ class HoldemEngine {
     }
     const smallIndex = (button+1) % playerOrder.length;
     const bigIndex = (button+2) % playerOrder.length;
-    console.log(`smallIndex ${smallIndex} player ${playerOrder[smallIndex]} ${players[playerOrder[smallIndex]]}`);
-    console.log(`bigIndex ${bigIndex} player ${playerOrder[bigIndex]}`);
     players[playerOrder[smallIndex]].addOffer(smallBlind);
     players[playerOrder[bigIndex]].addOffer(bigBlind);
     this.state.nextToAct = (button+3) % playerOrder.length;

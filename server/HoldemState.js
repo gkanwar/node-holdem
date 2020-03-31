@@ -29,7 +29,7 @@ export class PlayerState extends Schema {
     this.connected = true;
     this.folded = false;
     this.offering = 0;
-    this.stack = 0;
+    this.stack = 1000;
   }
 
   addOffer(value) {

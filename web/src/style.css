@@ -80,3 +80,6 @@ body {
     color: #444444;
 }
 
+svg text {
+    fill: #cccccc;
+}

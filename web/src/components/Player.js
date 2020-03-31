@@ -14,10 +14,20 @@ class Player extends Component {
     };
     const {username} = player;
     const usernamePos = [seat[0], seat[1]-20];
+    const infoPos = [seat[0], seat[1]+20];
     const elements = [];
     elements.push(
       <text x={usernamePos[0]} y={usernamePos[1]} textAnchor='middle' fill={color}>
         {username}
+      </text>
+    );
+    // TODO: Present this nicely
+    elements.push(
+      <text x={infoPos[0]} y={infoPos[1]} textAnchor='middle'>
+        <tspan x={infoPos[0]} dy='1.2em'>Off: {player.offering}</tspan>
+        <tspan x={infoPos[0]} dy='1.2em'>Stack: {player.stack}</tspan>
+        <tspan x={infoPos[0]} dy='1.2em'>Folded: {player.folded}</tspan>
+        <tspan x={infoPos[0]} dy='1.2em'>Cards: {cards}</tspan>
       </text>
     );
     if (isActive) {
