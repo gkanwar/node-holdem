@@ -25,22 +25,29 @@ function randomDraw(deck) {
   return value;
 }
 
-function getHandRank(board, cards) {
+// Lower is better.
+function getHandScore(board, cards) {
   // Do it the dumb way: enumerate all 5-card hands
   const allCards = board.concat(cards);
+  let bestScore = null;
+  let bestHand = null;
   let bestRank = null;
   for (var skip1 = 0; skip1 < 7; skip1++) {
     for (var skip2 = 0; skip2 < skip1; skip2++) {
       const hand = allCards.filter(
         (val, index) => (index != skip1 && index != skip2));
       const handStr = hand.map(x => x.toString());
-      const rank = PokerHand(handStr.join(' ')).getRank();
-      if (bestRank === null || rank < bestRank) {
-        bestRank = rank;
+      const pokerHand = new PokerHand(handStr.join(' '))
+      const score = pokerHand.getScore();
+      if (bestScore === null || score < bestScore) {
+        bestScore = score;
+        bestHand = handStr;
+        bestRank = pokerHand.getRank()
       }
     }
   }
-  return bestRank;
+  console.log(`Best hand ${bestHand} with score ${bestScore} (${bestRank})`);
+  return bestScore;
 }
 
 class HoldemEngine {
@@ -188,7 +195,7 @@ class HoldemEngine {
   runShowdown() {
     // TODO: Deal with side pots and the like
     const {players, board} = this.state;
-    let bestRank = null;
+    let bestScore = null;
     let bestPlayerIds = [];
     for (const playerId in players) {
       const player = players[playerId];
@@ -196,12 +203,12 @@ class HoldemEngine {
         continue;
       }
       const {cards} = this.privateState.players[playerId];
-      const rank = getHandRank(board, cards);
-      if (bestRank === null || rank < bestRank) {
-        bestRank = rank;
+      const score = getHandScore(board, cards);
+      if (bestScore === null || score < bestScore) {
+        bestScore = score;
         bestPlayerIds = [playerId];
       }
-      else if (rank === bestRank) {
+      else if (score === bestScore) {
         bestPlayerIds.push(playerId);
       }
     }
