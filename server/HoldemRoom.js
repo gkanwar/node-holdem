@@ -12,11 +12,13 @@ class HoldemRoom extends Room {
     super();
   }
 
+  /* eslint-disable no-unused-vars */
   onCreate(options) {
     this.setPatchRate(PATCH_RATE);
     this.setState(new HoldemState());
     this.clientsById = {};
   }
+  /* eslint-enable no-unused-vars */
 
   onJoin(client, options) {
     this.clientsById[client.sessionId] = client;
