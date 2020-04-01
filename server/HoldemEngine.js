@@ -68,10 +68,7 @@ class HoldemEngine {
     const {players: privatePlayers, deck} = this.privateState;
     for (const playerId in players) {
       const cards = [randomDraw(deck), randomDraw(deck)];
-      privatePlayers[playerId] = {
-        cards: cards,
-        playedThisStreet: false
-      };
+      this.makePlayerPrivateState(playerId, cards);
       this.send(playerId, {myCards: cards});
     }
     if (pot !== 0) {
@@ -87,6 +84,14 @@ class HoldemEngine {
     players[playerOrder[smallIndex]].addOffer(smallBlind);
     players[playerOrder[bigIndex]].addOffer(bigBlind);
     this.state.nextToAct = (button+3) % playerOrder.length;
+  }
+
+  makePlayerPrivateState(playerId, cards) {
+    const {players: privatePlayers} = this.privateState;
+    privatePlayers[playerId] = {
+      cards: cards !== undefined ? cards : [],
+      playedThisStreet: false
+    };
   }
 
   finishRound(winnerIds) {

@@ -22,6 +22,11 @@ class HoldemRoom extends Room {
     this.clientsById[client.sessionId] = client;
     this.state.players[client.sessionId] = new PlayerState(options.username);
     this.state.playerOrder.push(client.sessionId);
+    // TODO: Do we need to do something more careful for players joining mid-game?
+    if (this.engine !== undefined) {
+      this.state.players[client.sessionId].folded = true;
+      this.engine.makePlayerPrivateState(client.sessionId);
+    }
   }
 
   onMessage(client, message) {

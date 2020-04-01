@@ -28,7 +28,7 @@ class Player extends Component {
       <text x={infoPos[0]} y={infoPos[1]} textAnchor='middle'>
         <tspan x={infoPos[0]} dy='1.2em'>Off: {player.offering}</tspan>
         <tspan x={infoPos[0]} dy='1.2em'>Stack: {player.stack}</tspan>
-        <tspan x={infoPos[0]} dy='1.2em'>Folded: {player.folded}</tspan>
+        <tspan x={infoPos[0]} dy='1.2em'>Folded: {player.folded.toString()}</tspan>
         <tspan x={infoPos[0]} dy='1.2em'>Cards: {cardStr}</tspan>
       </text>
     );
