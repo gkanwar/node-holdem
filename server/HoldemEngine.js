@@ -253,10 +253,7 @@ class HoldemEngine {
         });
         return;
       }
-      privatePlayer.playedThisStreet = true;
       player.addOffer(value - player.offering);
-      this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
-      this.pushNextToAct();
     }
     else {
       this.send(playerId, {
@@ -264,6 +261,9 @@ class HoldemEngine {
       });
       return;
     }
+    privatePlayer.playedThisStreet = true;
+    this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
+    this.pushNextToAct();
     this.send(playerId, {
       message: 'Action OK'
     });
