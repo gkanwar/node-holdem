@@ -10,27 +10,33 @@ const VIEW_HEIGHT = 600;
 const positions6 = [
   {
     index: 0,
-    seat: [60, 258]
+    seat: [60, 258],
+    button: [148-15, 289+15]
   },
   {
     index: 3,
-    seat: [740, 258]
+    seat: [740, 258],
+    button: [654-15, 227+15]
   },
   {
     index: 1,
-    seat: [268, 457]
+    seat: [268, 457],
+    button: [317-15, 382+15]
   },
   {
     index: 4,
-    seat: [528, 50]
+    seat: [528, 50],
+    button: [510-15, 130+15]
   },
   {
     index: 2,
-    seat: [528, 457]
+    seat: [528, 457],
+    button: [560-15, 377+15]
   },
   {
     index: 5,
-    seat: [268, 50]
+    seat: [268, 50],
+    button: [268-15, 133+15]
   }
 ];
 
@@ -39,10 +45,10 @@ function getPositions(n) {
     const usedPositions = positions6.slice(0, n);
     usedPositions.sort((a,b) => a.index - b.index);
     return usedPositions.map((pos) => {
-      const {seat} = pos;
-      return {
-        seat: [seat[0], VIEW_HEIGHT - seat[1]]
-      };
+      const {index, ...posData} = pos;
+      const posDataReflected = Object.fromEntries(
+        Object.entries(posData).map(([k, v]) => [k, [v[0], VIEW_HEIGHT-v[1]]]));
+      return posDataReflected;
     });
   }
   else {
@@ -88,16 +94,17 @@ class Table extends Component {
   }
 
   render() {
-    const {myIndex, myCards, pot, board, players, positions, nextToAct} = this.state;
+    const {myIndex, myCards, pot, board, button, players, positions, nextToAct} = this.state;
     console.log('myCards =', myCards);
     const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
       const isActive = index == nextToAct;
+      const isButton = index == button;
       console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
           <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
-           isActive={isActive} cards={isMe ? myCards : ['??', '??']}/>
+           isActive={isActive} isButton={isButton} cards={isMe ? myCards : ['??', '??']}/>
       );
       return reactPlayer;
     });

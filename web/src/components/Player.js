@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import './pulse.scss';
 import {cardToString} from './Card';
+import {ReactComponent as Button} from './button.opt.svg';
 
 class Player extends Component {
 
   render() {
-    const {pos: {seat}, player, isMe, isActive, cards} = this.props;
+    const {pos: {seat, button}, player, isMe, isActive, isButton, cards} = this.props;
     const color = isMe ? '#ff0909' : '#888888';
     function makeAvatarCircle(className) {
       return (
@@ -16,15 +17,14 @@ class Player extends Component {
     const {username} = player;
     const usernamePos = [seat[0], seat[1]-20];
     const infoPos = [seat[0], seat[1]+20];
-    const elements = [];
-    elements.push(
+    const usernameElt = (
       <text x={usernamePos[0]} y={usernamePos[1]} textAnchor='middle' fill={color}>
         {username}
       </text>
     );
     // TODO: Present this nicely
     const cardStr = (cards !== null) ? cards.map(cardToString).join(' ') : '';
-    elements.push(
+    const infoElt = (
       <text x={infoPos[0]} y={infoPos[1]} textAnchor='middle'>
         <tspan x={infoPos[0]} dy='1.2em'>Off: {player.offering}</tspan>
         <tspan x={infoPos[0]} dy='1.2em'>Stack: {player.stack}</tspan>
@@ -32,16 +32,33 @@ class Player extends Component {
         <tspan x={infoPos[0]} dy='1.2em'>Cards: {cardStr}</tspan>
       </text>
     );
+    let avatarElt;
     if (isActive) {
-      elements.push(makeAvatarCircle('pulse-disk'));
-      elements.push(makeAvatarCircle('pulse-circle-1'));
-      elements.push(makeAvatarCircle('pulse-circle-2'));
+      avatarElt = (
+        <>
+          {makeAvatarCircle('pulse-disk')}
+          {makeAvatarCircle('pulse-circle-1')}
+          {makeAvatarCircle('pulse-circle-2')}
+        </>
+      );
     }
     else {
-      elements.push(makeAvatarCircle('pulse-circle-fixed'));
+      avatarElt = makeAvatarCircle('pulse-circle-fixed');
+    }
+
+    let buttonElt = null;
+    if (isButton) {
+      buttonElt = <Button x={button[0]} y={button[1]}/>;
     }
     
-    return elements;
+    return (
+      <>
+        {usernameElt}
+        {infoElt}
+        {avatarElt}
+        {buttonElt}
+      </>
+    );
   }
 }
 
