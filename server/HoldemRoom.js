@@ -4,6 +4,8 @@ import HoldemEngine from './HoldemEngine';
 
 // Wait up to 10m for reconnect
 const RECONNECT_TIMEOUT = 600;
+// Patch every 200ms
+const PATCH_RATE = 200;
 
 class HoldemRoom extends Room {
   constructor() {
@@ -11,8 +13,7 @@ class HoldemRoom extends Room {
   }
 
   onCreate(options) {
-    // Only need to patch every 1s
-    this.setPatchRate(1000);
+    this.setPatchRate(PATCH_RATE);
     this.setState(new HoldemState());
     this.clientsById = {};
   }
