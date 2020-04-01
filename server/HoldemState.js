@@ -68,6 +68,8 @@ defineTypes(HoldemState, {
   board: [Card],
   button: 'uint8',
   pot: 'int64',
+  toCall: 'int64',
+  minRaise: 'int64',
   nextToAct: 'uint8',
   smallBlind: 'int64',
   bigBlind: 'int64',

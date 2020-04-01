@@ -13,7 +13,8 @@
   "dependencies": {
     "colyseus.js": "^0.12.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-toastify": "^5.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

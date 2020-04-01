@@ -80,6 +80,8 @@ class HoldemEngine {
     if (board.length !== 0) {
       throw 'Board must start empty before round!';
     }
+    this.state.toCall = bigBlind;
+    this.state.minRaise = bigBlind;
     const smallIndex = (button+1) % playerOrder.length;
     const bigIndex = (button+2) % playerOrder.length;
     players[playerOrder[smallIndex]].addOffer(smallBlind);
@@ -181,6 +183,8 @@ class HoldemEngine {
   initNextStreet() {
     const {board, button, playerOrder} = this.state;
     const {players: privatePlayers, deck} = this.privateState;
+    this.state.toCall = 0;
+    this.state.minRaise = 0;
     this.state.nextToAct = (button+1) % playerOrder.length;
     this.pushNextToAct();
     for (const playerId in privatePlayers) {
@@ -234,7 +238,6 @@ class HoldemEngine {
       return;
     }
     
-    // TODO: check action is valid
     const {players: {[playerId]: player}} = this.state;
     const {players: {[playerId]: privatePlayer}} = this.privateState;
     const {type, value} = action;
@@ -244,16 +247,42 @@ class HoldemEngine {
     else if (type === 'bet') {
       if (!Number.isInteger(value)) {
         this.send(playerId, {
-          error: `Value must be numeric integer, received ${value}`
+          error: `Value must be numeric integer (you bet ${value})`
         });
       }
-      if (value < player.offering) {
+      if (value < 0) {
         this.send(playerId, {
-          error: `Cannot bet less than current offerring ${value} vs ${player.offering}`
+          error: `Cannot bet negative value ${value}`
         });
         return;
       }
-      player.addOffer(value - player.offering);
+      const {toCall, minRaise, bigBlind} = this.state;
+      if (value + player.offering < toCall) {
+        this.send(playerId, {
+          error: `Must at least call ${toCall - player.offering} (you bet ${value})`
+        });
+        return;
+      }
+      if (toCall === player.offering) { // bet
+        if (value < bigBlind) {
+          this.send(playerId, {
+            error: `Min bet value is big blind ${bigBlind} (you bet ${value})`
+          });
+          return;
+        }
+      }
+      else if (value + player.offering > toCall) { // raise
+        const raise = player.offering + value - toCall;
+        if (raise < minRaise) {
+          this.send(playerId, {
+            error: `Min raise is ${minRaise} (you only raised ${raise})`
+          });
+          return;
+        }
+        this.state.minRaise = raise;
+      }
+      player.addOffer(value);
+      this.state.toCall = player.offering;
     }
     else {
       this.send(playerId, {

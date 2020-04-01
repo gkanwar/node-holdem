@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
+import {toast} from 'react-toastify';
 import ActionBar from './ActionBar';
 import Board from './Board';
 import Player from './Player';
@@ -68,6 +69,9 @@ class Table extends Component {
       console.log('Got room message', message);
       if (message.myCards !== undefined) {
         this.setState({myCards: message.myCards});
+      }
+      if (message.error !== undefined) {
+        toast(message.error);
       }
     });
     room.onStateChange((state) => {

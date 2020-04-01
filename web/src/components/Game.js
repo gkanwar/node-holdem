@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Connector from './Connector';
 import Controller from './Controller';
 import Table from './Table';
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class Game extends Component {
   constructor() {
@@ -35,6 +37,8 @@ class Game extends Component {
       const {room} = this.state;
       return (
         <>
+          <ToastContainer autoClose={3000} draggable={false} closeButton={false}
+           hideProgressBar={true} pauseOnHover={false}/>
           <Controller room={room}/>
           <Table room={room}/>
         </>
