@@ -20,8 +20,8 @@ function randomInt(max) {
 
 function randomDraw(deck) {
   const index = randomInt(deck.length);
-  const value = deck[index];
-  delete deck[index];
+  const [value] = deck.splice(index, 1);
+  console.log(`New deck length ${deck.length}`);
   return value;
 }
 
@@ -62,7 +62,7 @@ class HoldemEngine {
     for (const playerId in players) {
       const cards = [randomDraw(deck), randomDraw(deck)];
       privatePlayers[playerId] = {cards: cards};
-      this.send(playerId, {cards: cards});
+      this.send(playerId, {myCards: cards});
     }
     if (pot !== 0) {
       throw 'Pot must start at 0 before round!';

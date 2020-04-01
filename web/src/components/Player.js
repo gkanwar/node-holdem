@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './pulse.scss';
+import {cardToString} from './Card';
 
 class Player extends Component {
 
@@ -22,12 +23,13 @@ class Player extends Component {
       </text>
     );
     // TODO: Present this nicely
+    const cardStr = (cards !== null) ? cards.map(cardToString).join(' ') : '';
     elements.push(
       <text x={infoPos[0]} y={infoPos[1]} textAnchor='middle'>
         <tspan x={infoPos[0]} dy='1.2em'>Off: {player.offering}</tspan>
         <tspan x={infoPos[0]} dy='1.2em'>Stack: {player.stack}</tspan>
         <tspan x={infoPos[0]} dy='1.2em'>Folded: {player.folded}</tspan>
-        <tspan x={infoPos[0]} dy='1.2em'>Cards: {cards}</tspan>
+        <tspan x={infoPos[0]} dy='1.2em'>Cards: {cardStr}</tspan>
       </text>
     );
     if (isActive) {

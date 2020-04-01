@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
-import Player from './Player';
 import ActionBar from './ActionBar';
+import Board from './Board';
+import Player from './Player';
 import Pot from './Pot';
 
 const VIEW_HEIGHT = 600;
@@ -83,7 +84,8 @@ class Table extends Component {
   }
 
   render() {
-    const {myIndex, myCards, pot, players, positions, nextToAct} = this.state;
+    const {myIndex, myCards, pot, board, players, positions, nextToAct} = this.state;
+    console.log('myCards =', myCards);
     const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
@@ -91,7 +93,7 @@ class Table extends Component {
       console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
           <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
-           isActive={isActive} cards={isMe ? myCards : undefined}/>
+           isActive={isActive} cards={isMe ? myCards : ['??', '??']}/>
       );
       return reactPlayer;
     });
@@ -106,6 +108,7 @@ class Table extends Component {
           <TableBg/>
           {playerElements}
           <Pot value={pot}/>
+          <Board cards={board}/>
         </svg>
         <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>
       </>
