@@ -68,7 +68,10 @@ class HoldemEngine {
     const {players: privatePlayers, deck} = this.privateState;
     for (const playerId in players) {
       const cards = [randomDraw(deck), randomDraw(deck)];
-      privatePlayers[playerId] = {cards: cards};
+      privatePlayers[playerId] = {
+        cards: cards,
+        playedThisStreet: false
+      };
       this.send(playerId, {myCards: cards});
     }
     if (pot !== 0) {
@@ -132,9 +135,14 @@ class HoldemEngine {
   isStreetDone() {
     let activeOffers = [];
     const {players} = this.state;
+    const {players: privatePlayers} = this.privateState;
     for (const playerId in players) {
       const player = players[playerId];
+      const privatePlayer = privatePlayers[playerId];
       if (!player.folded) {
+        if (!privatePlayer.playedThisStreet) {
+          return false;
+        }
         activeOffers.push(player.offering);
       }
     }
@@ -172,9 +180,12 @@ class HoldemEngine {
 
   initNextStreet() {
     const {board, button, playerOrder} = this.state;
-    const {deck} = this.privateState;
+    const {players: privatePlayers, deck} = this.privateState;
     this.state.nextToAct = (button+1) % playerOrder.length;
     this.pushNextToAct();
+    for (const playerId in privatePlayers) {
+      privatePlayers[playerId].playedThisStreet = false;
+    }
     if (board.length == 5) {
       return this.runShowdown();
     }
@@ -225,6 +236,7 @@ class HoldemEngine {
     
     // TODO: check action is valid
     const {players: {[playerId]: player}} = this.state;
+    const {players: {[playerId]: privatePlayer}} = this.privateState;
     const {type, value} = action;
     if (type === 'fold') {
       player.folded = true;
@@ -241,6 +253,7 @@ class HoldemEngine {
         });
         return;
       }
+      privatePlayer.playedThisStreet = true;
       player.addOffer(value - player.offering);
       this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
       this.pushNextToAct();
