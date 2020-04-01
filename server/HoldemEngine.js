@@ -263,7 +263,7 @@ class HoldemEngine {
         });
         return;
       }
-      if (toCall === player.offering) { // bet
+      if (toCall === player.offering && value != 0) { // bet
         if (value < bigBlind) {
           this.send(playerId, {
             error: `Min bet value is big blind ${bigBlind} (you bet ${value})`
