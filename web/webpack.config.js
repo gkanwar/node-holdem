@@ -43,7 +43,7 @@ module.exports = {
   output: {
     publicPath: "/static/"
   },
-  devtool: 'inline-source-map',
+  devtool: '',
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     port: 9076,
