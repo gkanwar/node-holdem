@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs>
+  <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="0.5"/>
+   <feOffset dx="1" dy="0.5" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -270.54)">
+  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -141.89)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#efefef" filter="url(#filter4822)" opacity=".97"/>
+ </g>
+ <g transform="translate(0 13.229)">
+  <path d="m13.229-4.4956-3.1585 4.5641 3.1585 4.4318 3.1585-4.4318z" fill="#b80000" stroke="#000" stroke-width=".26458"/>
+  <path d="m13.19-4.1701-2.0112 4.2756-0.91607-0.019374z" fill="#d50000"/>
+  <path d="m13.221 4.238 2.0443-4.1599 0.95599 0.007677z" fill="#960000"/>
+  <path d="m13.272 4.3135-2.0554-4.2546-0.91582 0.028856z" fill="#c40000"/>
+  <path d="m13.28-4.1453 1.9975 4.2067 0.9443 0.0040161z" fill="#a40000"/>
+ </g>
+</svg>
