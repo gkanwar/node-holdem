@@ -6,7 +6,8 @@
   "scripts": {
     "build-prod": "webpack --mode production",
     "build": "webpack --mode development --display-modules",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "watch": "webpack --mode development --display-modules --watch"
   },
   "author": "",
   "license": "ISC",

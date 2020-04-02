@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs>
+  <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="0.5"/>
+   <feOffset dx="1" dy="0.5" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -270.54)">
+  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -141.89)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#efefef" filter="url(#filter4822)" opacity=".97"/>
+ </g>
+ <g transform="translate(0 13.229)">
+  <path d="m17.529-1.3126c0.09162-1.848-0.77865-3.1435-1.9525-3.3007-1.1739-0.15723-2.3477 2.278-2.3477 2.278s-1.1738-2.4352-2.3477-2.278c-1.1739 0.15723-2.0442 1.4527-1.9525 3.3007 0.091635 1.848 4.3002 5.8576 4.3002 5.8576s4.2086-4.0096 4.3002-5.8576z" fill="#b80000" stroke="#202020" stroke-width=".26458"/>
+  <path d="m11.523-4.263c-0.32125-0.27779-0.97807-0.31444-1.6679 0.40642-0.48392 0.5057-0.82798 1.6146-0.79012 2.4726 0.075706 1.716 3.7897 5.321 3.7897 5.321s-2.2286-2.9902-2.5725-4.4946c-0.22397-0.9797-0.45193-1.8107-0.05625-2.7337 0.3823-0.89181 1.297-0.9718 1.297-0.9718z" fill="#d50000"/>
+  <path d="m17.404-1.4034c-0.0048 1.6848-3.8063 5.3376-3.8063 5.3376s1.2904-1.824 2.2377-3.8916c0.94736-2.0676 0.77172-3.9202 0.77172-3.9202s0.8016 0.78949 0.79682 2.4743z" fill="#960000"/>
+ </g>
+</svg>

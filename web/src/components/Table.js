@@ -96,6 +96,7 @@ class Table extends Component {
   render() {
     const {myIndex, myCards, pot, board, button, players, positions, nextToAct} = this.state;
     console.log('myCards =', myCards);
+    console.log('board =', board);
     const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;

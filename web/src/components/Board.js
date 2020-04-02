@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {cardToString} from './Card';
+import Card, {cardToString} from './Card';
+
+const CARD_SPACING = 50;
 
 class Board extends Component {
   render() {
@@ -7,10 +9,12 @@ class Board extends Component {
     if (cards === undefined) {
       return null;
     }
-    const boardStr = cards.map(cardToString).join(' ');
+    const boardElts = cards.map((card, index) => 
+      <Card key={`board-${index}`} card={card} posX={index*CARD_SPACING} posY={0}/>
+    );
     return (
-      <g className="board" transform="translate(400, 275)">
-        <text x="0" y="0" textAnchor='middle' >Board: {boardStr}</text>
+      <g className="board" transform="translate(250, 215)">
+        {boardElts}
       </g>
     );
   }
