@@ -2,8 +2,8 @@ import {Room} from 'colyseus';
 import {HoldemState, PlayerState} from './HoldemState';
 import HoldemEngine from './HoldemEngine';
 
-// Wait up to 10m for reconnect
-const RECONNECT_TIMEOUT = 600;
+// Wait up to 1m for reconnect
+const RECONNECT_TIMEOUT = 60;
 // Patch every 200ms
 const PATCH_RATE = 200;
 
