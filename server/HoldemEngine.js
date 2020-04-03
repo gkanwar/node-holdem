@@ -255,6 +255,7 @@ class HoldemEngine {
           });
           return;
         }
+        this.state.minRaise = value;
       }
       else if (value + player.offering > toCall) { // raise
         const raise = player.offering + value - toCall;

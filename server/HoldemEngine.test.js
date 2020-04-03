@@ -2,8 +2,9 @@ import {expect} from 'chai';
 import HoldemEngine from './HoldemEngine';
 import {HoldemState} from './HoldemState';
 
-function expectMsgOk({msg: {message}}) {
-  expect(message).to.equal('Action OK')
+function expectMsgOk({msg}) {
+  expect(msg).to.have.key('message');
+  expect(msg.message).to.equal('Action OK');
 }
 function expectMsgErr({msg}) {
   expect(msg).to.have.key('error');
@@ -52,7 +53,7 @@ describe('Holdem Engine', () => {
       });
     })
   })
-  describe('Gameplay', () => {
+  describe('Preflop play', () => {
     beforeEach('Setup engine with three players and start round', () => {
       state = new HoldemState();
       messages = [];
@@ -132,6 +133,126 @@ describe('Holdem Engine', () => {
       expect(state.nextToAct).to.equal(2);
       engine.onAction(p3.pid, {type: 'bet', value: 0});
       const [msg] = messages;
+      expectMsgOk(msg);
+    })
+    it('Should not allow BB less than min bet', () => {
+      engine.onAction(p1.pid, {type: 'fold'});
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      messages.splice(0);
+      engine.onAction(p3.pid, {type: 'bet', value: 1});
+      const [msg] = messages;
+      expectMsgErr(msg);
+    })
+    it('Should allow BB to bet', () => {
+      engine.onAction(p1.pid, {type: 'fold'});
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      messages.splice(0);
+      engine.onAction(p3.pid, {type: 'bet', value: 2});
+      const [msg] = messages;
+      expectMsgOk(msg);
+    })
+  })
+  describe('Postflop play', () => {
+    beforeEach('Setup engine with three players and play flop', () => {
+      state = new HoldemState();
+      messages = [];
+      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine.onJoin(p1.pid, p1.username);
+      engine.onJoin(p2.pid, p2.username);
+      engine.onJoin(p3.pid, p3.username);
+      state.button = 0;
+      state.smallBlind = 1;
+      state.bigBlind = 2;
+      engine.initRound();
+      engine.onAction(p1.pid, {type: 'bet', value: 2});
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      messages.splice(0);
+    })
+    it('Should have collected money and flopped 3 cards', () => {
+      expect(state.pot).to.equal(6);
+      expect(state.board).to.have.lengthOf(3);
+      allPids.map((pid) => {
+        expect(state.players[pid].folded).to.equal(false);
+        expect(state.players[pid].offering).to.equal(0);
+      });
+    })
+    it('Should give action to left of button', () => {
+      expect(state.nextToAct).to.equal(1);
+    })
+    it('Should allow check', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 0});
+      const [msg] = messages;
+      expectMsgOk(msg);
+    })
+    it('Should not allow smaller than min bet', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      const [msg] = messages;
+      expectMsgErr(msg);
+    })
+    it('Should allow bet', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      const [msg] = messages;
+      expectMsgOk(msg);
+    })
+    it('Should not allow check after bet', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      const [msg1, msg2] = messages;
+      expectMsgOk(msg1);
+      expectMsgErr(msg2);
+    })
+    it('Should allow call after bet', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 2});
+      const [msg1, msg2] = messages;
+      expectMsgOk(msg1);
+      expectMsgOk(msg2);
+    })
+    it('Should not allow raise below min raise', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 3});
+      const [msg1, msg2] = messages;
+      expectMsgOk(msg1);
+      expectMsgErr(msg2);
+    })
+    it('Should allow raise', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 4});
+      const [msg1, msg2] = messages;
+      expectMsgOk(msg1);
+      expectMsgOk(msg2);
+    })
+    it('Should not allow reraise below min raise', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 5});
+      engine.onAction(p1.pid, {type: 'bet', value: 7});
+      const [msg1, msg2, msg3] = messages;
+      expectMsgOk(msg1);
+      expectMsgOk(msg2);
+      expectMsgErr(msg3);
+    })
+    it('Should allow reraise', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 5});
+      engine.onAction(p1.pid, {type: 'bet', value: 8});
+      const [msg1, msg2, msg3] = messages;
+      expectMsgOk(msg1);
+      expectMsgOk(msg2);
+      expectMsgOk(msg3);
+    })
+    it('Should not give small blind the option', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 0});
+      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      engine.onAction(p1.pid, {type: 'bet', value: 0});
+      expect(state.board).to.have.lengthOf(4);
+    })
+    it('Should not give small blind the option after bets', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 10});
+      engine.onAction(p3.pid, {type: 'bet', value: 10});
+      engine.onAction(p1.pid, {type: 'bet', value: 10});
+      expect(state.pot).to.equal(36);
+      expect(state.board).to.have.lengthOf(4);
     })
   })
 })
