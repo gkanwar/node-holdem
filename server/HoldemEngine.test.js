@@ -151,6 +151,14 @@ describe('Holdem Engine', () => {
       const [msg] = messages;
       expectMsgOk(msg);
     })
+    it('Should skip folded player', () => {
+      engine.onAction(p1.pid, {type: 'fold'});
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      engine.onAction(p3.pid, {type: 'bet', value: 2});
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      expect(messages).to.have.lengthOf(4);
+      messages.map(expectMsgOk);
+    })
   })
   describe('Postflop play', () => {
     beforeEach('Setup engine with three players and play flop', () => {
@@ -253,6 +261,40 @@ describe('Holdem Engine', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 10});
       expect(state.pot).to.equal(36);
       expect(state.board).to.have.lengthOf(4);
+    })
+  })
+  describe('Showdown', () => {
+    beforeEach('Setup engine with three players and play to river', () => {
+      state = new HoldemState();
+      messages = [];
+      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine.onJoin(p1.pid, p1.username);
+      engine.onJoin(p2.pid, p2.username);
+      engine.onJoin(p3.pid, p3.username);
+      state.button = 0;
+      state.smallBlind = 1;
+      state.bigBlind = 2;
+      engine.initRound();
+      engine.onAction(p1.pid, {type: 'bet', value: 2});
+      engine.onAction(p2.pid, {type: 'bet', value: 1});
+      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      
+      engine.onAction(p2.pid, {type: 'bet', value: 10});
+      engine.onAction(p3.pid, {type: 'bet', value: 10});
+      engine.onAction(p1.pid, {type: 'bet', value: 10});
+
+      engine.onAction(p2.pid, {type: 'bet', value: 0});
+      engine.onAction(p3.pid, {type: 'bet', value: 50});
+      engine.onAction(p1.pid, {type: 'bet', value: 50});
+      engine.onAction(p2.pid, {type: 'fold'});
+      messages.splice(0);
+    })
+    it('Should have full board, only 2 players', () => {
+      expect(state.pot).to.equal(136);
+      expect(state.board).to.have.lengthOf(5);
+      expect(state.players[p1.pid].folded).to.equal(false);
+      expect(state.players[p2.pid].folded).to.equal(true);
+      expect(state.players[p3.pid].folded).to.equal(false);
     })
   })
 })
