@@ -2,11 +2,13 @@
 
 import {ArraySchema} from '@colyseus/schema';
 import {makeDeck, randomInt, randomDraw, getHandScore} from './holdemUtils';
+import {PlayerState} from './HoldemState';
 
 /**
- * Game engine responsible for managing state of game across rounds. Accepts
- * a reference to the global room state, which is mutated according to gameplay.
- * Further accepts a send(playerId) callback to send messages to players.
+ * Game engine responsible for managing state of game across rounds. Accepts a
+ * reference to the global room state, which is automatically synchronized to
+ * clients as the engine makes changes. Further accepts a send(playerId, msg)
+ * callback to send messages to players.
  * 
  * There is no clean divide in who mutates which elements of state, making the
  * logic here quite a mess. Should refactor in the future.
@@ -16,8 +18,21 @@ class HoldemEngine {
     this.state = state;
     this.send = send;
     this.privateState;
+  }
 
-    this.initRound();
+  onJoin(playerId, username) {
+    this.state.players[playerId] = new PlayerState(username);
+    this.state.playerOrder.push(playerId);
+    if (this.state.running) {
+      this.state.players[playerId].folded = true;
+      this.engine.makePlayerPrivateState(playerId);
+    }
+  }
+
+  onLeave(playerId) {
+    delete this.state.players[playerId];
+    this.state.playerOrder = this.state.playerOrder.filter(
+      pid => (pid != playerId));
   }
 
   initRound() {
@@ -201,6 +216,9 @@ class HoldemEngine {
     const {nextToAct, playerOrder} = this.state;
     if (playerOrder.findIndex((p) => p == playerId) !== nextToAct) {
       console.warn(`Player ${playerId} acted out of turn`);
+      this.send(playerId, {
+        error: 'Cannot act out of turn'
+      });
       return;
     }
     
@@ -215,6 +233,7 @@ class HoldemEngine {
         this.send(playerId, {
           error: `Value must be numeric integer (you bet ${value})`
         });
+        return;
       }
       if (value < 0) {
         this.send(playerId, {

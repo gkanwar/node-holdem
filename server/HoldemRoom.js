@@ -1,5 +1,5 @@
 import {Room} from 'colyseus';
-import {HoldemState, PlayerState} from './HoldemState';
+import {HoldemState} from './HoldemState';
 import HoldemEngine from './HoldemEngine';
 
 // Wait up to 1m for reconnect
@@ -7,6 +7,9 @@ const RECONNECT_TIMEOUT = 60;
 // Patch every 200ms
 const PATCH_RATE = 200;
 
+/**
+ * Colyseus room for holdem game. Thin wrapper around HoldemEngine.
+ */
 class HoldemRoom extends Room {
   constructor() {
     super();
@@ -17,31 +20,22 @@ class HoldemRoom extends Room {
     this.setPatchRate(PATCH_RATE);
     this.setState(new HoldemState());
     this.clientsById = {};
+    this.engine = new HoldemEngine(this.state, (sessionId, msg) => {
+      console.log(`Sending message to ${sessionId}`, msg);
+      this.send(this.clientsById[sessionId], msg);
+    });
   }
   /* eslint-enable no-unused-vars */
 
   onJoin(client, options) {
     this.clientsById[client.sessionId] = client;
-    this.state.players[client.sessionId] = new PlayerState(options.username);
-    this.state.playerOrder.push(client.sessionId);
-    // TODO: Do we need to do something more careful for players joining mid-game?
-    if (this.engine !== undefined) {
-      this.state.players[client.sessionId].folded = true;
-      this.engine.makePlayerPrivateState(client.sessionId);
-    }
+    this.engine.onJoin(client.sessionId, options.username);
   }
 
   onMessage(client, message) {
     console.log('Got message', message);
     if (message.running !== undefined) {
-      this.state.running = this.state.running || message.running;
-      if (this.state.running && this.engine === undefined) {
-        console.log('Booting up the game engine!');
-        this.engine = new HoldemEngine(this.state, (sessionId, msg) => {
-          console.log(`Sending message to ${sessionId}`, msg);
-          this.send(this.clientsById[sessionId], msg);
-        });
-      }
+      this.state.running = message.running;
     }
     if (message.action !== undefined) {
       if (this.engine !== undefined) {
@@ -64,9 +58,7 @@ class HoldemRoom extends Room {
       }
       catch (e) {
         console.log(`Timed out, full disconnect sessionId = ${client.sessionId}`);
-        delete this.state.players[client.sessionId];
-        this.state.playerOrder = this.state.playerOrder.filter(
-          sessionId => (sessionId != client.sessionId));
+        this.engine.onLeave(client.sessionId);
       }
     }
   }
