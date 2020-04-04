@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as Colyseus from 'colyseus.js';
 import './connector.css';
+import axios from 'axios';
 
 class Connector extends Component {
   constructor(props) {
@@ -26,9 +27,13 @@ class Connector extends Component {
       this.setState(hostInfo);
     }
     else {
-      this.setState({
-        server: window.location.hostname,
-        port: window.location.port
+      axios.get('/info').then(response => {
+        const {version, port} = response.data;
+        console.log(`Connected to server with version ${version}`);
+        this.setState({
+          server: window.location.hostname,
+          port: port
+        });
       });
     }
     const sessionInfo = JSON.parse(localStorage.getItem('sessionInfo'));
