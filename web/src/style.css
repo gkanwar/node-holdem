@@ -140,3 +140,10 @@ svg text {
 svg .pot text{
     fill: #202020;
 }
+
+.dark-toast {
+    background-color: #202020;
+    color: #cccccc;
+    border: 1px solid #3c3c3c;
+    min-height: 32px;
+}
