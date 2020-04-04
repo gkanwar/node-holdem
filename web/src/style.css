@@ -8,7 +8,6 @@ body {
     left: 25px;
     top: 150px;
     width: 250px;
-    padding-bottom: 20px;
 }
 
 #state-controller {
@@ -16,7 +15,6 @@ body {
     left: 25px;
     top: 350px;
     width: 250px;
-    padding-bottom: 20px;
 }
 
 #actions-bar {
@@ -28,11 +26,20 @@ body {
     text-align: center;
 }
 
+/* actions bar slimmer */
+#actions-bar.control-box {
+    padding-bottom: 10px;
+}
+#actions-bar .control-header {
+    margin-bottom: 10px;
+}
+
 .control-box {
     border: 1px solid #cccccc;
     border-radius: .2em;
     font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
     background-color: #202020;
+    padding-bottom: 20px;
 }
 
 .control-header {
