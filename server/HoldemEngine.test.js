@@ -26,6 +26,7 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players', () => {
       state = new HoldemState();
       messages = [];
+      broadcasts = [];
       engine = new HoldemEngine(
         state,
         (pid, msg) => {
@@ -33,7 +34,11 @@ describe('Holdem Engine', () => {
             messages.push({pid, msg})
           }
         },
-        (msg) => {}
+        (msg) => {
+          if ('showdown' in msg) {
+            broadcasts.push({msg});
+          }
+        }
       );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
@@ -311,6 +316,7 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players and play flop', () => {
       state = new HoldemState();
       messages = [];
+      broadcasts = [];
       engine = new HoldemEngine(
         state,
         (pid, msg) => {
@@ -318,7 +324,11 @@ describe('Holdem Engine', () => {
             messages.push({pid, msg})
           }
         },
-        (msg) => {}
+        (msg) => {
+          if ('showdown' in msg) {
+            broadcasts.push({msg});
+          }
+        }
       );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
@@ -364,6 +374,19 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 1});
       const [msg] = messages;
       expectMsgErr(msg);
+    })
+    it('Should allow fold down', () => {
+      engine.onAction(p2.pid, {type: 'fold'});
+      engine.onAction(p3.pid, {type: 'fold'});
+      expect(messages).to.have.lengthOf(5);
+      messages.splice(0,2).forEach(expectMsgOk);
+      messages.forEach(({msg}) => {
+        expect(msg).to.have.key('myCards');
+      });
+      const {smallBlind, bigBlind} = state;
+      expect(state.players[p1.pid].stack).to.equal(1004-bigBlind);
+      expect(state.players[p2.pid].stack).to.equal(998);
+      expect(state.players[p3.pid].stack).to.equal(998-smallBlind);
     })
     it('Should allow bet', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 2});
@@ -429,11 +452,24 @@ describe('Holdem Engine', () => {
       expect(state.pots[0].value).to.equal(36);
       expect(state.board).to.have.lengthOf(4);
     })
+    it('Should allocate all money on showdown', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 998});
+      engine.onAction(p3.pid, {type: 'bet', value: 998});
+      engine.onAction(p1.pid, {type: 'bet', value: 998});
+      console.log(messages);
+      expect(broadcasts).to.have.lengthOf(1);
+      expectMsgShowdown(broadcasts.pop());
+      const {smallBlind, bigBlind} = state;
+      expect(allPids.reduce(
+        (total, pid) => total + state.players[pid].stack, 0))
+        .to.equal(3000 - smallBlind - bigBlind);
+    })
   })
   describe('Showdown', () => {
     beforeEach('Setup engine with three players and play to river', () => {
       state = new HoldemState();
       messages = [];
+      broadcasts = [];
       engine = new HoldemEngine(
         state,
         (pid, msg) => {
@@ -441,7 +477,11 @@ describe('Holdem Engine', () => {
             messages.push({pid, msg})
           }
         },
-        (msg) => {}
+        (msg) => {
+          if ('showdown' in msg) {
+            broadcasts.push({msg});
+          }
+        }
       );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);

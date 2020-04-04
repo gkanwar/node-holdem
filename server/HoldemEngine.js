@@ -40,6 +40,7 @@ function divideValue(winners, value) {
     winnings[winner] = Math.floor(value / nWinners);
   });
   winnings[winners[randomInt(nWinners)]] += value % nWinners;
+  console.log(`Assigned value ${value}:`, winnings);
   return winnings;
 }
 
@@ -238,7 +239,7 @@ class HoldemEngine {
     const activePlayers = playerOrder.filter(pid => players[pid].active).length;
     if (running && activePlayers < MIN_ACTIVE_PLAYERS) {
       this.send(playerId, {
-        error: `Cannot start game with only ${playerOrder.length} players ready`
+        error: `Cannot start game with only ${activePlayers.length} players ready`
       });
     }
     else {
