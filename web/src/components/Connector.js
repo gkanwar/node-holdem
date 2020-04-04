@@ -134,14 +134,17 @@ class Connector extends Component {
         </div>
       );
       if (err !== null) {
-        return [form,
-          <div id="message">
-             <div className="error">Error: {err.toString()}</div>
+        return (
+          <div>
+            {form}
+            <div id="message">
+              <div className="error">Error: {err.toString()}</div>
+            </div>
           </div>
-        ] ;
+        );
       }
       else {
-        return [form, <div id="message"></div>];
+        return <div>{form}<div id="message"></div></div>;
       }
     }
   }

@@ -32,15 +32,18 @@ class ActionBar extends Component {
   render() {
     const {betValue} = this.state;
     return (
-        <div id="actions-bar">
-        <form onSubmit={this.handleFold}>
-        <input type="submit" value="Fold"/>
-        </form>
-        <form onSubmit={this.handleBet}>
-        <input type="text" name="betValue" value={betValue} type="number"
-         onChange={this.handleChange} style={{width: '50px'}}/>
-        <input type="submit" value="Bet"/>
-        </form>
+      <div id="actions-bar" className="control-box">
+        <div className="control-header">Actions</div>
+        <div className="control-group">
+          <form onSubmit={this.handleFold}>
+            <input type="submit" value="Fold"/>
+          </form>
+          <form onSubmit={this.handleBet}>
+            <input type="text" name="betValue" value={betValue} type="number"
+             onChange={this.handleChange} style={{width: '50px'}}/>
+            <input type="submit" value="Bet"/>
+          </form>
+        </div>
       </div>
     );
   }

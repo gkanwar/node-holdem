@@ -20,10 +20,17 @@ class HoldemRoom extends Room {
     this.setPatchRate(PATCH_RATE);
     this.setState(new HoldemState());
     this.clientsById = {};
-    this.engine = new HoldemEngine(this.state, (sessionId, msg) => {
-      console.log(`Sending message to ${sessionId}`, msg);
-      this.send(this.clientsById[sessionId], msg);
-    });
+    this.engine = new HoldemEngine(
+      this.state,
+      (sessionId, msg) => {
+        console.log(`Sending message to ${sessionId}`, msg);
+        this.send(this.clientsById[sessionId], msg);
+      },
+      (msg) => {
+        console.log('Broadcasting message', msg);
+        this.broadcast(msg);
+      }
+    );
   }
   /* eslint-enable no-unused-vars */
 
@@ -35,10 +42,13 @@ class HoldemRoom extends Room {
   onMessage(client, message) {
     console.log('Got message', message);
     if (message.running !== undefined) {
-      this.engine.setRunning(message.running);
+      this.engine.setRunning(client.sessionId, message.running);
     }
     if (message.buy !== undefined) {
       this.engine.onBuy(client.sessionId, message.buy);
+    }
+    if (message.stateRequest !== undefined) {
+      this.engine.onRequest(client.sessionId, message.stateRequest);
     }
     if (message.action !== undefined) {
       if (this.engine !== undefined) {

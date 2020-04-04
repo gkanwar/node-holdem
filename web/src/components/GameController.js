@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-class Controller extends Component {
+class GameController extends Component {
   constructor() {
     super();
     this.handleChange = this.handleChange.bind(this);
@@ -39,20 +39,26 @@ class Controller extends Component {
     const {smallBlind, bigBlind, clickedStart} = this.state;
     const {room: {state: {running}}} = this.props;
     return (
-      <div id="game-controls">
-        <div id="game-control-header">Table controls</div>
-        <form onSubmit={this.handleStart}>
+      <div id="game-controller" className="control-box">
+        <div className="control-header">Table controls</div>
+        <div className="control-group">
+        <form onSubmit="return false;">
           <label> <span className="label">Small</span>
             <input type="text" name="smallBlind" value={smallBlind} onChange={this.handleChange}/>
           </label>
           <label> <span className="label">Big</span>
             <input type="text" name="bigBlind" value={bigBlind} onChange={this.handleChange}/>
           </label>
+        </form>
+        </div>
+        <div className="control-group">
+        <form onSubmit={this.handleStart}>
           <input type="submit" name="startGame" disabled={running || clickedStart} value="Start game!"/>
         </form>
+        </div>
       </div>
     );
   }
 }
 
-export default Controller;
+export default GameController;

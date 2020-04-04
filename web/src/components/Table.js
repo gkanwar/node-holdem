@@ -76,8 +76,14 @@ class Table extends Component {
       if (message.myCards !== undefined) {
         this.setState({myCards: message.myCards});
       }
+      if (message.showdown !== undefined) {
+        // TODO showdown popup
+      }
       if (message.error !== undefined) {
-        toast(message.error);
+        toast.error(message.error);
+      }
+      if (message.info !== undefined) {
+        toast.info(message.info);
       }
     });
     room.onStateChange((state) => {
@@ -115,7 +121,7 @@ class Table extends Component {
       && !players[myIndex].folded
     );
     return (
-      <>
+      <div id="table-viewport">
         <svg id="game-canvas">
           <TableBg/>
           {playerElements}
@@ -123,7 +129,7 @@ class Table extends Component {
           <Board cards={board}/>
         </svg>
         <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>
-      </>
+      </div>
     );
   }
 }
