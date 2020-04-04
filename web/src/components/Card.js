@@ -36,7 +36,7 @@ class Card extends Component {
     const Cardback = suitToCardback[card.suit];
     // TODO: Suited card backs
     return (
-      <g className="card" transform={`translate(${posX}, ${posY})`}>
+      <g className="card" transform={`translate(${posX-50}, ${posY-55})`}>
         <Cardback/>
         <text x="50" y="55" textAnchor="middle">{rankToString2[card.rank]}</text>
       </g>

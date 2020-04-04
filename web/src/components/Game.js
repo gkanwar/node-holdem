@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Connector from './Connector';
 import GameController from './GameController';
 import ActiveStateController from './ActiveStateController';
+import ShowdownContainer from './ShowdownContainer';
 import Table from './Table';
 import {ToastContainer, Flip} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -44,6 +45,7 @@ class Game extends Component {
           <GameController room={room}/>
           <ActiveStateController room={room}/>
           <Table room={room}/>
+          <ShowdownContainer room={room}/>
         </>
       );
     }

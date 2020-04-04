@@ -358,7 +358,8 @@ class HoldemEngine {
     }
     // TODO: broadcast message that round ended?
     this.handleStateRequests();
-    if (playerOrder.length < MIN_ACTIVE_PLAYERS) {
+    const activePlayers = playerOrder.filter(pid => players[pid].active).length;
+    if (activePlayers < MIN_ACTIVE_PLAYERS) {
       this.state.running = false;
       this.broadcast({
         info: 'Fewer than two players active, pausing the game'

@@ -538,8 +538,8 @@ describe('Holdem Engine', () => {
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
-      engine.onBuy(p1.pid, 1000);
-      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p1.pid, 200);
+      engine.onBuy(p2.pid, 750);
       engine.onBuy(p3.pid, 1000);
       engine.onRequest(p1.pid, 'sit');
       engine.onRequest(p2.pid, 'sit');
@@ -559,6 +559,15 @@ describe('Holdem Engine', () => {
       engine.onAction(p3.pid, {type: 'bet', value: 0});
       expect(messages).to.have.lengthOf(2);
       messages.map(expectMsgOk);
+    })
+    it('Should make player inactive after bust', () => {
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'active');
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+      // TODO need to mock out RNG to properly test this
+      console.warn('Incomplete test!');
     })
   })
   describe('Side pots', () => {

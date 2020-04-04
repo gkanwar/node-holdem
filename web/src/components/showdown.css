@@ -1,0 +1,27 @@
+#showdown-container {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 800px;
+    height: 600px;
+}
+
+#showdown-splash {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* TODO something a little nicer looking */
+    background-color: rgba(204, 204, 204, 0.5);
+}
+
+#showdown-hole-cards {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#showdown-board {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}

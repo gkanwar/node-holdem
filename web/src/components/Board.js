@@ -13,7 +13,7 @@ class Board extends Component {
       <Card key={`board-${index}`} card={card} posX={index*CARD_SPACING} posY={0}/>
     );
     return (
-      <g className="board" transform="translate(250, 215)">
+      <g className="board" transform="translate(300, 270)">
         {boardElts}
       </g>
     );
