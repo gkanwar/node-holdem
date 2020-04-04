@@ -260,7 +260,8 @@ class HoldemEngine {
     pots.push(new PotState([], 0));
     this.privateState = {
       players: {},
-      deck: makeDeck()
+      deck: makeDeck(),
+      lastAggressor: undefined
     };
     const {deck} = this.privateState;
     for (const playerId in players) {
@@ -546,15 +547,16 @@ class HoldemEngine {
     return false;
   }
 
-  reopenBetting() {
-    const {players} = this.state;
-    const {players: privatePlayers} = this.privateState;
-    Object.entries(players).map(([pid, player]) => {
-      if (playerCanAct(player)) {
-        privatePlayers[pid].playedThisStreet = false;
-      }
-    });
-  }
+  // reopenBetting() {
+  //   const {players} = this.state;
+  //   const {players: privatePlayers} = this.privateState;
+  //   console.log('reopen betting');
+  //   Object.entries(players).map(([pid, player]) => {
+  //     if (playerCanAct(player)) {
+  //       privatePlayers[pid].playedThisStreet = false;
+  //     }
+  //   });
+  // }
 
   onBuy(playerId, value) {
     const {players: {[playerId]: player}} = this.state;
@@ -651,6 +653,7 @@ class HoldemEngine {
           });
           return;
         }
+        this.privateState.lastAggressor = playerId;
         this.state.minRaise = value;
       }
       else if (value + player.offering > toCall) { // raise
@@ -661,9 +664,16 @@ class HoldemEngine {
           });
           return;
         }
+        if (this.privateState.lastAggressor === playerId) {
+          this.send(playerId, {
+            error: 'You cannot raise yourself!'
+          });
+          return;
+        }
         if (raise >= minRaise) {
           this.state.minRaise = raise;
-          this.reopenBetting();
+          this.privateState.lastAggressor = playerId;
+          // this.reopenBetting();
         }
       }
       player.addOffer(value);
@@ -683,6 +693,9 @@ class HoldemEngine {
     this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
     // TODO: Can probably merge the below round/street logic into something nicer
     this.pushNextToAct();
+
+    console.log(Object.entries(this.privateState.players).map(
+      ([pid, player]) => [pid, player.playedThisStreet]));
 
     const winners = this.isRoundDefaulted();
     if (winners !== false) {

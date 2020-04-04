@@ -556,5 +556,24 @@ describe('Holdem Engine', () => {
       expect(state.pots).to.have.lengthOf(1);
       expect(state.pots[0].value).to.equal(0);
     })
+    it('Should allow call after incomplete raise', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 75});
+      engine.onAction(p2.pid, {type: 'bet', value: 149});
+      engine.onAction(p3.pid, {type: 'bet', value: 148});
+      engine.onAction(p1.pid, {type: 'bet', value: 125});
+      engine.onAction(p2.pid, {type: 'bet', value: 50});
+      console.log(messages);
+      messages.splice(0,5).map(expectMsgOk);
+    })
+    it('Should not allow raise after incomplete raise', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 75});
+      engine.onAction(p2.pid, {type: 'bet', value: 149});
+      engine.onAction(p3.pid, {type: 'bet', value: 148});
+      engine.onAction(p1.pid, {type: 'bet', value: 125});
+      engine.onAction(p2.pid, {type: 'bet', value: 125});
+      console.log(messages);
+      messages.splice(0,4).map(expectMsgOk);
+      expectMsgErr(messages.shift());
+    })
   })
 })
