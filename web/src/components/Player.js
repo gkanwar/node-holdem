@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import './pulse.scss';
 import {cardToString} from './Card';
 import {ReactComponent as Button} from './button.opt.svg';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 class Player extends Component {
 
@@ -25,12 +27,12 @@ class Player extends Component {
     // TODO: Present this nicely
     const cardStr = (cards !== null) ? cards.map(cardToString).join(' ') : '';
     const infoElt = (
-      <text x={infoPos[0]} y={infoPos[1]} textAnchor='middle'>
-        <tspan x={infoPos[0]} dy='1.2em'>Off: {player.offering}</tspan>
-        <tspan x={infoPos[0]} dy='1.2em'>Stack: {player.stack}</tspan>
-        <tspan x={infoPos[0]} dy='1.2em'>Folded: {player.folded.toString()}</tspan>
-        <tspan x={infoPos[0]} dy='1.2em'>Cards: {cardStr}</tspan>
-      </text>
+      <Tooltip>
+        Off: {player.offering}<br/>
+        Stack: {player.stack}<br/>
+        Folded: {player.folded.toString()}<br/>
+        Cards: {cardStr}
+      </Tooltip>
     );
     let avatarElt;
     if (isActive) {
@@ -53,9 +55,12 @@ class Player extends Component {
     
     return (
       <>
-        {usernameElt}
-        {infoElt}
-        {avatarElt}
+        <OverlayTrigger placement="bottom" overlay={infoElt}>
+          <g>
+            {usernameElt}
+            {avatarElt}
+          </g>
+        </OverlayTrigger>
         {buttonElt}
       </>
     );

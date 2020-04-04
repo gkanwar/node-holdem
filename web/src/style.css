@@ -1,3 +1,13 @@
+/* Fight Bootstrap */
+input {
+    font-size: 0.8em;
+}
+body {
+    font-family: initial;
+    font-size: initial;
+    line-height: initial;
+}
+
 body {
     color: #cccccc;
     background-color: #080808;
@@ -64,7 +74,7 @@ body {
 }
 .control-box input[type=text] {
     width: 100px;
-    height: 20px;
+    height: 26px;
     background-color: #ced4da;
     color: #202020;
     border: 1px solid #ced4da;
@@ -118,12 +128,12 @@ input[type=submit]:hover:not([disabled]) {
 }
 
 #root-container {
-    min-width: 800px;
     padding-right: 275px;
     padding-left: 275px;
 }
 
 #root {
+    min-width: 800px;
     /* width: 800px; */
     /* height: 600px; */
     /* margin: auto; */

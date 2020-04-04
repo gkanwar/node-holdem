@@ -67,9 +67,12 @@ class HoldemRoom extends Room {
       try {
         this.clientsById[client.sessionId] = await this.allowReconnection(client, RECONNECT_TIMEOUT);
         console.log(`Reconnected sessionId = ${client.sessionId}`);
+        console.log(this.state.players[client.sessionId]);
         this.state.players[client.sessionId].connected = true;
+        this.engine.onReconnect(client.sessionId);
       }
       catch (e) {
+        console.log(e);
         console.log(`Timed out, full disconnect sessionId = ${client.sessionId}`);
         this.engine.onLeave(client.sessionId);
       }

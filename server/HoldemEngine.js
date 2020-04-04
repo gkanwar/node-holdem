@@ -271,10 +271,10 @@ class HoldemEngine {
       let cards = [];
       if (players[playerId].active) {
         cards = [randomDraw(deck), randomDraw(deck)];
-        this.send(playerId, {myCards: cards});
         pots[0].eligiblePids.push(playerId);
       }
       this.makePlayerPrivateState(playerId, cards);
+      this.notifyPlayerPrivateState(playerId);
     }
     const smallIndex = this.pushToFirstActive(button+1);
     const bigIndex = this.pushToFirstActive(smallIndex+1);
@@ -291,6 +291,23 @@ class HoldemEngine {
       cards,
       playedThisStreet: false
     };
+  }
+
+  notifyPlayerPrivateState(playerId) {
+    if (this.privateState === undefined) {
+      return;
+    }
+    const {players: {[playerId]: privatePlayer}} = this.privateState;
+    if (privatePlayer !== undefined) {
+      const {cards} = privatePlayer;
+      if (cards.length !== 0) {
+        this.send(playerId, {myCards: cards});
+      }
+    }
+  }
+
+  onReconnect(playerId) {
+    this.notifyPlayerPrivateState(playerId);
   }
   
   divideMoneyDefaulted(winnerIds) {

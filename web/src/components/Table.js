@@ -70,6 +70,7 @@ class Table extends Component {
   }
   
   componentDidMount() {
+    // TODO: Could miss messages between connection and Table mount
     const {room} = this.props;
     console.log('Table mounting room message handler');
     room.onMessage((message) => {
