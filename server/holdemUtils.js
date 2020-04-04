@@ -18,7 +18,6 @@ export function randomInt(max) {
 export function randomDraw(deck) {
   const index = randomInt(deck.length);
   const [value] = deck.splice(index, 1);
-  console.log(`New deck length ${deck.length}`);
   return value;
 }
 

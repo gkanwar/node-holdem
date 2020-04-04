@@ -120,6 +120,7 @@ class HoldemEngine {
       this.send(playerId, {
         error: `Cannot go to state ${state} from standing, sit first`
       });
+      return;
     }
     if (state === 'active' &&
         player.stack < MIN_STACK_TO_ACTIVATE * bigBlind) {
@@ -136,6 +137,7 @@ class HoldemEngine {
     else if (state === 'active') {
       if (!running) {
         this.doStateRequest(playerId, {state});
+        return;
       }
       else {
         this.send(playerId, {
@@ -146,6 +148,7 @@ class HoldemEngine {
     else if (state === 'inactive') {
       if (!running) {
         this.doStateRequest(playerId, {state});
+        return;
       }
       else {
         this.send(playerId, {
@@ -225,8 +228,8 @@ class HoldemEngine {
   }
 
   handleStateRequests() {
-    Object.entries(this.request).map(([k,v]) => this.doStateRequest(k, v));
-    this.request.slice(0);
+    Object.entries(this.request).forEach(([k,v]) => {this.doStateRequest(k, v)});
+    this.request = {};
   }
 
   setRunning(playerId, running) {
@@ -261,18 +264,21 @@ class HoldemEngine {
     };
     const {deck} = this.privateState;
     for (const playerId in players) {
-      const cards = [randomDraw(deck), randomDraw(deck)];
+      let cards = [];
+      if (players[playerId].active) {
+        cards = [randomDraw(deck), randomDraw(deck)];
+        this.send(playerId, {myCards: cards});
+        pots[0].eligiblePids.push(playerId);
+      }
       this.makePlayerPrivateState(playerId, cards);
-      this.send(playerId, {myCards: cards});
-      pots[0].eligiblePids.push(playerId);
     }
-    const smallIndex = (button+1) % playerOrder.length;
-    const bigIndex = (button+2) % playerOrder.length;
+    const smallIndex = this.pushToFirstActive(button+1);
+    const bigIndex = this.pushToFirstActive(smallIndex+1);
     this.state.toCall = bigBlind;
     this.state.minRaise = bigBlind;
     players[playerOrder[smallIndex]].addOffer(smallBlind);
     players[playerOrder[bigIndex]].addOffer(bigBlind);
-    this.state.nextToAct = (button+3) % playerOrder.length;
+    this.state.nextToAct = this.pushToFirstActive(bigIndex+1);
   }
 
   makePlayerPrivateState(playerId, cards) {
@@ -297,6 +303,7 @@ class HoldemEngine {
     const {players, pots} = this.state;
     pots.map(pot => {
       const winnings = resolveShowdown(pot, handScores);
+      console.log('winnings', winnings);
       Object.entries(winnings).map(([pid, value]) => {
         players[pid].stack += value;
       });
@@ -310,13 +317,20 @@ class HoldemEngine {
    */
   finishRound() {
     // Reset/update state
-    const {playerOrder, players} = this.state;
+    const {playerOrder, players, bigBlind} = this.state;
     this.state.button = (this.state.button+1) % playerOrder.length;
     this.state.pots = new ArraySchema();
     this.state.board = new ArraySchema();
     for (const playerId in players) {
       const player = players[playerId];
       player.folded = false;
+      if (player.stack < bigBlind) {
+        console.log(`Player ${playerId} is bust`);
+        this.doStateRequest(playerId, {state: 'inactive'});
+        this.send(playerId, {
+          info: 'You are bust! Buy back in and toggle active state to rejoin'
+        });
+      }
       if (player.offering !== 0) {
         throw Error('Player must not have an active offering when ending round');
       }
@@ -447,6 +461,20 @@ class HoldemEngine {
     });
   }
 
+  // TODO: remove code dup with below
+  pushToFirstActive(index) {
+    const {players, playerOrder} = this.state;
+    let outIndex = index % playerOrder.length;
+    const origIndex = outIndex;
+    while (!(players[playerOrder[outIndex]]).active) {
+      outIndex = (outIndex+1) % playerOrder.length;
+      if (outIndex === origIndex) {
+        return null;
+      }
+    }
+    return outIndex;
+  }
+
   /**
    * Find the next player from nextToAct onwards that can play, and update
    * nextToAct to point at them. Returns a boolean indicating whether anyone
@@ -480,14 +508,22 @@ class HoldemEngine {
     }
     if (board.length == 5) {
       // showdown!
-      return {
-        handScores: Object.entries(privatePlayers).filter(
-          ([pid]) => !players[pid].folded
-        ).map(([pid, privatePlayer]) => {
-          const {cards} = privatePlayer;
-          return getHandScore(board, cards);
-        })
-      };
+      const handScores = {};
+      const allCards = {};
+      Object.entries(privatePlayers).filter(
+        ([pid]) => !players[pid].folded
+      ).forEach(([pid, privatePlayer]) => {
+        const {cards} = privatePlayer;
+        allCards[pid] = cards;
+        handScores[pid] = getHandScore(board, cards);
+      });
+      this.broadcast({
+        showdown: {
+          cards: allCards,
+          handScores
+        }
+      });
+      return {handScores};
     }
     else if (board.length == 0) {
       board.push(randomDraw(deck));
@@ -620,14 +656,30 @@ class HoldemEngine {
       });
       return;
     }
-    privatePlayer.playedThisStreet = true;
-    this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
-    const anyCanPlay = this.pushNextToAct();
-    if (!anyCanPlay) {
-      throw Error('need to handle nobody can play scenario');
-    }
     if (!silent) {
       this.send(playerId, {message: 'OK'});
+    }
+    privatePlayer.playedThisStreet = true;
+    
+    this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
+    // TODO: Can probably merge the below round/street logic into something nicer
+    const anyCanPlay = this.pushNextToAct();
+    if (!anyCanPlay) { // everyone all in
+      let handScores;
+      let _counter = 0;
+      while (handScores === undefined) {
+        this.finishStreet();
+        handScores = this.initNextStreet().handScores;
+        _counter++;
+        if (_counter > 10) {
+          throw Error('Should not have more than 10 streets!');
+        }
+      }
+      this.divideMoneyShowdown(handScores);
+      this.finishRound();
+      if (this.state.running) {
+        this.initRound();
+      }
     }
 
     const winners = this.isRoundDefaulted();
