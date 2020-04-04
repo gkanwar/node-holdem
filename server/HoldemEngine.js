@@ -225,7 +225,7 @@ class HoldemEngine {
   }
 
   handleStateRequests() {
-    Object.entries(this.request).map(([k,v]) => doStateRequest(k, v));
+    Object.entries(this.request).map(([k,v]) => this.doStateRequest(k, v));
     this.request.slice(0);
   }
 
@@ -284,7 +284,7 @@ class HoldemEngine {
   }
   
   divideMoneyDefaulted(winnerIds) {
-    const {playerOrder, players, pots} = this.state;
+    const {players, pots} = this.state;
     pots.map(pot => {
       const winnings = divideValue(winnerIds, pot.value);
       Object.entries(winnings).map(([pid, value]) => {
@@ -294,7 +294,7 @@ class HoldemEngine {
   }
 
   divideMoneyShowdown(handScores) {
-    const {playerOrder, players, pots} = this.state;
+    const {players, pots} = this.state;
     pots.map(pot => {
       const winnings = resolveShowdown(pot, handScores);
       Object.entries(winnings).map(([pid, value]) => {
@@ -310,6 +310,7 @@ class HoldemEngine {
    */
   finishRound() {
     // Reset/update state
+    const {playerOrder, players} = this.state;
     this.state.button = (this.state.button+1) % playerOrder.length;
     this.state.pots = new ArraySchema();
     this.state.board = new ArraySchema();
@@ -380,15 +381,70 @@ class HoldemEngine {
     return !haveUnchallengedBet;
   }
 
+  /**
+   * Collect money from all players' offerings and built the latest set of pots.
+   * The biggest complication here is that all-ins can cause there to be side
+   * pots introduced. The logic is handled in 3ish steps:
+   *   (1) Identify the pot "prices of entry". The offering size of each live
+   *       player is the price of entry of some pot.
+   *  (2a) Per player, work from the cheapest pot (the main pot for this street)
+   *       to the most expensive and allocate the difference between each pot to
+   *       the next.
+   *  (2b) If the player is live, also add them to the eligible players for each
+   *       pot on the way up.
+   */
   finishStreet() {
-    const {players} = this.state;
-    // TODO: Need to implement side pots
-    throw Error('Side pots not implemented yet');
+    const {players, toCall} = this.state;
+    const potPrices = new Set();
     for (const playerId in players) {
       const player = players[playerId];
-      this.state.pot += player.offering;
+      // Players already excluded from the side pots and those that folded
+      // do not set pot prices
+      if (player.offering === 0 || player.folded) {
+        continue;
+      }
+      // Every all-in player sets the price of a side pot
+      if (player.stack === 0) {
+        potPrices.add(player.offering);
+      }
+    }
+    const sortedPotPrices = Array.from(potPrices).sort();
+    if (sortedPotPrices.length > 0 && sortedPotPrices[sortedPotPrices.length-1] > toCall) {
+      throw Error('call value sets the active side pot price which should be '
+                  + 'at least as expensive than the more main pots');
+    }
+    sortedPotPrices.push(toCall);
+    const potEligiblePids = sortedPotPrices.map(() => []);
+    const potValues = sortedPotPrices.map(() => 0);
+    for (const playerId in players) {
+      const player = players[playerId];
+      let lastPotPrice = 0;
+      sortedPotPrices.forEach((potPrice, i) => {
+        if (player.offering >= potPrice) {
+          if (!player.folded) {
+            potEligiblePids[i].push(playerId);
+          }
+          potValues[i] += potPrice - lastPotPrice;
+        }
+        else if (player.offering > lastPotPrice) {
+          potValues[i] += player.offering - lastPotPrice;
+        }
+        lastPotPrice = potPrice;
+      });
+      if (player.offering > lastPotPrice) {
+        throw Error('Player should not be offering more than toCall '
+                    + `$(player.offering) vs lastPotPrice`);
+      }
       player.offering = 0;
     }
+    // Carry over main pot, update list of pots
+    const {pots} = this.state;
+    potValues[0] += pots[0].value;
+    pots.shift();
+    potValues.map((potValue, i) => {
+      const eligiblePids = potEligiblePids[i];
+      pots.unshift(new PotState(eligiblePids, potValue));
+    });
   }
 
   /**
@@ -426,7 +482,7 @@ class HoldemEngine {
       // showdown!
       return {
         handScores: Object.entries(privatePlayers).filter(
-          ([pid, privatePlayer]) => !players[pid].folded
+          ([pid]) => !players[pid].folded
         ).map(([pid, privatePlayer]) => {
           const {cards} = privatePlayer;
           return getHandScore(board, cards);
@@ -567,6 +623,9 @@ class HoldemEngine {
     privatePlayer.playedThisStreet = true;
     this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
     const anyCanPlay = this.pushNextToAct();
+    if (!anyCanPlay) {
+      throw Error('need to handle nobody can play scenario');
+    }
     if (!silent) {
       this.send(playerId, {message: 'OK'});
     }

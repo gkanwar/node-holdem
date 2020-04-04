@@ -9,10 +9,6 @@ function expectMsgOk({msg}) {
 function expectMsgErr({msg}) {
   expect(msg).to.have.key('error');
 }
-function expectMsgInfo({msg}) {
-  expect(msg).to.have.key('info');
-  expect(msg).to.not.have.key('error');
-}
 
 describe('Holdem Engine', () => {
   let state;
@@ -101,8 +97,7 @@ describe('Holdem Engine', () => {
       expect(engine.privateState.deck.length).to.equal(52 - 2*allPids.length);
       expect(engine.privateState.players).to.include.all.keys(allPids);
       allPids.map((pid) => {
-        expect(engine.privateState.players[pid]).to.include.all.keys(['playedThisStreet', 'cards']);
-        expect(engine.privateState.players[pid].playedThisStreet).to.equal(false);
+        expect(engine.privateState.players[pid]).to.include.key('cards');
         expect(engine.privateState.players[pid].cards).to.have.lengthOf(2);
       });
       expect(messages).to.have.lengthOf(3);
@@ -357,7 +352,7 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 10});
       engine.onAction(p3.pid, {type: 'bet', value: 10});
       engine.onAction(p1.pid, {type: 'bet', value: 10});
-      expect(state.pots[0]).to.equal(36);
+      expect(state.pots[0].value).to.equal(36);
       expect(state.board).to.have.lengthOf(4);
     })
   })
@@ -406,7 +401,7 @@ describe('Holdem Engine', () => {
       messages.splice(0);
     })
     it('Should have full board, only 2 players', () => {
-      expect(state.pots[0]).to.equal(136);
+      expect(state.pots[0].value).to.equal(136);
       expect(state.board).to.have.lengthOf(5);
       expect(state.players[p1.pid].folded).to.equal(false);
       expect(state.players[p2.pid].folded).to.equal(true);
