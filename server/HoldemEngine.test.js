@@ -242,14 +242,13 @@ describe('Holdem Engine', () => {
       messages.map(expectMsgOk);
     })
     it('Should play to showdown when everyone is all in', () => {
+      console.log('a folding');
       engine.onAction(p1.pid, {type: 'fold'});
+      console.log('b going all in');
       engine.onAction(p2.pid, {type: 'bet', value: 999});
+      console.log('c calling all in');
       engine.onAction(p3.pid, {type: 'bet', value: 998});
       messages.splice(0, 3).map(expectMsgOk);
-      console.log(messages);
-      console.log(state.players[p1.pid].stack);
-      console.log(state.players[p2.pid].stack);
-      console.log(state.players[p3.pid].stack);
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
       expect(state.board).to.have.lengthOf(0);
@@ -471,7 +470,91 @@ describe('Holdem Engine', () => {
       messages.map(expectMsgOk);
     })
   })
-  describe('Split pots', () => {
-    // TODO split pot tests
+  describe('Side pots', () => {
+    beforeEach('Setup engine with three players and unequal stacks', () => {
+      state = new HoldemState();
+      broadcasts = [];
+      messages = [];
+      engine = new HoldemEngine(
+        state,
+        (pid, msg) => {
+          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+            messages.push({pid, msg})
+          }
+        },
+        (msg) => {
+          if ('showdown' in msg) {
+            broadcasts.push({msg});
+          }
+        }
+      );
+      engine.onJoin(p1.pid, p1.username);
+      engine.onJoin(p2.pid, p2.username);
+      engine.onJoin(p3.pid, p3.username);
+      engine.onBuy(p1.pid, 200);
+      engine.onBuy(p2.pid, 750);
+      engine.onBuy(p3.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit');
+      engine.onRequest(p3.pid, 'active');
+      state.button = 0;
+      state.smallBlind = 1;
+      state.bigBlind = 2;
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+    })
+    it('Should make a side pot for betting beyond all in', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 200});
+      engine.onAction(p2.pid, {type: 'bet', value: 449});
+      engine.onAction(p3.pid, {type: 'bet', value: 448});
+      expect(state.board).to.have.lengthOf(3);
+      expect(messages).to.have.lengthOf(3);
+      messages.map(expectMsgOk);
+      expect(state.pots).to.have.lengthOf(2);
+      expect(state.pots[0].value).to.equal(500);
+      expect(state.pots[1].value).to.equal(600);
+      expect(state.pots[0].eligiblePids).to.have.members([p2.pid, p3.pid]);
+      expect(state.pots[0].eligiblePids).to.not.have.members([p1.pid]);
+      expect(state.pots[1].eligiblePids).to.have.members(allPids);
+    })
+    it('Should not let player undercall in side pot', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 200});
+      engine.onAction(p2.pid, {type: 'bet', value: 449});
+      engine.onAction(p3.pid, {type: 'bet', value: 998});
+      engine.onAction(p2.pid, {type: 'bet', value: 250});
+      expect(messages).to.have.lengthOf(4);
+      messages.splice(0,3).map(expectMsgOk);
+      expectMsgErr(messages.pop());
+    })
+    it('Should play to showdown after making side pot', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 200});
+      engine.onAction(p2.pid, {type: 'bet', value: 449});
+      engine.onAction(p3.pid, {type: 'bet', value: 798});
+      engine.onAction(p2.pid, {type: 'bet', value: 300});
+      console.log(messages);
+      messages.splice(0,4).map(expectMsgOk);
+      expect(state.board).to.have.lengthOf(0);
+      expect(broadcasts).to.have.lengthOf(1);
+      expectMsgShowdown(broadcasts.pop());
+      expect(state.board).to.have.lengthOf(0);
+      expect(state.pots).to.have.lengthOf(1);
+      expect(state.pots[0].value).to.equal(0);
+    })
+    it('Should play to showdown if everyone all-in', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 200});
+      engine.onAction(p2.pid, {type: 'bet', value: 749});
+      engine.onAction(p3.pid, {type: 'bet', value: 998});
+      console.log(messages);
+      messages.splice(0,3).map(expectMsgOk);
+      expect(state.board).to.have.lengthOf(0);
+      expect(broadcasts).to.have.lengthOf(1);
+      expectMsgShowdown(broadcasts.pop());
+      expect(state.board).to.have.lengthOf(0);
+      expect(state.pots).to.have.lengthOf(1);
+      expect(state.pots[0].value).to.equal(0);
+    })
   })
 })

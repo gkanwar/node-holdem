@@ -367,32 +367,23 @@ class HoldemEngine {
     }
   }
 
+  /**
+   * Check whether the current board state corresponds to a finished street.
+   * The criteria are: everyone either cannot act (folded/all-in), or have
+   * offered the toCall value and have played this street.
+   */
   isStreetDone() {
-    let activeOffers = [];
-    const {players} = this.state;
+    const {players, toCall} = this.state;
     const {players: privatePlayers} = this.privateState;
     for (const playerId in players) {
       const player = players[playerId];
       const privatePlayer = privatePlayers[playerId];
-      if (!player.folded) {
-        if (!privatePlayer.playedThisStreet) {
-          return false;
-        }
-        activeOffers.push(player.offering);
+      if (playerCanAct(player) &&
+          (player.offering !== toCall || !privatePlayer.playedThisStreet)) {
+        return false;
       }
     }
-    if (activeOffers.length < 2) {
-      console.warn('Should not call isStreetDone with < 2 active players');
-      return true;
-    }
-    const firstOffer = activeOffers[0];
-    let haveUnchallengedBet = false;
-    activeOffers.forEach(offer => {
-      if (offer !== firstOffer) {
-        haveUnchallengedBet = true;
-      }
-    });
-    return !haveUnchallengedBet;
+    return true;
   }
 
   /**
@@ -422,12 +413,25 @@ class HoldemEngine {
         potPrices.add(player.offering);
       }
     }
-    const sortedPotPrices = Array.from(potPrices).sort();
-    if (sortedPotPrices.length > 0 && sortedPotPrices[sortedPotPrices.length-1] > toCall) {
-      throw Error('call value sets the active side pot price which should be '
-                  + 'at least as expensive than the more main pots');
+    const sortedPotPrices = Array.from(potPrices).sort((a,b) => a-b);
+    console.log('(Pre)Pot prices:', sortedPotPrices);
+    if (this.playersThatCanAct().length > 1) { // live side pot
+      console.log('live side pot!', this.playersThatCanAct());
+      sortedPotPrices.push(toCall);
     }
-    sortedPotPrices.push(toCall);
+    if (sortedPotPrices.length === 0) {
+      console.log('No offerings this round');
+      return;
+    }
+    const maxPrice = sortedPotPrices[sortedPotPrices.length-1];
+    // Refund any player who offered more than the maximum pot price
+    Object.entries(players).forEach(([pid, player]) => {
+      if (player.offering > maxPrice) {
+        console.log(`Refunding ${pid} who paid ${player.offering} vs ${maxPrice}`);
+        player.addOffer(maxPrice - player.offering); // refund
+      }
+    });
+    console.log('Pot prices:', sortedPotPrices);
     const potEligiblePids = sortedPotPrices.map(() => []);
     const potValues = sortedPotPrices.map(() => 0);
     for (const playerId in players) {
@@ -439,26 +443,29 @@ class HoldemEngine {
             potEligiblePids[i].push(playerId);
           }
           potValues[i] += potPrice - lastPotPrice;
-        }
-        else if (player.offering > lastPotPrice) {
+        }        else if (player.offering > lastPotPrice) {
           potValues[i] += player.offering - lastPotPrice;
         }
         lastPotPrice = potPrice;
       });
+      // return money if one player bets over everyone's all-in prices
       if (player.offering > lastPotPrice) {
-        throw Error('Player should not be offering more than toCall '
-                    + `$(player.offering) vs lastPotPrice`);
+        throw Error('Player should not be offering more than max price '
+                    + `${player.offering} vs ${lastPotPrice} == ${maxPrice}`);
       }
       player.offering = 0;
     }
     // Carry over main pot, update list of pots
     const {pots} = this.state;
     potValues[0] += pots[0].value;
+    console.log('reconstructing pots', potValues, potEligiblePids);
     pots.shift();
     potValues.map((potValue, i) => {
       const eligiblePids = potEligiblePids[i];
       pots.unshift(new PotState(eligiblePids, potValue));
     });
+    console.log('finishStreet pots', pots.map(
+      pot => `${pot.value} [${pot.eligiblePids}]`));
   }
 
   // TODO: remove code dup with below
@@ -477,7 +484,7 @@ class HoldemEngine {
 
   /**
    * Find the next player from nextToAct onwards that can play, and update
-   * nextToAct to point at them. Returns a boolean indicating whether anyone
+   * nextToAct to point at them. Returns a boolean indicating whether any
    * can play.
    */
   pushNextToAct() {
@@ -577,6 +584,18 @@ class HoldemEngine {
     });
   }
 
+  playersThatCanAct() {
+    const {players} = this.state;
+    const pidsThatCanAct = [];
+    for (const playerId in players) {
+      const player = players[playerId];
+      if (player.active && playerCanAct(player)) {
+        pidsThatCanAct.push(playerId);
+      }
+    }
+    return pidsThatCanAct;
+  }
+
   onAction(playerId, action, silent=false) {
     const {running, nextToAct, playerOrder} = this.state;
     if (!running) {
@@ -663,8 +682,38 @@ class HoldemEngine {
     
     this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
     // TODO: Can probably merge the below round/street logic into something nicer
-    const anyCanPlay = this.pushNextToAct();
-    if (!anyCanPlay) { // everyone all in
+    this.pushNextToAct();
+
+    const winners = this.isRoundDefaulted();
+    if (winners !== false) {
+      this.finishStreet();
+      this.divideMoneyDefaulted(winners);
+      this.finishRound();
+      if (this.state.running) {
+        this.initRound();
+        return;
+      }
+    }
+    else if (this.isStreetDone()) {
+      this.finishStreet();
+      const {handScores} = this.initNextStreet();
+      if (handScores !== undefined) {
+        this.divideMoneyShowdown(handScores);
+        this.finishRound();
+        if (this.state.running) {
+          this.initRound();
+          return;
+        }
+      }
+    }
+    // Special FF clause to avoid hang on 0/1 actionable players
+    const {players, toCall} = this.state;
+    const pidsThatCanAct = this.playersThatCanAct();
+    console.log('pidsThatCanAct', pidsThatCanAct);
+    if (pidsThatCanAct.length === 0 ||
+        (pidsThatCanAct.length === 1 && players[pidsThatCanAct.pop()].offering >= toCall)) {
+      console.log('Less than 2 actionable players left, and all have paid the '
+                  + 'price, FF to showdown');
       let handScores;
       let _counter = 0;
       while (handScores === undefined) {
@@ -679,27 +728,6 @@ class HoldemEngine {
       this.finishRound();
       if (this.state.running) {
         this.initRound();
-      }
-    }
-
-    const winners = this.isRoundDefaulted();
-    if (winners !== false) {
-      this.finishStreet();
-      this.divideMoneyDefaulted(winners);
-      this.finishRound();
-      if (this.state.running) {
-        this.initRound();
-      }
-    }
-    else if (this.isStreetDone()) {
-      this.finishStreet();
-      const {handScores} = this.initNextStreet();
-      if (handScores !== undefined) {
-        this.divideMoneyShowdown(handScores);
-        this.finishRound();
-        if (this.state.running) {
-          this.initRound();
-        }
       }
     }
   }
