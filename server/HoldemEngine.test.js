@@ -4,10 +4,14 @@ import {HoldemState} from './HoldemState';
 
 function expectMsgOk({msg}) {
   expect(msg).to.have.key('message');
-  expect(msg.message).to.equal('Action OK');
+  expect(msg.message).to.equal('OK');
 }
 function expectMsgErr({msg}) {
   expect(msg).to.have.key('error');
+}
+function expectMsgInfo({msg}) {
+  expect(msg).to.have.key('info');
+  expect(msg).to.not.have.key('error');
 }
 
 describe('Holdem Engine', () => {
@@ -22,21 +26,78 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players', () => {
       state = new HoldemState();
       messages = [];
-      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine = new HoldemEngine(
+        state,
+        (pid, msg) => {
+          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+            messages.push({pid, msg})
+          }
+        },
+        (msg) => {}
+      );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
     })
     it('Should be possible to join', () => {
       expect(state.players).to.include.all.keys(allPids);
+      Object.entries(state.players).map(([pid,player]) => {
+        expect(player.sitting).to.be.false;
+        expect(player.active).to.be.false;
+      });
     })
     it('Should be possible to leave', () => {
       engine.onLeave(p1.pid);
       expect(state.players).to.not.include.key(p1.pid);
       expect(state.players).to.include.all.keys(allPids.filter(pid => (pid != p1.pid)));
     })
-    it('Should be possible to start round and get cards', () => {
-      engine.initRound();
+    it('Should be possible to sit', () => {
+      expect(state.players).to.include.all.keys(allPids);
+      engine.onRequest(p1.pid, 'sit');
+      expect(state.players[p1.pid].sitting).to.be.true;
+      expect(state.players[p1.pid].active).to.be.false;
+    })
+    it('Should not be possible to be active without a stack', () => {
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      expectMsgErr(messages.pop());
+    })
+    it('Should be possible to buy in', () => {
+      engine.onBuy(p1.pid, 1000);
+      expectMsgOk(messages.pop());
+      expect(state.players[p1.pid].stack).to.equal(1000);
+      expect(state.players[p1.pid].bankroll).to.equal(-1000);
+    })
+    it('Should be possible to be active with a stack', () => {
+      engine.onRequest(p1.pid, 'sit');
+      engine.onBuy(p1.pid, 1000);
+      expectMsgOk(messages.pop());
+      engine.onRequest(p1.pid, 'active');
+      expect(messages).to.have.lengthOf(0);
+    })
+    it('Should not be possible to buy while active', () => {
+      engine.onRequest(p1.pid, 'sit');
+      engine.onBuy(p1.pid, 1000);
+      expectMsgOk(messages.pop());
+      engine.onRequest(p1.pid, 'active');
+      engine.onBuy(p1.pid, 1000);
+      expectMsgErr(messages.pop());
+      expect(state.players[p1.pid].stack).to.equal(1000);
+      expect(state.players[p1.pid].bankroll).to.equal(-1000);
+    })
+    it('Should give cards', () => {
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p3.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit');
+      engine.onRequest(p3.pid, 'active');
+      messages.splice(0);
+      
+      engine.setRunning(p1.pid, true);
       expect(engine.privateState.deck.length).to.equal(52 - 2*allPids.length);
       expect(engine.privateState.players).to.include.all.keys(allPids);
       allPids.map((pid) => {
@@ -44,7 +105,7 @@ describe('Holdem Engine', () => {
         expect(engine.privateState.players[pid].playedThisStreet).to.equal(false);
         expect(engine.privateState.players[pid].cards).to.have.lengthOf(2);
       });
-      expect(messages).to.have.lengthOf(allPids.length);
+      expect(messages).to.have.lengthOf(3);
       const pids = messages.map(msg => msg.pid);
       expect(pids).to.include.members(allPids);
       messages.map(({msg}) => {
@@ -57,14 +118,31 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players and start round', () => {
       state = new HoldemState();
       messages = [];
-      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine = new HoldemEngine(
+        state,
+        (pid, msg) => {
+          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+            messages.push({pid, msg})
+          }
+        },
+        (msg) => {}
+      );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p3.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit');
+      engine.onRequest(p3.pid, 'active');
       state.button = 0;
       state.smallBlind = 1;
       state.bigBlind = 2;
-      engine.initRound();
+      engine.setRunning(p1.pid, true);
       messages.splice(0);
     })
     it('Should set nextToAct to after big blind', () => {
@@ -164,21 +242,41 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players and play flop', () => {
       state = new HoldemState();
       messages = [];
-      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine = new HoldemEngine(
+        state,
+        (pid, msg) => {
+          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+            messages.push({pid, msg})
+          }
+        },
+        (msg) => {}
+      );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p3.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit');
+      engine.onRequest(p3.pid, 'active');
       state.button = 0;
       state.smallBlind = 1;
       state.bigBlind = 2;
-      engine.initRound();
+      engine.setRunning(p1.pid, true);
+      
       engine.onAction(p1.pid, {type: 'bet', value: 2});
       engine.onAction(p2.pid, {type: 'bet', value: 1});
       engine.onAction(p3.pid, {type: 'bet', value: 0});
       messages.splice(0);
     })
     it('Should have collected money and flopped 3 cards', () => {
-      expect(state.pot).to.equal(6);
+      expect(state.pots).to.have.lengthOf(1);
+      expect(state.pots[0].value).to.equal(6);
+      expect(state.pots[0].eligiblePids).to.include.members(allPids);
       expect(state.board).to.have.lengthOf(3);
       allPids.map((pid) => {
         expect(state.players[pid].folded).to.equal(false);
@@ -259,7 +357,7 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 10});
       engine.onAction(p3.pid, {type: 'bet', value: 10});
       engine.onAction(p1.pid, {type: 'bet', value: 10});
-      expect(state.pot).to.equal(36);
+      expect(state.pots[0]).to.equal(36);
       expect(state.board).to.have.lengthOf(4);
     })
   })
@@ -267,14 +365,32 @@ describe('Holdem Engine', () => {
     beforeEach('Setup engine with three players and play to river', () => {
       state = new HoldemState();
       messages = [];
-      engine = new HoldemEngine(state, (pid, msg) => messages.push({pid, msg}));
+      engine = new HoldemEngine(
+        state,
+        (pid, msg) => {
+          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+            messages.push({pid, msg})
+          }
+        },
+        (msg) => {}
+      );
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p3.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit');
+      engine.onRequest(p3.pid, 'active');
       state.button = 0;
       state.smallBlind = 1;
       state.bigBlind = 2;
-      engine.initRound();
+      engine.setRunning(p1.pid, true);
+      
       engine.onAction(p1.pid, {type: 'bet', value: 2});
       engine.onAction(p2.pid, {type: 'bet', value: 1});
       engine.onAction(p3.pid, {type: 'bet', value: 0});
@@ -290,7 +406,7 @@ describe('Holdem Engine', () => {
       messages.splice(0);
     })
     it('Should have full board, only 2 players', () => {
-      expect(state.pot).to.equal(136);
+      expect(state.pots[0]).to.equal(136);
       expect(state.board).to.have.lengthOf(5);
       expect(state.players[p1.pid].folded).to.equal(false);
       expect(state.players[p2.pid].folded).to.equal(true);

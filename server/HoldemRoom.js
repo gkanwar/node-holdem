@@ -35,7 +35,10 @@ class HoldemRoom extends Room {
   onMessage(client, message) {
     console.log('Got message', message);
     if (message.running !== undefined) {
-      this.state.running = message.running;
+      this.engine.setRunning(message.running);
+    }
+    if (message.buy !== undefined) {
+      this.engine.onBuy(client.sessionId, message.buy);
     }
     if (message.action !== undefined) {
       if (this.engine !== undefined) {

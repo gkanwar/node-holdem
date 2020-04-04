@@ -22,14 +22,29 @@ defineTypes(Card, {
   suit: 'uint8'
 });
 
+export class PotState extends Schema {
+  constructor(eligiblePids, value) {
+    super();
+    this.eligiblePids = eligiblePids;
+    this.value = value;
+  }
+}
+defineTypes(PotState, {
+  eligiblePids: ['string'],
+  value: 'int64'
+})
+
 export class PlayerState extends Schema {
   constructor(username) {
     super();
     this.username = username;
     this.connected = true;
     this.folded = false;
+    this.sitting = false;
+    this.active = false;
     this.offering = 0;
-    this.stack = 1000;
+    this.stack = 0;
+    this.bankroll = 0;
   }
 
   addOffer(value) {
@@ -44,7 +59,10 @@ export class PlayerState extends Schema {
 defineTypes(PlayerState, {
   username: 'string',
   connected: 'boolean',
+  sitting: 'boolean',
+  active: 'boolean',
   stack: 'int64',
+  bankroll: 'int64',
   offering: 'int64',
   folded: 'boolean'
 });
@@ -55,7 +73,7 @@ export class HoldemState extends Schema {
     this.players = new MapSchema();
     this.playerOrder = new ArraySchema();
     this.button = 0;
-    this.pot = 0;
+    this.pots = new ArraySchema();
     this.board = new ArraySchema();
     this.smallBlind = 1;
     this.bigBlind = 2;
@@ -67,7 +85,7 @@ defineTypes(HoldemState, {
   playerOrder: ['string'],
   board: [Card],
   button: 'uint8',
-  pot: 'int64',
+  pots: [PotState],
   toCall: 'int64',
   minRaise: 'int64',
   nextToAct: 'uint8',
