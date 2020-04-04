@@ -57,6 +57,15 @@ describe('Holdem Engine', () => {
       expect(state.players[p1.pid].sitting).to.be.true;
       expect(state.players[p1.pid].active).to.be.false;
     })
+    it('Should be possible to stand', () => {
+      expect(state.players).to.include.all.keys(allPids);
+      engine.onRequest(p1.pid, 'sit');
+      expect(state.players[p1.pid].sitting).to.be.true;
+      expect(state.players[p1.pid].active).to.be.false;
+      engine.onRequest(p1.pid, 'stand');
+      expect(state.players[p1.pid].sitting).to.be.false;
+      expect(state.players[p1.pid].active).to.be.false;
+    })
     it('Should not be possible to be active without a stack', () => {
       engine.onRequest(p1.pid, 'sit');
       engine.onRequest(p1.pid, 'active');
@@ -84,6 +93,39 @@ describe('Holdem Engine', () => {
       expectMsgErr(messages.pop());
       expect(state.players[p1.pid].stack).to.equal(1000);
       expect(state.players[p1.pid].bankroll).to.equal(-1000);
+    })
+    it('Should not be possible to start with only 1 active player', () => {
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      engine.onBuy(p3.pid, 1000);
+      console.log(messages);
+      expect(messages).to.have.lengthOf(3);
+      messages.splice(0,3).map(expectMsgOk);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p3.pid, 'sit');
+      engine.setRunning(p1.pid, true);
+      expect(messages).to.have.lengthOf(1);
+      expectMsgErr(messages.pop());
+    })
+    it('Should be possible to start heads up game', () => {
+      engine.onBuy(p1.pid, 1000);
+      engine.onBuy(p2.pid, 1000);
+      expect(messages).to.have.lengthOf(2);
+      messages.splice(0,2).map(expectMsgOk);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'sit');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'sit'); // just watching
+      engine.setRunning(p1.pid, true);
+      console.log(messages);
+      expect(messages).to.have.lengthOf(2);
+      messages.map(({msg}) => {
+        expect(msg).to.include.key('myCards');
+        expect(msg.myCards).to.have.lengthOf(2);
+      });
     })
     it('Should give cards', () => {
       engine.onBuy(p1.pid, 1000);
@@ -188,11 +230,20 @@ describe('Holdem Engine', () => {
       expect(msg.pid).to.equal(p1.pid);
       expectMsgErr(msg);
     })
+    it('Should let all players fold down', () => {
+      engine.onAction(p1.pid, {type: 'fold'});
+      engine.onAction(p2.pid, {type: 'fold'});
+      messages.splice(0,2).forEach(expectMsgOk);
+    })
     it('Should not let player call too little', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 1});
       expect(messages).to.have.lengthOf(1);
-      const [msg] = messages;
-      expectMsgErr(msg);
+      expectMsgErr(messages.pop());
+    })
+    it('Should not let player bet more than stack', () => {
+      engine.onAction(p1.pid, {type: 'bet', value: 10000});
+      expect(messages).to.have.lengthOf(1);
+      expectMsgErr(messages.pop());
     })
     it('Should let player call', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 2});

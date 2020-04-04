@@ -53,7 +53,8 @@ class ActiveStateController extends Component {
   handleBuyIn(event) {
     const {room} = this.props;
     const {buyInAmount} = this.state;
-    room.send({buy: buyInAmount});
+    room.send({buy: parseInt(buyInAmount)});
+    this.setState({buyInAmount: 0});
     event.preventDefault();
   }
   

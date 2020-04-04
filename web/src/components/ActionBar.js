@@ -26,6 +26,7 @@ class ActionBar extends Component {
     const {room} = this.props;
     const {betValue} = this.state;
     room.send({action: {type: 'bet', value: parseInt(betValue)}});
+    this.setState({betValue: 0});
     event.preventDefault();
   }
 

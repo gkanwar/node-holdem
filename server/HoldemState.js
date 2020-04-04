@@ -25,6 +25,9 @@ defineTypes(Card, {
 export class PotState extends Schema {
   constructor(eligiblePids, value) {
     super();
+    if (!(eligiblePids instanceof ArraySchema)) {
+      throw Error('Eligible pids must be ArraySchema');
+    }
     this.eligiblePids = eligiblePids;
     this.value = value;
   }

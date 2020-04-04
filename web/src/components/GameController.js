@@ -30,19 +30,18 @@ class GameController extends Component {
 
   handleStart(event) {
     const {room} = this.props;
-    this.setState({clickedStart: true});
     room.send({running: true});
     event.preventDefault();
   }
   
   render() {
-    const {smallBlind, bigBlind, clickedStart} = this.state;
+    const {smallBlind, bigBlind} = this.state;
     const {room: {state: {running}}} = this.props;
     return (
       <div id="game-controller" className="control-box">
         <div className="control-header">Table controls</div>
         <div className="control-group">
-        <form onSubmit="return false;">
+        <form onSubmit={() => {return false;}}>
           <label> <span className="label">Small</span>
             <input type="text" name="smallBlind" value={smallBlind} onChange={this.handleChange}/>
           </label>
@@ -53,7 +52,7 @@ class GameController extends Component {
         </div>
         <div className="control-group">
         <form onSubmit={this.handleStart}>
-          <input type="submit" name="startGame" disabled={running || clickedStart} value="Start game!"/>
+          <input type="submit" name="startGame" disabled={running} value="Start game!"/>
         </form>
         </div>
       </div>

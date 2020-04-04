@@ -71,6 +71,7 @@ class Table extends Component {
   
   componentDidMount() {
     const {room} = this.props;
+    console.log('Table mounting room message handler');
     room.onMessage((message) => {
       console.log('Got room message', message);
       if (message.myCards !== undefined) {

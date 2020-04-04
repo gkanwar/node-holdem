@@ -99,13 +99,14 @@ class HoldemEngine {
     if (state === 'stand') {
       if (player.sitting === false) {
         this.send(playerId, {info: 'You are already standing'});
+        return;
       }
       else if (player.active === true) {
         this.send(playerId, {
           error: 'Cannot stand while actively playing, go inactive first'
         });
+        return;
       }
-      return;
     }
     if (state === 'active' && player.active === true) {
       this.send(playerId, {info: 'You are already active'});
@@ -233,8 +234,9 @@ class HoldemEngine {
   }
 
   setRunning(playerId, running) {
-    const {playerOrder} = this.state;
-    if (running && playerOrder.length < MIN_ACTIVE_PLAYERS) {
+    const {playerOrder, players} = this.state;
+    const activePlayers = playerOrder.filter(pid => players[pid].active).length;
+    if (running && activePlayers < MIN_ACTIVE_PLAYERS) {
       this.send(playerId, {
         error: `Cannot start game with only ${playerOrder.length} players ready`
       });
@@ -257,7 +259,7 @@ class HoldemEngine {
       throw Error('Board must start empty before round!');
     }
     pots.splice();
-    pots.push(new PotState([], 0));
+    pots.push(new PotState(new ArraySchema(), 0));
     this.privateState = {
       players: {},
       deck: makeDeck(),
@@ -421,7 +423,13 @@ class HoldemEngine {
       sortedPotPrices.push(toCall);
     }
     if (sortedPotPrices.length === 0) {
-      console.log('No offerings this round');
+      console.log('No all-ins this round, no live side pot');
+      // Just collect all offerings into main pot
+      const {pots} = this.state;
+      Object.values(players).forEach(player => {
+        pots[0].value += player.offering;
+        player.offering = 0;
+      });
       return;
     }
     const maxPrice = sortedPotPrices[sortedPotPrices.length-1];
@@ -433,7 +441,7 @@ class HoldemEngine {
       }
     });
     console.log('Pot prices:', sortedPotPrices);
-    const potEligiblePids = sortedPotPrices.map(() => []);
+    const potEligiblePids = sortedPotPrices.map(() => new ArraySchema());
     const potValues = sortedPotPrices.map(() => 0);
     for (const playerId in players) {
       const player = players[playerId];
@@ -528,7 +536,8 @@ class HoldemEngine {
       this.broadcast({
         showdown: {
           cards: allCards,
-          handScores
+          handScores,
+          board
         }
       });
       return {handScores};
@@ -634,6 +643,12 @@ class HoldemEngine {
       if (value < 0) {
         this.send(playerId, {
           error: `Cannot bet negative value ${value}`
+        });
+        return;
+      }
+      if (value > player.stack) {
+        this.send(playerId, {
+          error: `Cannot bet more than stack ${value} vs ${player.stack}`
         });
         return;
       }
