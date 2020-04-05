@@ -440,6 +440,27 @@ describe('Holdem Engine', () => {
           return total + state.players[pid].stack + state.players[pid].offering;
         }, 0)).to.equal(3000);
     })
+    it('Should allow many reraises', () => {
+      engine.onAction(p2.pid, {type: 'bet', value: 0});
+      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      engine.onAction(p1.pid, {type: 'bet', value: 2});
+      engine.onAction(p2.pid, {type: 'bet', value: 4});
+      engine.onAction(p3.pid, {type: 'bet', value: 6});
+      engine.onAction(p1.pid, {type: 'bet', value: 6});
+      engine.onAction(p2.pid, {type: 'bet', value: 6});
+      engine.onAction(p3.pid, {type: 'bet', value: 6});
+      engine.onAction(p1.pid, {type: 'bet', value: 6});
+      engine.onAction(p2.pid, {type: 'bet', value: 6});
+      engine.onAction(p3.pid, {type: 'bet', value: 6});
+      expect(state.minRaise).to.equal(2);
+      engine.onAction(p1.pid, {type: 'bet', value: 10});
+      expect(state.minRaise).to.equal(6);
+      engine.onAction(p2.pid, {type: 'bet', value: 8});
+      engine.onAction(p3.pid, {type: 'bet', value: 6});
+      expect(messages).to.have.lengthOf(14);
+      messages.splice(0).map(expectMsgOk);
+      expect(state.board).to.have.lengthOf(4);
+    })
   })
   describe('Showdown', () => {
     beforeEach('Setup engine with three players and play to river', () => {
