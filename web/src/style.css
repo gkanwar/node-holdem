@@ -141,13 +141,13 @@ input[type=submit]:hover:not([disabled]) {
     /* vertical-align: middle; */
 }
 
-#attrib {
+#version {
     position: fixed;
     left: 10px;
     bottom: 10px;
     color: #202020;
 }
-#attrib a {
+#version .value {
     color: #444444;
 }
 
