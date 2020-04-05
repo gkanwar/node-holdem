@@ -73,14 +73,14 @@ class HoldemEngine {
 
   onLeave(playerId) {
     const {players, playerOrder, nextToAct} = this.state;
-    if (players[playerId].sitting && players[playerId].active) {
-      if (nextToAct == playerOrder.findIndex((pid) => (pid == playerId))) {
+    if (players[playerId].active) {
+      this.request[playerId] = {state: 'leave'};
+      if (nextToAct === playerOrder.findIndex((pid) => (pid == playerId))) {
         this.onAction(playerId, {type: 'fold'}, true);
       }
       else {
         players[playerId].folded = true;
       }
-      this.request[playerId] = {state: 'leave'};
     }
     else {
       this.doStateRequest(playerId, {state: 'leave'});
@@ -167,12 +167,16 @@ class HoldemEngine {
     this.request[playerId] = {state};
   }
 
-  removePlayer(playerId) {
+  removePlayer(playerId, fromRoomEntirely) {
     const {playerOrder, button} = this.state;
     const _oldButtonPid = playerOrder[button];
-    delete this.state[playerId];
+    if (fromRoomEntirely) {
+      console.log('Removing player from room entirely');
+      delete this.state.players[playerId];
+    }
     const index = playerOrder.findIndex((pid) => (pid === playerId));
     if (index < 0) {
+      console.log('Player not found in player order, skipping removal');
       return;
     }
     playerOrder.splice(index, 1);
@@ -211,16 +215,14 @@ class HoldemEngine {
     else if (state === 'stand') {
       player.sitting = false;
       player.active = false;
-      // this.state.playerOrder = playerOrder.filter((pid) => (pid !== playerId));
-      this.removePlayer(playerId);
+      this.removePlayer(playerId, false);
       this.send(playerId, {
         info: 'You are now just watching gameplay'
       });
     }
     else if (state === 'leave') {
       delete players[playerId];
-      // this.state.playerOrder = playerOrder.filter((pid) => (pid !== playerId));
-      this.removePlayer(playerId);
+      this.removePlayer(playerId, true);
       this.send(playerId, {
         info: 'Goodbye'
       });

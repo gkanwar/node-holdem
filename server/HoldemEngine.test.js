@@ -563,6 +563,17 @@ describe('Holdem Engine', () => {
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
     })
+    it('Should fold disconnected next-to-act', () => {
+      engine.onRequest(p1.pid, 'active');
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'active');
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+      engine.onLeave(p1.pid);
+      expect(state.players[p1.pid].folded).to.be.true;
+      engine.onAction(p2.pid, {type: 'fold'});
+      expect(state.players).to.not.have.key(p1.pid);
+    })
   })
   describe('Side pots', () => {
     beforeEach('Setup engine with three players and unequal stacks', () => {
