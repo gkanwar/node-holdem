@@ -162,6 +162,7 @@ class HoldemEngine {
       this.send(playerId, {
         error: `Unknown requested state ${state}`
       });
+      return;
     }
     this.request[playerId] = {state};
   }
@@ -400,7 +401,7 @@ class HoldemEngine {
     for (const playerId in players) {
       const player = players[playerId];
       const privatePlayer = privatePlayers[playerId];
-      if (playerCanAct(player) &&
+      if (player.active && playerCanAct(player) &&
           (player.offering !== toCall || !privatePlayer.playedThisStreet)) {
         return false;
       }
@@ -522,7 +523,7 @@ class HoldemEngine {
     let {nextToAct} = this.state;
     while (!playerCanAct(players[playerOrder[nextToAct]])) {
       privatePlayers[playerOrder[nextToAct]].playedThisStreet = true;
-      nextToAct = (nextToAct+1) % playerOrder.length;
+      nextToAct = this.pushToFirstActive(nextToAct+1);
       if (nextToAct === origNextToAct) {
         return false;
       }
@@ -549,8 +550,10 @@ class HoldemEngine {
         ([pid]) => !players[pid].folded
       ).forEach(([pid, privatePlayer]) => {
         const {cards} = privatePlayer;
-        allCards[pid] = cards;
-        handScores[pid] = getHandScore(board, cards);
+        if (cards !== undefined && cards.length === 2) {
+          allCards[pid] = cards;
+          handScores[pid] = getHandScore(board, cards);
+        }
       });
       this.broadcast({
         showdown: {
@@ -641,10 +644,14 @@ class HoldemEngine {
       });
       return;
     }
+    console.log('Got action:', playerId, action);
     
     const {players: {[playerId]: player}} = this.state;
     const {players: {[playerId]: privatePlayer}} = this.privateState;
     const {type, value} = action;
+    if (!player.active) {
+      throw Error('Inactive player should not be next to act');
+    }
     if (type === 'fold') {
       const {pots} = this.state;
       player.folded = true;
@@ -724,7 +731,7 @@ class HoldemEngine {
     }
     privatePlayer.playedThisStreet = true;
     
-    this.state.nextToAct = (this.state.nextToAct+1) % playerOrder.length;
+    this.state.nextToAct = this.pushToFirstActive(this.state.nextToAct+1);
     // TODO: Can probably merge the below round/street logic into something nicer
     this.pushNextToAct();
 

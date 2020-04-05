@@ -13,6 +13,26 @@ function expectMsgShowdown({msg}) {
   expect(msg).to.have.key('showdown');
 }
 
+function initEngineTestFrame() {
+  const state = new HoldemState();
+  const messages = [];
+  const broadcasts = [];
+  const engine = new HoldemEngine(
+    state,
+    (pid, msg) => {
+      if ('error' in msg || 'message' in msg || 'myCards' in msg) {
+        messages.push({pid, msg})
+      }
+    },
+    (msg) => {
+      if ('showdown' in msg) {
+        broadcasts.push({msg});
+      }
+    }
+  );
+  return {state, messages, broadcasts, engine};
+}
+
 describe('Holdem Engine', () => {
   let state;
   let messages;
@@ -24,22 +44,7 @@ describe('Holdem Engine', () => {
   let allPids = [p1.pid, p2.pid, p3.pid];
   describe('Setup', () => {
     beforeEach('Setup engine with three players', () => {
-      state = new HoldemState();
-      messages = [];
-      broadcasts = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {
-          if ('showdown' in msg) {
-            broadcasts.push({msg});
-          }
-        }
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -162,22 +167,7 @@ describe('Holdem Engine', () => {
   })
   describe('Preflop play', () => {
     beforeEach('Setup engine with three players and start round', () => {
-      state = new HoldemState();
-      messages = [];
-      broadcasts = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {
-          if ('showdown' in msg) {
-            broadcasts.push({msg});
-          }
-        }
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -314,22 +304,7 @@ describe('Holdem Engine', () => {
   })
   describe('Postflop play', () => {
     beforeEach('Setup engine with three players and play flop', () => {
-      state = new HoldemState();
-      messages = [];
-      broadcasts = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {
-          if ('showdown' in msg) {
-            broadcasts.push({msg});
-          }
-        }
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -461,28 +436,14 @@ describe('Holdem Engine', () => {
       expectMsgShowdown(broadcasts.pop());
       const {smallBlind, bigBlind} = state;
       expect(allPids.reduce(
-        (total, pid) => total + state.players[pid].stack, 0))
-        .to.equal(3000 - smallBlind - bigBlind);
+        (total, pid) => {
+          return total + state.players[pid].stack + state.players[pid].offering;
+        }, 0)).to.equal(3000);
     })
   })
   describe('Showdown', () => {
     beforeEach('Setup engine with three players and play to river', () => {
-      state = new HoldemState();
-      messages = [];
-      broadcasts = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {
-          if ('showdown' in msg) {
-            broadcasts.push({msg});
-          }
-        }
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -524,17 +485,7 @@ describe('Holdem Engine', () => {
   })
   describe('Inactive and standing states', () => {
     beforeEach('Setup engine with three players', () => {
-      state = new HoldemState();
-      messages = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {}
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -558,7 +509,17 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 1});
       engine.onAction(p3.pid, {type: 'bet', value: 0});
       expect(messages).to.have.lengthOf(2);
-      messages.map(expectMsgOk);
+      messages.splice(0).map(expectMsgOk);
+      console.log(messages);
+      console.log(state.nextToAct);
+      expect(state.board).to.have.lengthOf(3);
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
+      engine.onAction(p3.pid, {type: 'bet', value: 4});
+      engine.onAction(p2.pid, {type: 'bet', value: 4});
+      engine.onAction(p3.pid, {type: 'bet', value: 2});
+      expect(messages).to.have.lengthOf(4);
+      messages.splice(0).map(expectMsgOk);
+      expect(state.board).to.have.lengthOf(4);
     })
     it('Should make player inactive after bust', () => {
       engine.onRequest(p1.pid, 'active');
@@ -569,25 +530,22 @@ describe('Holdem Engine', () => {
       // TODO need to mock out RNG to properly test this
       console.warn('Incomplete test!');
     })
+    it('Should play showdown excluding inactive players', () => {
+      expect(state.players[p1.pid].active).to.equal(false);
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'active');
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+      engine.onAction(p2.pid, {type: 'bet', value: 749});
+      engine.onAction(p3.pid, {type: 'bet', value: 998});
+      console.log(messages);
+      expect(broadcasts).to.have.lengthOf(1);
+      expectMsgShowdown(broadcasts.pop());
+    })
   })
   describe('Side pots', () => {
     beforeEach('Setup engine with three players and unequal stacks', () => {
-      state = new HoldemState();
-      broadcasts = [];
-      messages = [];
-      engine = new HoldemEngine(
-        state,
-        (pid, msg) => {
-          if ('error' in msg || 'message' in msg || 'myCards' in msg) {
-            messages.push({pid, msg})
-          }
-        },
-        (msg) => {
-          if ('showdown' in msg) {
-            broadcasts.push({msg});
-          }
-        }
-      );
+      ({state, messages, broadcasts, engine} = initEngineTestFrame());
       engine.onJoin(p1.pid, p1.username);
       engine.onJoin(p2.pid, p2.username);
       engine.onJoin(p3.pid, p3.username);
@@ -640,8 +598,6 @@ describe('Holdem Engine', () => {
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
       expect(state.board).to.have.lengthOf(0);
-      expect(state.pots).to.have.lengthOf(1);
-      expect(state.pots[0].value).to.equal(0);
     })
     it('Should play to showdown if everyone all-in', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 200});
@@ -653,8 +609,6 @@ describe('Holdem Engine', () => {
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
       expect(state.board).to.have.lengthOf(0);
-      expect(state.pots).to.have.lengthOf(1);
-      expect(state.pots[0].value).to.equal(0);
     })
     it('Should allow call after incomplete raise', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 75});
