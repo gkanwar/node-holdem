@@ -35,7 +35,7 @@ class ActionBar extends Component {
     return (
       <div id="actions-bar" className="control-box">
         <div className="control-header">Actions</div>
-        <div className="control-group">
+        <div className="control-row">
           <form onSubmit={this.handleFold}>
             <input type="submit" value="Fold"/>
           </form>

@@ -37,26 +37,26 @@ body {
 }
 
 /* actions bar slimmer */
-#actions-bar.control-box {
-    padding-bottom: 10px;
-}
-#actions-bar .control-header {
-    margin-bottom: 10px;
-}
+/* #actions-bar.control-box { */
+/*     padding-bottom: 10px; */
+/* } */
+/* #actions-bar .control-header { */
+/*     margin-bottom: 10px; */
+/* } */
 
 .control-box {
     border: 1px solid #cccccc;
     border-radius: .2em;
     font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
     background-color: #202020;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .control-header {
     border-bottom: 1px solid #cccccc;
     font-size: 0.7em;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .control-box label {
@@ -86,15 +86,24 @@ body {
     box-shadow: 0 0 5px #d07030;
     border: 1px solid #d07030;
 }
+.control-box input[type=text]:disabled {
+    border: 1px solid #808080;
+    background-color: #808080;
+    color: #444444;
+}
 .control-box .simple-action input[type=submit] {
     width: 75px;
 }
 
-.control-box .control-group {
+.control-box .control-row {
     text-align: center;
 }
+.control-box .control-group {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
-.control-box .control-group form {
+.control-box .control-row form {
     display: inline-block;
 }
 

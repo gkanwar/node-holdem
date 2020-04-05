@@ -51,9 +51,11 @@ class GameController extends Component {
         </form>
         </div>
         <div className="control-group">
+        <div className="control-row">
         <form onSubmit={this.handleStart}>
           <input type="submit" name="startGame" disabled={running} value="Start game!"/>
         </form>
+        </div>
         </div>
       </div>
     );

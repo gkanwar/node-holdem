@@ -10,7 +10,9 @@ class ActiveStateController extends Component {
     this.handleInactive = this.handleInactive.bind(this);
     this.handleBuyIn = this.handleBuyIn.bind(this);
     this.state = {
-      myStack: 0,
+      username: '',
+      active: false,
+      sitting: false,
       buyInAmount: 0
     }
   }
@@ -20,9 +22,8 @@ class ActiveStateController extends Component {
     const {room} = this.props;
     const {sessionId: myPid} = room;
     room.onStateChange((state) => {
-      this.setState({
-        myStack: state.players[myPid].stack
-      });
+      const {username, active, sitting} = state.players[myPid];
+      this.setState({username, active, sitting});
     });
   }
 
@@ -59,22 +60,28 @@ class ActiveStateController extends Component {
   }
   
   render() {
-    const {myStack, buyInAmount} = this.state;
+    const {active, sitting, username, buyInAmount} = this.state;
     const {room} = this.props;
     if (room === undefined) {
       return null;
     }
     console.log(room);
-    const {state, sessionId: myPid} = room;
-    if (!(myPid in state.players)) {
+    const {sessionId: myPid} = room;
+    if (!(myPid in room.state.players)) {
       return null;
     }
-    const {active, sitting} = state.players[myPid];
-      
     return (
       <div id="state-controller" className="control-box">
         <div className="control-header">Stack / state controls</div>
         <div className="control-group">
+        <form onSubmit={() => false}>
+          <label> <span className="label">Nick</span>
+            <input type="text" name="username" value={username} disabled="true"/>
+          </label>
+        </form>
+        </div>
+        <div className="control-group">
+        <div className="control-row">
         <form onSubmit={this.handleActive} className="simple-action">
           <input type="submit" name="activeInactive" disabled={active || !sitting} value="Jump in"/>
         </form>
@@ -82,7 +89,7 @@ class ActiveStateController extends Component {
           <input type="submit" name="activeInactive" disabled={!active || !sitting} value="Sit out"/>
         </form>
         </div>
-        <div className="control-group">
+        <div className="control-row">
         <form onSubmit={this.handleSit} className="simple-action">
           <input type="submit" name="activeInactive" disabled={sitting} value="Sit down"/>
         </form>
@@ -90,12 +97,15 @@ class ActiveStateController extends Component {
           <input type="submit" name="activeInactive" disabled={!sitting} value="Stand up"/>
         </form>
         </div>
+        </div>
         <div className="control-group">
         <form onSubmit={this.handleBuyIn}>
           <label> <span className="label">Buy in</span>
             <input type="text" name="buyInAmount" value={buyInAmount} onChange={this.handleChange}/>
           </label>
+        <div className="control-row">
           <input type="submit" name="buyIn" disabled={active} value="Buy in!"/>
+        </div>
         </form>
         </div>
       </div>
