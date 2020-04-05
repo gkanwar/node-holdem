@@ -10,33 +10,51 @@ const VIEW_HEIGHT = 600;
 const positions6 = [
   {
     index: 0,
-    seat: [60, 258],
-    button: [148-15, 289+15]
+    seat: [85, 258],
+    button: [148-15, 289+15],
+    name: [75, 258],
+    nameAnchor: 'end',
+    nameBaseline: 'middle'
   },
   {
     index: 3,
-    seat: [740, 258],
-    button: [654-15, 227+15]
+    seat: [715, 258],
+    button: [654-15, 227+15],
+    name: [725, 258],
+    nameAnchor: 'start',
+    nameBaseline: 'middle'
   },
   {
     index: 1,
-    seat: [268, 457],
-    button: [317-15, 382+15]
+    seat: [268, 435],
+    button: [317-15, 382+15],
+    name: [268, 448],
+    nameAnchor: 'middle',
+    nameBaseline: 'baseline'
   },
   {
     index: 4,
-    seat: [528, 50],
-    button: [510-15, 130+15]
+    seat: [528, 75],
+    button: [510-15, 130+15],
+    name: [528, 65],
+    nameAnchor: 'middle',
+    nameBaseline: 'hanging'
   },
   {
     index: 2,
-    seat: [528, 457],
-    button: [560-15, 377+15]
+    seat: [528, 435],
+    button: [560-15, 377+15],
+    name: [528, 448],
+    nameAnchor: 'middle',
+    nameBaseline: 'baseline'
   },
   {
     index: 5,
-    seat: [268, 50],
-    button: [268-15, 133+15]
+    seat: [268, 75],
+    button: [268-15, 133+15],
+    name: [268, 65],
+    nameAnchor: 'middle',
+    nameBaseline: 'hanging'
   }
 ];
 
@@ -47,7 +65,16 @@ function getPositions(n) {
     return usedPositions.map((pos) => {
       const {index, ...posData} = pos;
       const posDataReflected = Object.fromEntries(
-        Object.entries(posData).map(([k, v]) => [k, [v[0], VIEW_HEIGHT-v[1]]]));
+        Object.entries(posData).map(
+          ([k, v]) => {
+            if (v.length === 2) {
+              return [k, [v[0], VIEW_HEIGHT-v[1]]];
+            }
+            else {
+              return [k, v];
+            }
+          }));
+      console.log(posDataReflected);
       return posDataReflected;
     });
   }
@@ -102,13 +129,13 @@ class Table extends Component {
   }
 
   render() {
-    const {myIndex, myCards, pot, board, button, players, positions, nextToAct} = this.state;
+    const {myIndex, myCards, pots, board, button, players, positions, nextToAct, running} = this.state;
     console.log('myCards =', myCards);
     console.log('board =', board);
     const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
-      const isActive = index == nextToAct;
+      const isActive = (index == nextToAct && running);
       const isButton = index == button;
       console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
@@ -127,7 +154,7 @@ class Table extends Component {
         <svg id="game-canvas">
           <TableBg/>
           {playerElements}
-          <Pot value={pot}/>
+          <Pot pots={pots}/>
           <Board cards={board}/>
         </svg>
         <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>

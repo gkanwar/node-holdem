@@ -8,8 +8,11 @@ import Tooltip from 'react-bootstrap/Tooltip';
 class Player extends Component {
 
   render() {
-    const {pos: {seat, button}, player, isMe, isActive, isButton, cards} = this.props;
-    const color = isMe ? '#ff0909' : '#888888';
+    const {
+      pos: {seat, button, name, nameAnchor, nameBaseline}, player,
+      isMe, isActive, isButton, cards
+    } = this.props;
+    const color = isActive ? '#ff0909' : '#888888';
     function makeAvatarCircle(className) {
       return (
         <circle cx={seat[0]} cy={seat[1]} fill={color} stroke={color}
@@ -17,10 +20,11 @@ class Player extends Component {
       );
     };
     const {username} = player;
-    const usernamePos = [seat[0], seat[1]-20];
+    const usernamePos = [name[0], name[1]];
     const infoPos = [seat[0], seat[1]+20];
     const usernameElt = (
-      <text x={usernamePos[0]} y={usernamePos[1]} textAnchor='middle' fill={color}>
+      <text x={usernamePos[0]} y={usernamePos[1]} textAnchor={nameAnchor}
+       alignmentBaseline={nameBaseline} fill={color}>
         {username}
       </text>
     );
@@ -45,7 +49,7 @@ class Player extends Component {
       );
     }
     else {
-      avatarElt = makeAvatarCircle('pulse-circle-fixed');
+      avatarElt = makeAvatarCircle('pulse-disk');
     }
 
     let buttonElt = null;
