@@ -750,8 +750,8 @@ class HoldemEngine {
       this.finishRound();
       if (this.state.running) {
         this.initRound();
-        return;
       }
+      return;
     }
     else if (this.isStreetDone()) {
       this.finishStreet();
@@ -761,8 +761,8 @@ class HoldemEngine {
         this.finishRound();
         if (this.state.running) {
           this.initRound();
-          return;
         }
+        return;
       }
     }
     // Special FF clause to avoid hang on 0/1 actionable players
