@@ -5,6 +5,15 @@ import {ReactComponent as Button} from './button.opt.svg';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
+function stackToString(stack) {
+  if (stack === 0) {
+    return 'BUST';
+  }
+  else {
+    return stack.toString();
+  }
+}
+
 class Player extends Component {
 
   render() {
@@ -19,13 +28,19 @@ class Player extends Component {
         className={className}/>
       );
     };
-    const {username} = player;
+    const {username, stack} = player;
     const usernamePos = [name[0], name[1]];
-    const infoPos = [seat[0], seat[1]+20];
+    const stackPos = [name[0], name[1]+15];
     const usernameElt = (
       <text x={usernamePos[0]} y={usernamePos[1]} textAnchor={nameAnchor}
-       alignmentBaseline={nameBaseline} fill={color}>
+       alignmentBaseline={nameBaseline}>
         {username}
+      </text>
+    );
+    const stackElt = (
+      <text x={stackPos[0]} y={stackPos[1]} textAnchor={nameAnchor}
+       alignmentBaseline={nameBaseline}>
+        ({stackToString(stack)})
       </text>
     );
     // TODO: Present this nicely
@@ -61,7 +76,7 @@ class Player extends Component {
       <>
         <OverlayTrigger placement="bottom" overlay={infoElt}>
           <g>
-            {usernameElt}
+            {usernameElt}{stackElt}
             {avatarElt}
           </g>
         </OverlayTrigger>
