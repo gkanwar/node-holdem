@@ -238,23 +238,23 @@ class HoldemEngine {
   }
 
   setRunning(playerId, running) {
-    this.state.button = this.pushToFirstActive(this.state.button);
     const {playerOrder, players} = this.state;
     const activePlayers = playerOrder.filter(pid => players[pid].active).length;
+    console.log(`set running with ${activePlayers} active`);
     if (running && activePlayers < MIN_ACTIVE_PLAYERS) {
       this.send(playerId, {
-        error: `Cannot start game with only ${activePlayers.length} players ready`
+        error: `Cannot start game with only ${activePlayers} players ready`
       });
+      return;
+    }
+    this.state.button = this.pushToFirstActive(this.state.button);
+    this.state.running = running;
+    if (running) {
+      this.broadcast({info: 'Starting game!'});
+      this.initRound();
     }
     else {
-      this.state.running = running;
-      if (running) {
-        this.broadcast({info: 'Starting game!'});
-        this.initRound();
-      }
-      else {
-        this.broadcast({info: 'Pausing game after this hand'});
-      }
+      this.broadcast({info: 'Pausing game after this hand'});
     }
   }
 

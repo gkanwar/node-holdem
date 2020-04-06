@@ -18,10 +18,11 @@ class HoldemRoom extends Room {
   /* eslint-disable no-unused-vars */
   onCreate(options) {
     this.setPatchRate(PATCH_RATE);
-    this.setState(new HoldemState());
+    const state = new HoldemState()
+    this.setState(state);
     this.clientsById = {};
     this.engine = new HoldemEngine(
-      this.state,
+      state,
       (sessionId, msg) => {
         console.log(`Sending message to ${sessionId}`, msg);
         this.send(this.clientsById[sessionId], msg);

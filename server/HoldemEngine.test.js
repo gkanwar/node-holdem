@@ -61,6 +61,23 @@ describe('Holdem Engine', () => {
       expect(state.players).to.not.include.key(p1.pid);
       expect(state.players).to.include.all.keys(allPids.filter(pid => (pid != p1.pid)));
     })
+    it('Should not be possible to start game with zero active players', () => {
+      engine.setRunning(p1.pid, true);
+      expect(messages).to.have.lengthOf(1);
+      expectMsgErr(messages.pop());
+      expect(state.running).to.be.false;
+    })
+    it('Should not be possible to start game with one active player', () => {
+      engine.onBuy(p1.pid, 1000);
+      engine.onRequest(p1.pid, 'sit');
+      engine.onRequest(p1.pid, 'active');
+      expect(state.players[p1.pid].active).to.be.true;
+      messages.splice(0).map(expectMsgOk);
+      engine.setRunning(p1.pid, true);
+      expect(messages).to.have.lengthOf(1);
+      expectMsgErr(messages.pop());
+      expect(state.running).to.be.false;
+    })
     it('Should be possible to sit', () => {
       expect(state.players).to.include.all.keys(allPids);
       engine.onRequest(p1.pid, 'sit');
