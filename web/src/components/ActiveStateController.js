@@ -76,7 +76,7 @@ class ActiveStateController extends Component {
         <div className="control-group">
         <form onSubmit={() => false}>
           <label> <span className="label">Nick</span>
-            <input type="text" name="username" value={username} disabled="true"/>
+            <input type="text" name="username" value={username} disabled={true}/>
           </label>
         </form>
         </div>

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Connector from './Connector';
 import GameController from './GameController';
 import ActiveStateController from './ActiveStateController';
+import Standings from './Standings';
 import ShowdownContainer from './ShowdownContainer';
 import Table from './Table';
 import {ToastContainer, Flip} from 'react-toastify';
@@ -37,6 +38,7 @@ class Game extends Component {
     }
     else {
       const {room} = this.state;
+      // TODO: Should reduce passed prop to only relevant piece of state
       return (
         <>
           <ToastContainer autoClose={3000} draggable={false} closeButton={false}
@@ -44,6 +46,7 @@ class Game extends Component {
            toastClassName="dark-toast"/>
           <GameController room={room}/>
           <ActiveStateController room={room}/>
+          <Standings room={room}/>
           <Table room={room}/>
           <ShowdownContainer room={room}/>
         </>

@@ -348,6 +348,7 @@ class HoldemEngine {
     for (const playerId in players) {
       const player = players[playerId];
       player.folded = false;
+      player.setLastValue();
       if (player.stack < bigBlind) {
         console.log(`Player ${playerId} is bust`);
         this.doStateRequest(playerId, {state: 'inactive'});
@@ -614,6 +615,7 @@ class HoldemEngine {
     }
     player.stack += value;
     player.bankroll -= value;
+    player.setLastValue();
     this.send(playerId, {
       message: 'OK'
     });

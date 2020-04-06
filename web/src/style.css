@@ -16,14 +16,14 @@ body {
 #game-controller {
     position: absolute;
     left: 25px;
-    top: 150px;
+    top: 50px;
     width: 250px;
 }
 
 #state-controller {
     position: absolute;
     left: 25px;
-    top: 350px;
+    top: 250px;
     width: 250px;
 }
 
@@ -36,13 +36,37 @@ body {
     text-align: center;
 }
 
-/* actions bar slimmer */
-/* #actions-bar.control-box { */
-/*     padding-bottom: 10px; */
-/* } */
-/* #actions-bar .control-header { */
-/*     margin-bottom: 10px; */
-/* } */
+#standings-box {
+    position: absolute;
+    left: 25px;
+    top: 525px;
+    width: 250px;
+}
+
+table.clean-table {
+    font-size: .7em;
+    width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+table.clean-table td,th {
+    text-align: center;
+    min-width: 15px;
+}
+table.clean-table .text-col {
+    text-align: left;
+}
+
+table.clean-table .value {
+    font-weight: bold;
+}
+table.clean-table .pos {
+    color: #24cc20;
+}
+table.clean-table .neg {
+    color: #ee2514;
+}
 
 .control-box {
     border: 1px solid #cccccc;
@@ -136,18 +160,10 @@ input[type=submit]:hover:not([disabled]) {
     height: 100%;
 }
 
-#root-container {
+#root {
     padding-right: 275px;
     padding-left: 275px;
-}
-
-#root {
-    min-width: 800px;
-    /* width: 800px; */
-    /* height: 600px; */
-    /* margin: auto; */
-    /* margin-top: 20px; */
-    /* vertical-align: middle; */
+    min-width: 1350px;
 }
 
 #version {

@@ -47,6 +47,7 @@ export class PlayerState extends Schema {
     this.active = false;
     this.offering = 0;
     this.stack = 0;
+    this.lastValue = 0;
     this.bankroll = 0;
   }
 
@@ -58,6 +59,10 @@ export class PlayerState extends Schema {
       console.error('Error: player has negative stack!');
     }
   }
+
+  setLastValue() {
+    this.lastValue = this.stack;
+  }
 }
 defineTypes(PlayerState, {
   username: 'string',
@@ -65,6 +70,7 @@ defineTypes(PlayerState, {
   sitting: 'boolean',
   active: 'boolean',
   stack: 'int64',
+  lastValue: 'int64',
   bankroll: 'int64',
   offering: 'int64',
   folded: 'boolean'
