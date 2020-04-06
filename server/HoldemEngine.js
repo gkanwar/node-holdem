@@ -238,6 +238,7 @@ class HoldemEngine {
   }
 
   setRunning(playerId, running) {
+    this.state.button = this.pushToFirstActive(this.state.button);
     const {playerOrder, players} = this.state;
     const activePlayers = playerOrder.filter(pid => players[pid].active).length;
     if (running && activePlayers < MIN_ACTIVE_PLAYERS) {
@@ -342,7 +343,7 @@ class HoldemEngine {
   finishRound() {
     // Reset/update state
     const {playerOrder, players, bigBlind} = this.state;
-    this.state.button = (this.state.button+1) % playerOrder.length;
+    this.state.button = this.pushToFirstActive(this.state.button+1);
     this.state.pots = new ArraySchema();
     this.state.board = new ArraySchema();
     for (const playerId in players) {
@@ -373,22 +374,22 @@ class HoldemEngine {
 
   // Check if one player wins by default
   isRoundDefaulted() {
-    let active = [];
+    let alive = [];
     const {players} = this.state;
     for (const playerId in players) {
-      if (!players[playerId].folded) {
-        active.push(playerId);
+      if (players[playerId].active && !players[playerId].folded) {
+        alive.push(playerId);
       }
     }
-    if (active.length > 1) {
+    if (alive.length > 1) {
       return false;
     }
-    else if (active.length == 1) {
-      console.log(`isRoundDefaulted found winner ${active}`);
-      return active;
+    else if (alive.length == 1) {
+      console.log(`isRoundDefaulted found winner ${alive}`);
+      return alive;
     }
     else {
-      console.warn('All players folded, possibly due to disconnection');
+      console.warn('Zero players alive, possibly due to disconnection');
       return [];
     }
   }

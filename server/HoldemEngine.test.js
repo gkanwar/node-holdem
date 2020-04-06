@@ -288,11 +288,8 @@ describe('Holdem Engine', () => {
       messages.map(expectMsgOk);
     })
     it('Should play to showdown when everyone is all in', () => {
-      console.log('a folding');
       engine.onAction(p1.pid, {type: 'fold'});
-      console.log('b going all in');
       engine.onAction(p2.pid, {type: 'bet', value: 999});
-      console.log('c calling all in');
       engine.onAction(p3.pid, {type: 'bet', value: 998});
       messages.splice(0, 3).map(expectMsgOk);
       expect(broadcasts).to.have.lengthOf(1);
@@ -300,6 +297,17 @@ describe('Holdem Engine', () => {
       expect(state.board).to.have.lengthOf(0);
       expect(state.pots).to.have.lengthOf(1);
       expect(state.pots[0].value).to.equal(0);
+    })
+    it('Should not go to showdown if it folds to one all in player', () => {
+      engine.onAction(p1.pid, {type: 'fold'});
+      engine.onAction(p2.pid, {type: 'bet', value: 9});
+      engine.onAction(p3.pid, {type: 'bet', value: 8});
+      expect(state.board).to.have.lengthOf(3);
+      expect(messages).to.have.lengthOf(3);
+      messages.splice(0).map(expectMsgOk);
+      engine.onAction(p2.pid, {type: 'fold'});
+      expect(broadcasts).to.have.lengthOf(0);
+      expect(state.board).to.have.lengthOf(0);
     })
   })
   describe('Postflop play', () => {
@@ -527,17 +535,17 @@ describe('Holdem Engine', () => {
       engine.setRunning(p1.pid, true);
       messages.splice(0);
       
-      engine.onAction(p2.pid, {type: 'bet', value: 1});
-      engine.onAction(p3.pid, {type: 'bet', value: 0});
+      engine.onAction(p3.pid, {type: 'bet', value: 1});
+      engine.onAction(p2.pid, {type: 'bet', value: 0});
       expect(messages).to.have.lengthOf(2);
       messages.splice(0).map(expectMsgOk);
       console.log(messages);
       console.log(state.nextToAct);
       expect(state.board).to.have.lengthOf(3);
-      engine.onAction(p2.pid, {type: 'bet', value: 2});
-      engine.onAction(p3.pid, {type: 'bet', value: 4});
-      engine.onAction(p2.pid, {type: 'bet', value: 4});
       engine.onAction(p3.pid, {type: 'bet', value: 2});
+      engine.onAction(p2.pid, {type: 'bet', value: 4});
+      engine.onAction(p3.pid, {type: 'bet', value: 4});
+      engine.onAction(p2.pid, {type: 'bet', value: 2});
       expect(messages).to.have.lengthOf(4);
       messages.splice(0).map(expectMsgOk);
       expect(state.board).to.have.lengthOf(4);
@@ -557,9 +565,9 @@ describe('Holdem Engine', () => {
       engine.onRequest(p3.pid, 'active');
       engine.setRunning(p1.pid, true);
       messages.splice(0);
-      engine.onAction(p2.pid, {type: 'bet', value: 749});
-      engine.onAction(p3.pid, {type: 'bet', value: 998});
-      console.log(messages);
+      engine.onAction(p3.pid, {type: 'bet', value: 999});
+      engine.onAction(p2.pid, {type: 'bet', value: 748});
+      messages.splice(0,2).map(expectMsgOk);
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
     })
@@ -573,6 +581,27 @@ describe('Holdem Engine', () => {
       expect(state.players[p1.pid].folded).to.be.true;
       engine.onAction(p2.pid, {type: 'fold'});
       expect(state.players).to.not.have.key(p1.pid);
+    })
+    it('Should not go to showdown if it folds to one player and there are inactive', () => {
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'active');
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+      engine.onAction(p3.pid, {type: 'fold'});
+      expectMsgOk(messages.shift());
+      expect(broadcasts).to.have.lengthOf(0);
+      expect(state.board).to.have.lengthOf(0);
+    })
+    it('Should not pass button to inactive player', () => {
+      engine.onRequest(p2.pid, 'active');
+      engine.onRequest(p3.pid, 'active');
+      engine.setRunning(p1.pid, true);
+      messages.splice(0);
+      expect(state.button).to.equal(1);
+      engine.onAction(p3.pid, {type: 'fold'});
+      expect(state.button).to.equal(2);
+      engine.onAction(p2.pid, {type: 'fold'});
+      expect(state.button).to.equal(1);
     })
   })
   describe('Side pots', () => {
