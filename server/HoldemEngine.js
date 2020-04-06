@@ -469,6 +469,9 @@ class HoldemEngine {
     const potValues = sortedPotPrices.map(() => 0);
     for (const playerId in players) {
       const player = players[playerId];
+      if (!player.active) {
+        continue;
+      }
       let lastPotPrice = 0;
       sortedPotPrices.forEach((potPrice, i) => {
         if (player.offering >= potPrice) {
