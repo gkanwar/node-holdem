@@ -185,6 +185,9 @@ svg .pot text {
 svg .offer text {
     fill: #202020;
 }
+svg text.me {
+    fill: #ff0909;
+}
 
 .dark-toast {
     background-color: #202020;

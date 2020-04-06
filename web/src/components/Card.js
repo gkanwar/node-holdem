@@ -3,6 +3,7 @@ import {ReactComponent as CardSpades} from './card_spades.opt.svg';
 import {ReactComponent as CardDiamonds} from './card_diamonds.opt.svg';
 import {ReactComponent as CardHearts} from './card_hearts.opt.svg';
 import {ReactComponent as CardClubs} from './card_clubs.opt.svg';
+import {ReactComponent as Facedown} from './card_facedown.opt.svg';
 
 // TODO: Actual rendering of cards
 const rankToString = {
@@ -33,12 +34,20 @@ class Card extends Component {
     if (card === undefined) {
       return null;
     }
-    const Cardback = suitToCardback[card.suit];
-    // TODO: Suited card backs
+    let {scale} = this.props;
+    if (scale === undefined) {
+      scale = 1.0;
+    }
+    let Cardback = Facedown;
+    let rankElt = null;
+    if (card !== '??') { // face up
+      Cardback = suitToCardback[card.suit];
+      rankElt = <text x="50" y="55" textAnchor="middle">{rankToString2[card.rank]}</text>;
+    }
     return (
-      <g className="card" transform={`translate(${posX-50}, ${posY-55})`}>
+      <g className="card" transform={`translate(${posX-50}, ${posY-55}) scale(${scale})`}>
         <Cardback/>
-        <text x="50" y="55" textAnchor="middle">{rankToString2[card.rank]}</text>
+        {rankElt}
       </g>
     );
   }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <defs>
+  <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="0.5"/>
+   <feOffset dx="1" dy="0.5" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -270.54)">
+  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -141.89)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#ccc" filter="url(#filter4822)"/>
+  <rect x="8.1336" y="275.85" width="10.191" height="15.848" rx="1.1885" ry="1.2502" fill="#ccc"/>
+  <g transform="matrix(1.2991 0 0 1.2991 -3.9645 -83.95)">
+   <g fill="#202020">
+    <path d="m14.99 279.9c1.2331-0.0813 1.6172-0.73491 1.8943-1.7072 0.01916 1.3298-0.18204 2.7488-0.63142 3.391z"/>
+    <path d="m11.48 279.9c-1.2331-0.0813-1.6172-0.73491-1.8943-1.7072-0.01916 1.3298 0.18204 2.7488 0.63142 3.391z"/>
+    <ellipse cx="13.229" cy="282.71" rx="3.1805" ry="3.6248"/>
+   </g>
+   <g>
+    <path d="m13.196 287.93c0.41507-0.27012 0.82258-0.7271 1.1816-2.3839 0 0-0.79602-0.3638-1.1899-0.3638-0.39388 0-1.1734 0.3638-1.1734 0.3638 0.40039 1.6127 0.73578 2.0948 1.1816 2.3839z" fill="#959595"/>
+    <ellipse cx="13.229" cy="282.45" rx="1.3681" ry="1.6604" fill="#959595" opacity=".94"/>
+    <circle cx="13.552" cy="282.95" r=".52626" fill="#202020" opacity=".94"/>
+   </g>
+   <path d="m11.952 279.9c0.92759 0.61783 1.7779 0.56661 2.5686 0" fill="none" stroke="#959595" stroke-width=".22633px"/>
+  </g>
+ </g>
+</svg>

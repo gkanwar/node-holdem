@@ -1,27 +1,18 @@
 import React, {Component} from 'react';
 import './pulse.scss';
 import './player.css';
-import {cardToString} from './Card';
+import Card, {cardToString} from './Card';
 import {ReactComponent as Button} from './button.opt.svg';
 import Offering from './Offering';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-function stackToString(stack) {
-  if (stack === 0) {
-    return 'BUST';
-  }
-  else {
-    return stack.toString();
-  }
-}
-
 class Player extends Component {
 
   render() {
     const {
-      pos: {seat, button, name, nameAnchor, nameBaseline, offer}, player,
-      isMe, isActive, isNextToAct, isButton, cards
+      pos: {seat, button, name, nameAnchor, nameBaseline, offer, card: cardPos},
+      player, isMe, isActive, isNextToAct, isButton, cards
     } = this.props;
     // const color = isNextToAct ? '#ff0909' : '#888888';
     function makeAvatarCircle(className) {
@@ -36,19 +27,26 @@ class Player extends Component {
     else {
       stackPos[1] += 15;
     }
+    const meClass = isMe ? "me" : "";
     const usernameElt = (
-      <text x={usernamePos[0]} y={usernamePos[1]} textAnchor={nameAnchor}
-       alignmentBaseline={nameBaseline}>
+      <text className={meClass} x={usernamePos[0]} y={usernamePos[1]}
+       textAnchor={nameAnchor} alignmentBaseline={nameBaseline}>
         {username}
       </text>
     );
     const stackElt = (
-      <text x={stackPos[0]} y={stackPos[1]} textAnchor={nameAnchor}
-       alignmentBaseline={nameBaseline}>
-        ({stackToString(stack)})
+      <text className={meClass} x={stackPos[0]} y={stackPos[1]}
+       textAnchor={nameAnchor} alignmentBaseline={nameBaseline}>
+        ({stack})
       </text>
     );
-    // TODO: Present this nicely
+    let cardElt = null;
+    if (cards !== null) {
+      cardElt = <>
+        <Card card={cards[0]} posX={cardPos[0]-17} posY={cardPos[1]} scale={0.75}/>
+        <Card card={cards[1]} posX={cardPos[0]+17} posY={cardPos[1]} scale={0.75}/>
+      </>;
+    }
     const cardStr = (cards !== null) ? cards.map(cardToString).join(' ') : '';
     const infoElt = (
       <Tooltip>
@@ -85,6 +83,7 @@ class Player extends Component {
           <g>
             {usernameElt}{stackElt}
             {avatarElt}
+            {cardElt}
           </g>
         </OverlayTrigger>
         {offerElt}

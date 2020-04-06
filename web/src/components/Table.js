@@ -13,6 +13,7 @@ const positions6 = [
     seat: [85, 258],
     button: [148, 289],
     name: [75, 258],
+    card: [75, 280],
     offer: [148, 258],
     nameAnchor: 'end',
     nameBaseline: 'middle'
@@ -22,6 +23,7 @@ const positions6 = [
     seat: [715, 258],
     button: [654, 227],
     name: [725, 258],
+    card: [750, 280],
     offer: [650, 258],
     nameAnchor: 'start',
     nameBaseline: 'middle'
@@ -31,6 +33,7 @@ const positions6 = [
     seat: [268, 435],
     button: [317, 382],
     name: [268, 448],
+    card: [340, 435],
     offer: [268, 375],
     nameAnchor: 'middle',
     nameBaseline: 'baseline'
@@ -40,6 +43,7 @@ const positions6 = [
     seat: [528, 75],
     button: [510, 130],
     name: [528, 65],
+    card: [475, 40],
     offer: [528, 130],
     nameAnchor: 'middle',
     nameBaseline: 'hanging'
@@ -49,6 +53,7 @@ const positions6 = [
     seat: [528, 435],
     button: [560, 377],
     name: [528, 448],
+    card: [600, 435],
     offer: [528, 375],
     nameAnchor: 'middle',
     nameBaseline: 'baseline'
@@ -58,6 +63,7 @@ const positions6 = [
     seat: [268, 75],
     button: [230, 133],
     name: [268, 65],
+    card: [215, 40],
     offer: [268, 133],
     nameAnchor: 'middle',
     nameBaseline: 'hanging'
@@ -144,11 +150,22 @@ class Table extends Component {
       const isNextToAct = (index == nextToAct && running);
       const isActive = player.active;
       const isButton = index == button;
+      let cards = myCards;
+      if (!isMe) {
+        // TODO: For now just inferring whether players have cards, is there
+        // a better (more robust) way?
+        if (player.active && running) {
+          cards = ['??', '??'];
+        }
+        else {
+          cards = null;
+        }
+      }
       console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
         <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
          isActive={isActive} isNextToAct={isNextToAct} isButton={isButton}
-         cards={isMe ? myCards : ['??', '??']}/>
+         cards={cards}/>
       );
       return reactPlayer;
     });
