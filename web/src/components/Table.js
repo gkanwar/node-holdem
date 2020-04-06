@@ -11,48 +11,54 @@ const positions6 = [
   {
     index: 0,
     seat: [85, 258],
-    button: [148-15, 289+15],
+    button: [148, 289],
     name: [75, 258],
+    offer: [148, 258],
     nameAnchor: 'end',
     nameBaseline: 'middle'
   },
   {
     index: 3,
     seat: [715, 258],
-    button: [654-15, 227+15],
+    button: [654, 227],
     name: [725, 258],
+    offer: [650, 258],
     nameAnchor: 'start',
     nameBaseline: 'middle'
   },
   {
     index: 1,
     seat: [268, 435],
-    button: [317-15, 382+15],
+    button: [317, 382],
     name: [268, 448],
+    offer: [268, 375],
     nameAnchor: 'middle',
     nameBaseline: 'baseline'
   },
   {
     index: 4,
     seat: [528, 75],
-    button: [510-15, 130+15],
+    button: [510, 130],
     name: [528, 65],
+    offer: [528, 130],
     nameAnchor: 'middle',
     nameBaseline: 'hanging'
   },
   {
     index: 2,
     seat: [528, 435],
-    button: [560-15, 377+15],
+    button: [560, 377],
     name: [528, 448],
+    offer: [528, 375],
     nameAnchor: 'middle',
     nameBaseline: 'baseline'
   },
   {
     index: 5,
     seat: [268, 75],
-    button: [268-15, 133+15],
+    button: [230, 133],
     name: [268, 65],
+    offer: [268, 133],
     nameAnchor: 'middle',
     nameBaseline: 'hanging'
   }
@@ -135,12 +141,14 @@ class Table extends Component {
     const playerElements = players.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
-      const isActive = (index == nextToAct && running);
+      const isNextToAct = (index == nextToAct && running);
+      const isActive = player.active;
       const isButton = index == button;
       console.log('key = ', 'player-'+player.username);
       const reactPlayer = (
-          <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
-           isActive={isActive} isButton={isButton} cards={isMe ? myCards : ['??', '??']}/>
+        <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
+         isActive={isActive} isNextToAct={isNextToAct} isButton={isButton}
+         cards={isMe ? myCards : ['??', '??']}/>
       );
       return reactPlayer;
     });

@@ -65,7 +65,7 @@ table.clean-table .pos {
     color: #24cc20;
 }
 table.clean-table .neg {
-    color: #ee2514;
+    color: #ff0909;
 }
 
 .control-box {
@@ -179,7 +179,10 @@ input[type=submit]:hover:not([disabled]) {
 svg text {
     fill: #cccccc;
 }
-svg .pot text{
+svg .pot text {
+    fill: #202020;
+}
+svg .offer text {
     fill: #202020;
 }
 

@@ -3,7 +3,7 @@ $pulse-radius: 1.5;
 $pulse-scale: 4;
 $pulse-stroke: 1;
 
-.pulse-circle-1, .pulse-circle-2, .pulse-circle-fixed {
+.pulse-circle-1, .pulse-circle-2 {
     transform-origin: center;
     stroke-width: $pulse-stroke;
     fill: none;
@@ -13,7 +13,7 @@ $pulse-stroke: 1;
 .pulse-disk {
     r: $pulse-radius + $pulse-stroke;
 }
-.pulse-circle-fixed {
+.pulse-disk-fixed {
     r: $pulse-radius * $pulse-scale;
 }
 
