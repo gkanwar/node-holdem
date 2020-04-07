@@ -177,16 +177,13 @@ input[type=submit]:hover:not([disabled]) {
 }
 
 svg text {
-    fill: #cccccc;
+    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
 }
 svg .pot text {
     fill: #202020;
 }
 svg .offer text {
     fill: #202020;
-}
-svg text.me {
-    fill: #ff0909;
 }
 
 .dark-toast {

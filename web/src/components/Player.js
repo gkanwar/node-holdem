@@ -68,7 +68,8 @@ class Player extends Component {
       avatarElt = <g className="active">{makeAvatarCircle('pulse-disk-fixed')}</g>;
     }
 
-    const offerElt = <Offering offer={player.offering} posX={offer[0]} posY={offer[1]}/>;
+    const offerElt = <Offering offer={player.offering}
+      style={{transform: `translate(${offer[0]}, ${offer[1]})`}}/>;
 
     let buttonElt = null;
     if (isButton) {

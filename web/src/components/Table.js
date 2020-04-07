@@ -1,72 +1,50 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
-import {toast} from 'react-toastify';
 import ActionBar from './ActionBar';
+import {cardPropType} from './Card';
 import Board from './Board';
 import Player from './Player';
 import Pot from './Pot';
+import PlayerBadge from './PlayerBadge';
+import PropTypes from 'prop-types';
 
 const VIEW_HEIGHT = 600;
 const positions6 = [
   {
     index: 0,
-    seat: [85, 258],
+    badge: [85, 258],
     button: [148, 289],
-    name: [75, 258],
-    card: [75, 280],
-    offer: [148, 258],
-    nameAnchor: 'end',
-    nameBaseline: 'middle'
+    offer: [148, 258]
   },
   {
     index: 3,
-    seat: [715, 258],
+    badge: [715, 258],
     button: [654, 227],
-    name: [725, 258],
-    card: [750, 280],
-    offer: [650, 258],
-    nameAnchor: 'start',
-    nameBaseline: 'middle'
+    offer: [650, 258]
   },
   {
     index: 1,
-    seat: [268, 435],
+    badge: [268, 435],
     button: [317, 382],
-    name: [268, 448],
-    card: [340, 435],
-    offer: [268, 375],
-    nameAnchor: 'middle',
-    nameBaseline: 'baseline'
+    offer: [268, 375]
   },
   {
     index: 4,
-    seat: [528, 75],
+    badge: [528, 75],
     button: [510, 130],
-    name: [528, 65],
-    card: [475, 40],
-    offer: [528, 130],
-    nameAnchor: 'middle',
-    nameBaseline: 'hanging'
+    offer: [528, 130]
   },
   {
     index: 2,
-    seat: [528, 435],
+    badge: [528, 435],
     button: [560, 377],
-    name: [528, 448],
-    card: [600, 435],
-    offer: [528, 375],
-    nameAnchor: 'middle',
-    nameBaseline: 'baseline'
+    offer: [528, 375]
   },
   {
     index: 5,
-    seat: [268, 75],
+    badge: [268, 75],
     button: [230, 133],
-    name: [268, 65],
-    card: [215, 40],
-    offer: [268, 133],
-    nameAnchor: 'middle',
-    nameBaseline: 'hanging'
+    offer: [268, 133]
   }
 ];
 
@@ -96,93 +74,98 @@ function getPositions(n) {
 }
 
 class Table extends Component {
+  static propTypes = {
+    pots: PropTypes.array,
+    nextToAct: PropTypes.number,
+    myIndex: PropTypes.number,
+    myCards: PropTypes.arrayOf(cardPropType),
+    orderedPlayers: PropTypes.array,
+    running: PropTypes.bool,
+    board: PropTypes.array,
+    button: PropTypes.number,
+    send: PropTypes.func
+  };
   constructor() {
     super();
     this.state = {
-      pot: 0,
-      nextToAct: 0,
-      myIndex: null,
-      myCards: null,
-      players: [],
       positions: []
     }
   }
-  
+
   componentDidMount() {
-    // TODO: Could miss messages between connection and Table mount
-    const {room} = this.props;
-    console.log('Table mounting room message handler');
-    room.onMessage((message) => {
-      console.log('Got room message', message);
-      if (message.myCards !== undefined) {
-        this.setState({myCards: message.myCards});
-      }
-      if (message.showdown !== undefined) {
-        // TODO showdown popup
-      }
-      if (message.error !== undefined) {
-        toast.error(message.error);
-      }
-      if (message.info !== undefined) {
-        toast.info(message.info);
-      }
-    });
-    room.onStateChange((state) => {
-      const {players, playerOrder, ...residualState} = state;
-      const orderedPlayers = playerOrder.map((sessionId) => players[sessionId]);
-      const myIndex = playerOrder.findIndex((sessionId) => sessionId == room.sessionId);
-      this.setState({
-        players: orderedPlayers,
-        positions: getPositions(orderedPlayers.length),
-        myIndex,
-        ...residualState
-      });
+    const {orderedPlayers} = this.props;
+    this.setState({
+      positions: getPositions(orderedPlayers.length)
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const {orderedPlayers} = this.props;
+    if (prevProps.orderedPlayers.length !== orderedPlayers.length) {
+      this.setState({
+        positions: getPositions(orderedPlayers.length)
+      });
+    }
+  }
+  
   render() {
-    const {myIndex, myCards, pots, board, button, players, positions, nextToAct, running} = this.state;
+    const {positions} = this.state;
+    const {
+      pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button, send
+    } = this.props;
+    if (positions.length !== orderedPlayers.length) {
+      return null;
+    }
     console.log('myCards =', myCards);
     console.log('board =', board);
-    const playerElements = players.map((player, index) => {
+    console.log('positions =', positions);
+    const buttonPos = positions[button];
+    // TODO: Render button
+    
+    const playerBadges = orderedPlayers.map((player, index) => {
       const pos = positions[index];
       const isMe = index == myIndex;
-      const isNextToAct = (index == nextToAct && running);
-      const isActive = player.active;
+      const badgeProps = {
+        isMe,
+        isNextToAct: (index == nextToAct && running),
+        isActive: player.active,
+        isShowing: false // TODO
+      }
       const isButton = index == button;
       let cards = myCards;
       if (!isMe) {
         // TODO: For now just inferring whether players have cards, is there
         // a better (more robust) way?
         if (player.active && running) {
-          cards = ['??', '??'];
+          cards = [{rank: -1, suit: -1}, {rank: -1, suit: -1}];
         }
         else {
           cards = null;
         }
       }
-      console.log('key = ', 'player-'+player.username);
-      const reactPlayer = (
-        <Player key={'player-' + player.username} pos={pos} player={player} isMe={isMe}
-         isActive={isActive} isNextToAct={isNextToAct} isButton={isButton}
-         cards={cards}/>
+      const key = `player-${index}`;
+      console.log('key = ', key);
+      const {badge} = pos;
+      return (
+        <g transform={`translate(${badge[0]},${badge[1]})`}>
+          <PlayerBadge key={key} username={player.username} stack={player.stack}
+          {...badgeProps} cards={cards}/>
+        </g>
       );
-      return reactPlayer;
     });
-    const {room} = this.props;
     const enableActionBar = (
-      myIndex == nextToAct && players[myIndex] !== undefined
-      && !players[myIndex].folded
+      myIndex == nextToAct && orderedPlayers[myIndex] !== undefined
+      && !orderedPlayers[myIndex].folded
     );
     return (
       <div id="table-viewport">
         <svg id="game-canvas">
           <TableBg/>
-          {playerElements}
+          {playerBadges}
           <Pot pots={pots}/>
           <Board cards={board}/>
         </svg>
-        <ActionBar key="actions-bar" room={room} myIndex={myIndex} enabled={enableActionBar}/>
+        <ActionBar key="actions-bar" send={send} myIndex={myIndex} enabled={enableActionBar}/>
       </div>
     );
   }

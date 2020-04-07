@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="175" height="75" version="1.1" viewBox="0 0 46.302 19.844" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient895" x1="34.229" x2="40.415" y1="290.95" y2="283.3" gradientTransform="translate(-1.0583 -.37418)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#808080" offset="0"/>
+   <stop stop-color="#909090" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient1003" cx="22.49" cy="287.08" r="20.323" gradientTransform="matrix(1 0 0 .40358 -1.0583 170.84)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#a7a7a7" offset="0"/>
+   <stop stop-color="#505050" offset="1"/>
+  </radialGradient>
+  <filter id="filter1270" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(32,32,32)" flood-opacity=".79942" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur flood-opacity=".8" in="composite1" result="blur" stdDeviation="1"/>
+   <feOffset dx="1.8" dy="1" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -277.16)">
+  <path d="m1.5875 286.7 5.2917 7.8052h29.104l5.2917-7.8052-5.2917-7.8052h-29.104z" fill="url(#radialGradient1003)" filter="url(#filter1270)" stroke="#ccc" stroke-width=".26458"/>
+  <path d="m35.983 295.3 5.8298-8.599-5.8298-8.599-5.8298 8.599z" fill="url(#linearGradient895)" stroke="#ccc" stroke-width=".26458"/>
+  <path d="m29.613 286.56h-27.292" fill="none" stroke="#808080" stroke-linecap="round" stroke-width=".26458px"/>
+  <path d="m29.613 286.83h-27.292" fill="none" stroke="#474747" stroke-linecap="round" stroke-width=".26458px"/>
+ </g>
+</svg>
