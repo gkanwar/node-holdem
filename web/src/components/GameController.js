@@ -29,9 +29,9 @@ class GameController extends Component {
   }
 
   handleStart(event) {
+    event.preventDefault();
     const {room} = this.props;
     room.send({running: true});
-    event.preventDefault();
   }
   
   render() {

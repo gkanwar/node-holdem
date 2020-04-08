@@ -65,6 +65,7 @@ class Game extends Component {
       const {pots, nextToAct, players, playerOrder, running, board, button} = room.state;
       const orderedPlayers = playerOrder.map((pid) => players[pid]);
       const tableProps = {pots, nextToAct, running, board, button, orderedPlayers};
+      const send = (msg) => {return room.send(msg);}
       // TODO: Should reduce passed prop to only relevant piece of state
       return (
         <>
@@ -75,7 +76,7 @@ class Game extends Component {
           <GameController room={room}/>
           <ActiveStateController room={room}/>
           <Standings room={room}/>
-          <Table {...tableProps} myIndex={myIndex} myCards={myCards}/>
+          <Table {...tableProps} send={send} myIndex={myIndex} myCards={myCards}/>
           <ShowdownContainer room={room}/>
         </>
       );

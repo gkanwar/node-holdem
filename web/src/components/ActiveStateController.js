@@ -33,9 +33,9 @@ class ActiveStateController extends Component {
   }
 
   handleStateEvent(event, state) {
+    event.preventDefault();
     const {room} = this.props;
     room.send({stateRequest: state});
-    event.preventDefault();
   }
 
   handleSit(event) {
@@ -52,11 +52,11 @@ class ActiveStateController extends Component {
   }
 
   handleBuyIn(event) {
+    event.preventDefault();
     const {room} = this.props;
     const {buyInAmount} = this.state;
     room.send({buy: parseInt(buyInAmount)});
     this.setState({buyInAmount: 0});
-    event.preventDefault();
   }
   
   render() {

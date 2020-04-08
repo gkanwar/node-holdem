@@ -53,6 +53,7 @@ class Connector extends Component {
   }
 
   onSubmit(event) {
+    event.preventDefault();
     const {server, port, username} = this.state;
     console.log('Setting local storage hostInfo', this.state);
     localStorage.setItem('hostInfo', JSON.stringify({
@@ -61,7 +62,6 @@ class Connector extends Component {
       username: username
     }));
     this.tryConnect();
-    event.preventDefault();
   }
 
   makeConnection() {
