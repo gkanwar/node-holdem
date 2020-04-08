@@ -9,14 +9,12 @@ import PropTypes from 'prop-types';
 class PlayerBadge extends Component {
   static propTypes = {
     username: PropTypes.string,
-    stack: PropTypes.string,
+    stack: PropTypes.number,
     isMe: PropTypes.bool,
     isActive: PropTypes.bool,
     isNextToAct: PropTypes.bool,
     isShowing: PropTypes.bool,
-    cards: PropTypes.arrayOf(cardPropType),
-    // CHECK
-    asdf: PropTypes.bool.required
+    cards: PropTypes.arrayOf(cardPropType)
   };
   render() {
     const {username, stack, isMe, isActive, isNextToAct, isShowing, cards} = this.props;
@@ -41,8 +39,27 @@ class PlayerBadge extends Component {
         <g transform={`scale(${cardScale}) translate(+23,0)`}><Card card={cards[1]}/></g>
       </g>;
     }
-    // TODO: Active and nextToAct info
-    const badgeElt = <><PlayerBadgeBg/>{usernameElt}{stackElt}</>;
+
+    // Active and nextToAct info in avatar
+    function makeAvatarCircle(className) {
+      return <circle className={className}/>;
+    };
+    const avatarTransform = "translate(136,37)";
+    let avatarElt = null;
+    if (isNextToAct) {
+      avatarElt = <g className="next-to-act" transform={avatarTransform}>
+        {makeAvatarCircle('pulse-disk')}
+        {makeAvatarCircle('pulse-circle-1')}
+        {makeAvatarCircle('pulse-circle-2')}
+      </g>;
+    }
+    else if (isActive) {
+      avatarElt = <g className="active" transform={avatarTransform}>
+        {makeAvatarCircle('pulse-disk-fixed')}
+      </g>;
+    }
+    
+    const badgeElt = <><PlayerBadgeBg/>{usernameElt}{stackElt}{avatarElt}</>;
     const combinedElt = isShowing ? <>{badgeElt}{cardElt}</> : <>{cardElt}{badgeElt}</>;
 
     return (

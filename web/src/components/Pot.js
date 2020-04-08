@@ -8,7 +8,7 @@ class Pot extends Component {
     }
     const [activePot, ...otherPots] = pots;
     return (
-      <g className="pot" transform="translate(400, 350)">
+      <g className="pot">
         <text x="0" y="0" textAnchor='middle' >Pot: {activePot.value}</text>
       </g>
     );

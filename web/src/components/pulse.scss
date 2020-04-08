@@ -1,5 +1,5 @@
 $pulse-speed: 3s;
-$pulse-radius: 1.5;
+$pulse-radius: 2;
 $pulse-scale: 4;
 $pulse-stroke: 1;
 
@@ -14,7 +14,7 @@ $pulse-stroke: 1;
     r: $pulse-radius + $pulse-stroke;
 }
 .pulse-disk-fixed {
-    r: $pulse-radius * $pulse-scale;
+    r: $pulse-radius * $pulse-scale / 1.5;
 }
 
 .pulse-circle-1 {

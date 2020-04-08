@@ -32,10 +32,10 @@ export function activePlayerWithHiddenCards() {
     isNextToAct={false} {...hideCardData}/>,
     -100, -100, 100, 100);
 }
-export function activePlayerWithShownCards() {
+export function nextToActPlayerWithHiddenCards() {
   return drawWithAxes(
     <PlayerBadge {...playerData} isMe={false} isActive={true}
-    isNextToAct={false} {...showCardData}/>,
+    isNextToAct={true} {...hideCardData}/>,
     -100, -100, 100, 100);
 }
 export function activePlayerShowingCards() {

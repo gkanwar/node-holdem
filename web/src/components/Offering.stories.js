@@ -1,26 +1,23 @@
 import React from 'react';
 import Offering from './Offering';
+import {includeChips} from './Chips';
+import {drawWithAxes} from '../../.storybook/storyUtils';
 
 export default {
   component: Offering,
   title: 'Offering'
 };
 
-export function noOffer() {
-  return <Offering offer={0} posX={0} posY={0}/>;
+function drawOffer(offer) {
+  const withAxes = drawWithAxes(
+    <Offering offer={offer}/>,
+    -50, -50, 50, 50);
+  return <>{includeChips()}{withAxes}</>;
 }
-export function offer1() {
-  return <Offering offer={1} posX={0} posY={0}/>;
-}
-export function offer2() {
-  return <Offering offer={2} posX={0} posY={0}/>;
-}
-export function offer10() {
-  return <Offering offer={10} posX={0} posY={0}/>;
-}
-export function offer78() {
-  return <Offering offer={78} posX={0} posY={0}/>;
-}
-export function offer550() {
-  return <Offering offer={550} posX={0} posY={0}/>;
-}
+
+export const noOffer = () => drawOffer(0);
+export const offer1 = () => drawOffer(1);
+export const offer2 = () => drawOffer(2);
+export const offer10 = () => drawOffer(10);
+export const offer78 = () => drawOffer(78);
+export const offer550 = () => drawOffer(550);

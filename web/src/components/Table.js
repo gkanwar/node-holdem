@@ -5,6 +5,7 @@ import {cardPropType} from './Card';
 import Board from './Board';
 import Player from './Player';
 import Pot from './Pot';
+import Offering from './Offering';
 import PlayerBadge from './PlayerBadge';
 import PropTypes from 'prop-types';
 
@@ -12,39 +13,39 @@ const VIEW_HEIGHT = 600;
 const positions6 = [
   {
     index: 0,
-    badge: [85, 258],
+    badge: [90, 250],
     button: [148, 289],
-    offer: [148, 258]
+    offer: [210, 270]
   },
   {
     index: 3,
     badge: [715, 258],
     button: [654, 227],
-    offer: [650, 258]
+    offer: [600, 250]
   },
   {
     index: 1,
     badge: [268, 435],
     button: [317, 382],
-    offer: [268, 375]
+    offer: [275, 360]
   },
   {
     index: 4,
-    badge: [528, 75],
+    badge: [570, 80],
     button: [510, 130],
-    offer: [528, 130]
+    offer: [500, 160]
   },
   {
     index: 2,
     badge: [528, 435],
     button: [560, 377],
-    offer: [528, 375]
+    offer: [520, 360]
   },
   {
     index: 5,
-    badge: [268, 75],
+    badge: [230, 80],
     button: [230, 133],
-    offer: [268, 133]
+    offer: [295, 165]
   }
 ];
 
@@ -121,6 +122,13 @@ class Table extends Component {
     console.log('positions =', positions);
     const buttonPos = positions[button];
     // TODO: Render button
+
+    const offerElts = orderedPlayers.map((player, index) => {
+      const {offer: offerPos} = positions[index];
+      return <g transform={`translate(${offerPos[0]}, ${offerPos[1]})`}>
+        <Offering offer={player.offering}/>
+      </g>;
+    });
     
     const playerBadges = orderedPlayers.map((player, index) => {
       const pos = positions[index];
@@ -140,7 +148,7 @@ class Table extends Component {
           cards = [{rank: -1, suit: -1}, {rank: -1, suit: -1}];
         }
         else {
-          cards = null;
+          cards = [];
         }
       }
       const key = `player-${index}`;
@@ -157,13 +165,21 @@ class Table extends Component {
       myIndex == nextToAct && orderedPlayers[myIndex] !== undefined
       && !orderedPlayers[myIndex].folded
     );
+    const boardElt = <g transform="translate(400,310)">
+      <Board cards={board}/>
+          </g>;
+    const potElt = <g transform="translate(400,385)">
+      <Pot pots={pots}/>
+    </g>;
+    
     return (
       <div id="table-viewport">
         <svg id="game-canvas">
           <TableBg/>
           {playerBadges}
-          <Pot pots={pots}/>
-          <Board cards={board}/>
+          {offerElts}
+          {potElt}
+          {boardElt}
         </svg>
         <ActionBar key="actions-bar" send={send} myIndex={myIndex} enabled={enableActionBar}/>
       </div>

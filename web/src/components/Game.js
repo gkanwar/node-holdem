@@ -8,6 +8,7 @@ import Table from './Table';
 import {ToastContainer, Flip} from 'react-toastify';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {includeChips} from './Chips';
 
 class Game extends Component {
   constructor() {
@@ -67,6 +68,7 @@ class Game extends Component {
       // TODO: Should reduce passed prop to only relevant piece of state
       return (
         <>
+          {includeChips()}
           <ToastContainer autoClose={3000} draggable={false} closeButton={false}
            hideProgressBar={true} pauseOnHover={false} transition={Flip}
            toastClassName="dark-toast"/>

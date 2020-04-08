@@ -1,7 +1,9 @@
+/* TODO: Clean this styling up */
 svg .next-to-act {
-    fill: #24cc20;
-    stroke: #24cc20;
+    fill: #ff0909;
+    stroke: #ff0909;
 }
 svg .active {
-    fill: #24cc20;
+    fill: #ff0909;
+    stroke: #990909;
 }

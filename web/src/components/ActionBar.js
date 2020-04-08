@@ -17,15 +17,16 @@ class ActionBar extends Component {
   }
 
   handleFold(event) {
-    const {room} = this.props;
-    room.send({action: {type: 'fold'}});
+    console.log('Handle fold');
+    const {send} = this.props;
+    send({action: {type: 'fold'}});
     event.preventDefault();
   }
 
   handleBet(event) {
-    const {room} = this.props;
+    const {send} = this.props;
     const {betValue} = this.state;
-    room.send({action: {type: 'bet', value: parseInt(betValue)}});
+    send({action: {type: 'bet', value: parseInt(betValue)}});
     this.setState({betValue: 0});
     event.preventDefault();
   }
