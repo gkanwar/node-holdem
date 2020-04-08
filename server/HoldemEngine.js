@@ -509,10 +509,15 @@ class HoldemEngine {
     const {players, playerOrder} = this.state;
     let outIndex = index % playerOrder.length;
     const origIndex = outIndex;
+    let _counter = 0;
     while (!(players[playerOrder[outIndex]]).active) {
       outIndex = (outIndex+1) % playerOrder.length;
       if (outIndex === origIndex) {
         return null;
+      }
+      _counter++;
+      if (_counter > 100) {
+        throw Error(`Infinite loop! ${origIndex} ${outIndex}`);
       }
     }
     return outIndex;
@@ -528,11 +533,16 @@ class HoldemEngine {
     const {players: privatePlayers} = this.privateState;
     const {nextToAct: origNextToAct} = this.state;
     let {nextToAct} = this.state;
+    let _counter = 0;
     while (!playerCanAct(players[playerOrder[nextToAct]])) {
       privatePlayers[playerOrder[nextToAct]].playedThisStreet = true;
       nextToAct = this.pushToFirstActive(nextToAct+1);
       if (nextToAct === origNextToAct) {
         return false;
+      }
+      _counter++;
+      if (_counter > 100) {
+        throw Error(`Infinite loop! ${origNextToAct} ${nextToAct}`);
       }
     }
     this.state.nextToAct = nextToAct;
