@@ -69,7 +69,7 @@ export const state2Data = {
      offering: 60}
   ],
   pots: [
-    {eligiblePids: ['a', 'b', 'c', 'd', 'f'], value: 0}
+    {eligiblePids: ['a', 'b', 'c', 'd', 'f'], value: 30}
   ],
   nextToAct: 3,
   myIndex: 5,

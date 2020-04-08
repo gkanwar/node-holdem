@@ -5,6 +5,7 @@ import ActiveStateController from './ActiveStateController';
 import Standings from './Standings';
 import ShowdownContainer from './ShowdownContainer';
 import Table from './Table';
+import Attention from './Attention';
 import {ToastContainer, Flip} from 'react-toastify';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -78,6 +79,7 @@ class Game extends Component {
           <Standings room={room}/>
           <Table {...tableProps} send={send} myIndex={myIndex} myCards={myCards}/>
           <ShowdownContainer room={room}/>
+          <Attention value={myIndex === nextToAct}/>
         </>
       );
     }

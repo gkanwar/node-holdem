@@ -18,7 +18,6 @@ class ActionBar extends Component {
 
   handleFold(event) {
     event.preventDefault();
-    console.log('Handle fold');
     const {send} = this.props;
     send({action: {type: 'fold'}});
   }
