@@ -17,6 +17,7 @@ class Game extends Component {
     this.state = {
       connected: false,
       room: null,
+      showdown: null,
       myIndex: null,
       myCards: []
     };
@@ -34,7 +35,7 @@ class Game extends Component {
         this.setState({myCards: message.myCards});
       }
       if (message.showdown !== undefined) {
-        // TODO showdown popup
+        this.setState({showdown: message.showdown});
       }
       if (message.error !== undefined) {
         toast.error(message.error);
@@ -62,17 +63,17 @@ class Game extends Component {
       );
     }
     else {
-      const {room, myIndex, myCards} = this.state;
+      const {room, myIndex, myCards, showdown} = this.state;
       const {
         pots, nextToAct, players, playerOrder, running, board, button,
         toCall, minRaise, bigBlind
       } = room.state;
-      console.log('Game render', board, minRaise);
+      console.log('Game render', showdown);
       const orderedPlayers = playerOrder.map((pid) => players[pid]);
       const send = (msg) => {return room.send(msg);}
       const tableProps = {
         pots, nextToAct, running, board, button, toCall, minRaise, bigBlind,
-        orderedPlayers, myIndex, myCards, send
+        orderedPlayers, myIndex, myCards, showdown, send
       };
       // TODO: Should reduce passed prop to only relevant piece of state
       return (

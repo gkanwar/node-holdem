@@ -21,10 +21,8 @@ class Board extends Component {
       </g>
     ));
     const emptyCard = {rank: EMPTY, suit: EMPTY};
-    console.log(Array(MAX_BOARD-cards.length));
     for (const i of Array(MAX_BOARD-cards.length).keys()) {
       const index = cards.length + i;
-      console.log(index);
       boardElts.push(
         <g key={`board-${index}`} transform={`translate(${index*CARD_SPACING},0)`}>
           <Card card={emptyCard}/>

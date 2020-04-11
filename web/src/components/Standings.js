@@ -56,7 +56,7 @@ class Standings extends Component {
     console.log('playerValues', playerValues);
     const rowElts = playerValues.map(
       (player, index) => (
-        <tr key={`status-${player.sessionId}`}>
+        <tr key={`status-${Object.keys(players)[index]}`}>
           <td>{index+1}</td>
           <td className="text-col">{player.username} ({statusToString(player)})</td>
           <td>{makeSignedValue(player.bankroll)}</td>

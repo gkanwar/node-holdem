@@ -4,13 +4,13 @@ import './action-bar.css';
 
 class ActionBar extends Component {
   static propTypes = {
-    send: PropTypes.func.required,
-    toCall: PropTypes.number.required,
-    minRaise: PropTypes.number.required,
-    bigBlind: PropTypes.number.required,
-    offer: PropTypes.number.required,
-    stack: PropTypes.number.required,
-    enabled: PropTypes.bool.required
+    send: PropTypes.func,
+    toCall: PropTypes.number,
+    minRaise: PropTypes.number,
+    bigBlind: PropTypes.number,
+    offer: PropTypes.number,
+    stack: PropTypes.number,
+    enabled: PropTypes.bool
   };
   constructor() {
     super();

@@ -8,6 +8,7 @@ import Offering from './Offering';
 import PlayerBadge from './PlayerBadge';
 import Button from './Button';
 import PropTypes from 'prop-types';
+import lodash from 'lodash';
 
 const VIEW_HEIGHT = 600;
 const positions6 = [
@@ -65,7 +66,6 @@ function getPositions(n) {
               return [k, v];
             }
           }));
-      console.log(posDataReflected);
       return posDataReflected;
     });
   }
@@ -92,54 +92,93 @@ class Table extends Component {
   constructor() {
     super();
     this.doShowdown = this.doShowdown.bind(this);
+    this.queueUpdateState = this.queueUpdateState.bind(this);
+    this.updateStateFromProps = this.updateStateFromProps.bind(this);
+    this.pendingUpdate = null;
     this.state = {
       positions: [],
-      showdown: null
+      showdown: null,
+      pots: [],
+      nextToAct: 0,
+      myIndex: 0,
+      myCards: [],
+      orderedPlayers: [],
+      running: false,
+      board: [],
+      toCall: 0,
+      minRaise: 0,
+      button: 0,
+      send: () => {}
     }
   }
 
-  componentDidMount() {
-    const {orderedPlayers, showdown} = this.props;
+  queueUpdateState(props) {
+    const {showdown} = this.state;
+    if (showdown === null) {
+      this.updateStateFromProps(props);
+      this.pendingUpdate = null;
+    }
+    else {
+      this.pendingUpdate = props;
+    }
+  }
+
+  updateStateFromProps(props, callback) {
+    const {orderedPlayers, showdown, ...restProps} = props;
+    const cloneRestProps = lodash.cloneDeep(restProps);
     this.setState({
-      positions: getPositions(orderedPlayers.length)
-    });
+      positions: getPositions(orderedPlayers.length),
+      orderedPlayers: lodash.cloneDeep(orderedPlayers),
+      ...cloneRestProps
+    }, callback);
+  }
+
+  componentDidMount() {
+    console.log('Table mount!');
+    const {showdown} = this.props;
     if (showdown !== null && showdown !== undefined) {
       this.doShowdown(showdown);
+      this.pendingUpdate = this.props;
+    }
+    else {
+      this.queueUpdateState(this.props);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const {orderedPlayers, showdown} = this.props;
-    if (prevProps.orderedPlayers.length !== orderedPlayers.length) {
-      this.setState({
-        positions: getPositions(orderedPlayers.length)
-      });
-    }
-    // TODO: Need to add state sync from this.props -> this.state to avoid
-    // instant update from server overriding display.
+    const {showdown} = this.props;
     if (showdown !== null && prevProps.showdown !== showdown) {
+      console.log('Table got new showdown');
       this.doShowdown(showdown);
+      this.pendingUpdate = this.props;
+    }
+    else if (this.props !== prevProps) {
+      console.log('Table update props');
+      console.log(this.props);
+      this.queueUpdateState(this.props);
     }
   }
 
   doShowdown(showdown) {
-    this.setState({showdown});
-    setTimeout(() => this.setState({showdown: null}), 8000);
+    this.setState({showdown, board: showdown.board});
+    setTimeout(() => {
+      console.log('Cleaning up showdown with pending update', this.pendingUpdate);
+      this.updateStateFromProps(this.pendingUpdate, () => {
+        this.pendingUpdate = null;
+        this.setState({showdown: null});
+      });
+    }, 8000);
   }
 
   render() {
-    const {positions, showdown} = this.state;
     const {
-      pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button,
-      toCall, minRaise, bigBlind, send
-    } = this.props;
+      positions, showdown, pots, nextToAct, myIndex, myCards, orderedPlayers,
+      running, board, button, toCall, minRaise, bigBlind, send
+    } = this.state;
     if (positions.length !== orderedPlayers.length) {
       return null;
     }
-    console.log('myCards =', myCards);
-    console.log('board =', board);
-    console.log('positions =', positions);
-    console.log('button', button);
+    console.log('render', this.state);
     let buttonElt = null;
     if (button !== undefined) {
       const pos = positions[button];
@@ -167,15 +206,18 @@ class Table extends Component {
       }
       let cards = myCards;
       let isShowing = false;
-      if (!isMe) {
+      console.log(`Render player ${index}`, player.sessionId);
+      console.log(`Showdown non null? ${showdown !== null}`);
+      console.log('Player in showdown cards', showdown !== null && player.sessionId in showdown.cards);
+      if (showdown !== null && player.sessionId in showdown.cards) {
+        cards = showdown.cards[player.sessionId];
+        console.log('Player', player.sessionId, 'cards', cards);
+        isShowing = true; // TODO: Muck?
+      }
+      else if (!isMe) {
         // TODO: For now just inferring whether players have cards, is there
         // a better (more robust) way?
-        if (showdown !== null && player.sessionId in showdown.cards) {
-          cards = showdown.cards[player.sessionId];
-          console.log('Player', player.sessionId, 'cards', cards);
-          isShowing = true; // TODO: Muck?
-        }
-        else if (player.active && running) {
+        if (player.active && running) {
           cards = [{rank: -1, suit: -1}, {rank: -1, suit: -1}];
         }
         else {
@@ -183,7 +225,6 @@ class Table extends Component {
         }
       }
       const key = `player-${index}`;
-      console.log('key = ', key);
       const {badge} = pos;
       return (
         <g transform={`translate(${badge[0]},${badge[1]})`}>
@@ -202,7 +243,6 @@ class Table extends Component {
     const myPlayer = orderedPlayers[myIndex];
     let actionBarElt = null;
     if (myPlayer !== undefined) {
-      console.log('Setting action bar!');
       const actionBarProps = {
         send, toCall, minRaise, bigBlind,
         offer: myPlayer.offering,
