@@ -38,9 +38,10 @@ defineTypes(PotState, {
 })
 
 export class PlayerState extends Schema {
-  constructor(username) {
+  constructor(username, sessionId) {
     super();
     this.username = username;
+    this.sessionId = sessionId;
     this.connected = true;
     this.folded = false;
     this.sitting = false;
@@ -65,6 +66,7 @@ export class PlayerState extends Schema {
   }
 }
 defineTypes(PlayerState, {
+  sessionId: 'string',
   username: 'string',
   connected: 'boolean',
   sitting: 'boolean',

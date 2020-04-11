@@ -68,7 +68,7 @@ class HoldemEngine {
   }
 
   onJoin(playerId, username) {
-    this.state.players[playerId] = new PlayerState(username);
+    this.state.players[playerId] = new PlayerState(username, playerId);
   }
 
   onLeave(playerId) {
