@@ -52,7 +52,7 @@ class Standings extends Component {
     const {players} = this.state;
     console.log('players', players);
     const playerValues = Object.values(players).sort(
-      (p1, p2) => (p1.lastValue + p1.bankroll)-(p2.lastValue + p2.bankroll));
+      (p1, p2) => (p2.lastValue + p2.bankroll)-(p1.lastValue + p1.bankroll));
     console.log('playerValues', playerValues);
     const rowElts = playerValues.map(
       (player, index) => (
