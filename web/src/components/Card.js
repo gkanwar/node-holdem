@@ -49,9 +49,12 @@ export const EMPTY = -2;
 export const cardPropType = PropTypes.shape({rank: PropTypes.number, suit: PropTypes.number});
 
 class Card extends Component {
-  static propTypes = {card: cardPropType};
+  static propTypes = {
+    card: cardPropType,
+    onBoard: PropTypes.bool
+  };
   render() {
-    const {card} = this.props;
+    const {card, onBoard} = this.props;
     if (card === undefined) {
       return null;
     }
@@ -70,10 +73,13 @@ class Card extends Component {
     if (cardbackHref === undefined) {
       return null;
     }
+    const classNames = onBoard ? "card on-board" : "card";
     return (
-      <g className="card" transform="translate(-50,-55)">
+      <g className={classNames}>
+      <g transform="translate(-50,-55)">
         <use xlinkHref={cardbackHref}/>
         {rankElt}
+      </g>
       </g>
     );
   }

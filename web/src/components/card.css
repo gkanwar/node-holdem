@@ -2,3 +2,14 @@ text.card-rank {
     fill: #cccccc;
     text-anchor: middle;
 }
+.card.on-board {
+    animation: card-flip 0.3s;
+}
+@keyframes card-flip {
+    from {
+        transform: scale(0,1);
+    }
+    to {
+        transform: scale(1,1);
+    }
+}

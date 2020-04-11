@@ -16,7 +16,7 @@ class Board extends Component {
     }
     const boardElts = cards.map((card, index) => (
       <g key={`board-${index}`} transform={`translate(${index*CARD_SPACING},0)`}>
-        <Card card={card}/>
+        <Card card={card} onBoard={true}/>
       </g>
     ));
     const emptyCard = {rank: EMPTY, suit: EMPTY};
