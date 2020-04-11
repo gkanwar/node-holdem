@@ -3,7 +3,7 @@ import './pulse.scss';
 import './player.css';
 import './badge.css';
 import Card, {cardToString, cardPropType} from './Card';
-// import {ReactComponent as PlayerBadgeBg} from './player_badge.opt.svg';
+import {ReadyTag, SittingTag, NextTag} from './PlayerTag';
 import {ReactComponent as PlayerBadgeBg} from './player_badge_v2.opt.svg';
 import PropTypes from 'prop-types';
 
@@ -44,34 +44,25 @@ class PlayerBadge extends Component {
       </g>;
     }
 
-    // Active and nextToAct info in avatar
-    // function makeAvatarCircle(className) {
-    //   return <circle className={className}/>;
-    // };
-    // const avatarTransform = "translate(17,22)";
-    // let avatarElt = null;
-    // if (isNextToAct) {
-    //   avatarElt = <g className="next-to-act" transform={avatarTransform}>
-    //     {makeAvatarCircle('pulse-disk')}
-    //     {makeAvatarCircle('pulse-circle-1')}
-    //     {makeAvatarCircle('pulse-circle-2')}
-    //   </g>;
-    // }
-    // else if (isActive) {
-    //   avatarElt = <g className="active" transform={avatarTransform}>
-    //     {makeAvatarCircle('pulse-disk-fixed')}
-    //   </g>;
-    // }
-    
     // Active and nextToAct info in tag
-    // TODO:
-    const tagElt = null;
+    let tagElt = null;
+    if (isNextToAct) {
+      tagElt = <NextTag/>;
+    }
+    else if (isActive) {
+      tagElt = <ReadyTag/>;
+    }
+    else {
+      tagElt = <SittingTag/>;
+    }
+    const posTagElt = <g transform="translate(55,50)">{tagElt}</g>;
     
-    const badgeElt = <><PlayerBadgeBg/>{usernameElt}{stackElt}{tagElt}</>;
+    const badgeElt = <>{posTagElt}<PlayerBadgeBg/>{usernameElt}{stackElt}</>;
     const combinedElt = isShowing ? <>{badgeElt}{cardElt}</> : <>{cardElt}{badgeElt}</>;
 
+    const opacity = isActive ? 1.0 : 0.5;
     return (
-      <g className="player-badge" transform="translate(-55,-25)">
+        <g className="player-badge" transform="translate(-55,-25)" opacity={opacity}>
           {combinedElt}
       </g>
     );

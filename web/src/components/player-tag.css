@@ -1,0 +1,32 @@
+.player-tag text {
+    text-anchor: middle;
+    alignment-baseline: middle;
+    font-size: 0.8em;
+}
+.player-tag text.dark {
+    fill: #202020;
+}
+.player-tag text.light {
+    fill: #cccccc;
+}
+.player-tag.ready rect {
+    fill: #54cc20;
+}
+.player-tag.sitting rect {
+    fill: #808080;
+}
+.player-tag.next-to-act rect {
+    fill: #ff0909;
+    animation: 1s your-turn-pulse infinite;
+}
+@keyframes your-turn-pulse {
+    0% {
+        fill: #ff0909;
+    }
+    50% {
+        fill: #ff6060;
+    }
+    100% {
+        fill: #ff0909;
+    }
+}
