@@ -7,6 +7,7 @@ class ActionBar extends Component {
     send: PropTypes.func.required,
     toCall: PropTypes.number.required,
     minRaise: PropTypes.number.required,
+    bigBlind: PropTypes.number.required,
     offer: PropTypes.number.required,
     stack: PropTypes.number.required,
     enabled: PropTypes.bool.required
@@ -41,8 +42,11 @@ class ActionBar extends Component {
   }
 
   computeMinRaiseValue() {
-    const {toCall, minRaise} = this.props;
-    return toCall + minRaise;
+    const {toCall, minRaise, bigBlind} = this.props;
+    if (toCall === undefined || minRaise === undefined || bigBlind === undefined) {
+      return 0;
+    }
+    return toCall + Math.max(minRaise, bigBlind);
   }
 
   componentDidUpdate(lastProps) {

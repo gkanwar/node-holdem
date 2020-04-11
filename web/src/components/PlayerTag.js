@@ -33,8 +33,13 @@ export class SittingTag extends Component {
   }
 }
 export class NextTag extends Component {
+  static propTypes = {
+    isMe: PropTypes.bool
+  };
   render() {
-    return <PlayerTag text="YOUR TURN" className="next-to-act" textDark={false}/>;
+    const {isMe} = this.props
+    const text = isMe ? "YOUR TURN" : "THEIR TURN";
+    return <PlayerTag text={text} className="next-to-act" textDark={false}/>;
   }
 }
 

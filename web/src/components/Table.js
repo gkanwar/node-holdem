@@ -115,7 +115,7 @@ class Table extends Component {
     const {positions} = this.state;
     const {
       pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button,
-      toCall, minRaise, send
+      toCall, minRaise, bigBlind, send
     } = this.props;
     if (positions.length !== orderedPlayers.length) {
       return null;
@@ -123,8 +123,15 @@ class Table extends Component {
     console.log('myCards =', myCards);
     console.log('board =', board);
     console.log('positions =', positions);
-    const buttonPos = positions[button].button;
-    const buttonElt = <g transform={`translate(${buttonPos[0]},${buttonPos[1]})`}><Button/></g>;
+    console.log('button', button);
+    let buttonElt = null;
+    if (button !== undefined) {
+      const pos = positions[button];
+      if (pos !== undefined) {
+        const buttonPos = positions[button].button;
+        buttonElt = <g transform={`translate(${buttonPos[0]},${buttonPos[1]})`}><Button/></g>;
+      }
+    }
 
     const offerElts = orderedPlayers.map((player, index) => {
       const {offer: offerPos} = positions[index];
@@ -171,12 +178,18 @@ class Table extends Component {
     </g>;
 
     const myPlayer = orderedPlayers[myIndex];
-    const actionBarProps = {
-      send, toCall, minRaise,
-      offer: myPlayer.offering,
-      stack: myPlayer.stack,
-      enabled: (myPlayer !== undefined && !myPlayer.folded && myPlayer.active)
-    };
+    let actionBarElt = null;
+    if (myPlayer !== undefined) {
+      console.log('Setting action bar!');
+      const actionBarProps = {
+        send, toCall, minRaise, bigBlind,
+        offer: myPlayer.offering,
+        stack: myPlayer.stack,
+        enabled: (!myPlayer.folded && myPlayer.active)
+      };
+      actionBarElt = <ActionBar {...actionBarProps}/>;
+    }
+
     return (
       <div id="table-viewport">
         <svg id="game-canvas">
@@ -187,7 +200,7 @@ class Table extends Component {
           {potElt}
           {boardElt}
         </svg>
-        <ActionBar key="actions-bar" {...actionBarProps}/>
+        {actionBarElt}
       </div>
     );
   }

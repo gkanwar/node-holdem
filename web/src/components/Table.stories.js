@@ -44,6 +44,7 @@ export const state1Data = {
   board: [],
   toCall: 100,
   minRaise: 78,
+  bigBlind: 2,
   button: 1,
 };
 export const state2Data = {
@@ -71,6 +72,7 @@ export const state2Data = {
   board: [{rank: 5, suit: 2}, {rank: 3, suit: 0}, {rank: 4, suit: 0}],
   toCall: 400,
   minRaise: 200,
+  bigBlind: 2,
   button: 2,
 };
 export const state3Data = {
@@ -91,6 +93,7 @@ export const state3Data = {
   board: [],
   toCall: 100,
   minRaise: 78,
+  bigBlind: 2,
   button: 1,
 };
 

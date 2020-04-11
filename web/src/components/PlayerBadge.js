@@ -45,7 +45,7 @@ class PlayerBadge extends Component {
     // Active and nextToAct info in tag
     let tagElt = null;
     if (isNextToAct) {
-      tagElt = <NextTag/>;
+      tagElt = <NextTag isMe={isMe}/>;
     }
     else if (isActive) {
       tagElt = <ReadyTag/>;

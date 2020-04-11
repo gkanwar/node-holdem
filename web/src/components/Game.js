@@ -66,22 +66,26 @@ class Game extends Component {
       const {room, myIndex, myCards} = this.state;
       const {
         pots, nextToAct, players, playerOrder, running, board, button,
-        toCall, minRaise
+        toCall, minRaise, bigBlind
       } = room.state;
+      console.log('Game render', board, minRaise);
       const orderedPlayers = playerOrder.map((pid) => players[pid]);
-      const tableProps = {pots, nextToAct, running, board, button, toCall, minRaise, orderedPlayers};
       const send = (msg) => {return room.send(msg);}
+      const tableProps = {
+        pots, nextToAct, running, board, button, toCall, minRaise, bigBlind,
+        orderedPlayers, myIndex, myCards, send
+      };
       // TODO: Should reduce passed prop to only relevant piece of state
       return (
         <>
-          {includeChips()}
+          {includeChips()}{includeCardbacks()}
           <ToastContainer autoClose={3000} draggable={false} closeButton={false}
            hideProgressBar={true} pauseOnHover={false} transition={Flip}
            toastClassName="dark-toast"/>
           <GameController room={room}/>
           <ActiveStateController room={room}/>
           <Standings room={room}/>
-          <Table {...tableProps} send={send} myIndex={myIndex} myCards={myCards}/>
+          <Table {...tableProps}/>
           <ShowdownContainer room={room}/>
           <Attention value={myIndex === nextToAct}/>
         </>

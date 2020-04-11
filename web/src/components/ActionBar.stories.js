@@ -17,6 +17,7 @@ export default {
 export const state1Data = {
   toCall: 20,
   minRaise: 10,
+  bigBlind: 2,
   offer: 10,
   stack: 990,
   enabled: true
@@ -24,6 +25,7 @@ export const state1Data = {
 export const state2Data = {
   toCall: 20,
   minRaise: 10,
+  bigBlind: 2,
   offer: 10,
   stack: 990,
   enabled: false
