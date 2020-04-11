@@ -189,6 +189,11 @@ input[type=submit]:hover:not([disabled]) {
 
 svg text {
     stroke-width: 0;
+    user-select: none;
+    cursor: default;
+}
+svg text::selection {
+    background: none;
 }
 svg .pot text {
     fill: #202020;
