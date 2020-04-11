@@ -18,7 +18,10 @@ text.stack.me {
     stroke: #efefef;
 }
 
-.cards-in-hand {
+.player-badge {
+    pointer-events: bounding-box;
+}
+.player-badge .cards-in-hand {
     transition: 0.05s ease-in;
 }
 .player-badge:hover .cards-in-hand {

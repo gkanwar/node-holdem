@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './badge.css';
+import './player-badge.css';
 import Card, {cardToString, cardPropType} from './Card';
 import {ReadyTag, SittingTag, NextTag} from './PlayerTag';
 import {ReactComponent as PlayerBadgeBg} from './player_badge_v2.opt.svg';
