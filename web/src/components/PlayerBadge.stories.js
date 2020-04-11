@@ -5,7 +5,10 @@ import {drawWithAxes} from '../../.storybook/storyUtils';
 export default {
   component: PlayerBadge,
   title: 'PlayerBadge',
-  excludeStories: /.*Data$/
+  excludeStories: /.*Data$/,
+  decorators: [
+    storyFn => drawWithAxes(storyFn(), -100, -100, 100, 100)
+  ]
 };
 
 export const playerData = {
@@ -21,44 +24,30 @@ export const hideCardData = {
 
 
 export function inactivePlayerWithoutCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={false} isActive={false}
-    isNextToAct={false} cards={[]}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={false} isActive={false}
+  isNextToAct={false} cards={[]}/>;
 }
 export function activePlayerWithHiddenCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={false} isActive={true}
-    isNextToAct={false} {...hideCardData}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={false} isActive={true}
+  isNextToAct={false} {...hideCardData}/>;
 }
 export function nextToActPlayerWithHiddenCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={false} isActive={true}
-    isNextToAct={true} {...hideCardData}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={false} isActive={true}
+  isNextToAct={true} {...hideCardData}/>;
 }
 export function activePlayerShowingCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={false} isActive={true}
-    isNextToAct={false} isShowing={true} {...showCardData}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={false} isActive={true}
+  isNextToAct={false} isShowing={true} {...showCardData}/>;
 }
 export function inactiveMeWithoutCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={true} isActive={false}
-    isNextToAct={false} cards={[]}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={true} isActive={false}
+  isNextToAct={false} cards={[]}/>;
 }
 export function activeMeWithShownCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={true} isActive={true}
-    isNextToAct={false} {...showCardData}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={true} isActive={true}
+  isNextToAct={false} {...showCardData}/>;
 }
 export function activeMeShowingCards() {
-  return drawWithAxes(
-    <PlayerBadge {...playerData} isMe={true} isActive={true}
-    isNextToAct={false} isShowing={true} {...showCardData}/>,
-    -100, -100, 100, 100);
+  return <PlayerBadge {...playerData} isMe={true} isActive={true}
+  isNextToAct={false} isShowing={true} {...showCardData}/>;
 }

@@ -5,10 +5,22 @@ import {includeCardbacks} from './Card';
 import {drawWithAxes} from '../../.storybook/storyUtils';
 import {action} from '@storybook/addon-actions';
 
+const absStyle = {
+  position: 'absolute',
+  top: '0px',
+  left: '0px'
+};
 export default {
   component: Table,
   title: 'Table',
-  excludeStories: /.*Data$/
+  excludeStories: /.*Data$/,
+  decorators: [
+    storyFn => {
+      return <div style={absStyle}>
+        {includeChips()}{includeCardbacks()}{storyFn()}
+      </div>;
+    }
+  ]
 };
 
 export const preflopData = {
@@ -82,22 +94,9 @@ export const cards1Data = [{rank: 0, suit: 1}, {rank: 12, suit: 2}];
 export const cards2Data = [{rank: 5, suit: 1}, {rank: 5, suit: 3}];
 export const cards3Data = [{rank: 3, suit: 0}, {rank: 4, suit: 0}];
 
-const absStyle = {
-  position: 'absolute',
-  top: '0px',
-  left: '0px'
-};
-function absContainer(elt) {
-  return <div style={absStyle}>{includeChips()}{includeCardbacks()}{elt}</div>;
-}
-
 export function headsUp() {
-  return absContainer(
-    <Table {...state1Data} send={action('send-message')} myIndex={0} myCards={cards1Data}/>
-  );
-n}
+  return <Table {...state1Data} send={action('send-message')} myIndex={0} myCards={cards1Data}/>;
+}
 export function full6() {
-  return absContainer(
-    <Table {...state2Data} send={action('send-message')} myIndex={0} myCards={cards2Data}/>
-  );
+  return <Table {...state2Data} send={action('send-message')} myIndex={0} myCards={cards2Data}/>;
 }
