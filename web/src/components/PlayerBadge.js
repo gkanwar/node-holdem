@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import './pulse.scss';
-import './player.css';
 import './badge.css';
 import Card, {cardToString, cardPropType} from './Card';
 import {ReadyTag, SittingTag, NextTag} from './PlayerTag';

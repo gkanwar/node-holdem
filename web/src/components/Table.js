@@ -3,7 +3,6 @@ import {ReactComponent as TableBg} from './table.opt.svg';
 import ActionBar from './ActionBar';
 import {cardPropType} from './Card';
 import Board from './Board';
-import Player from './Player';
 import Pot from './Pot';
 import Offering from './Offering';
 import PlayerBadge from './PlayerBadge';
