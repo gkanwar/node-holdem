@@ -53,8 +53,9 @@ export const CHIP_HREFS = [
   '#chip500', '#chip1000', '#chip5000', '#chip10000'
 ];
 
+/** Render this function once to include svg elts for reference */
 export function includeChips() {
-  return <div id="assets" style={{display: 'none'}}>
+  return <div id="chip-assets" className="assets">
     <SVG src={Chip1}/>
     <SVG src={Chip5}/>
     <SVG src={Chip10}/>

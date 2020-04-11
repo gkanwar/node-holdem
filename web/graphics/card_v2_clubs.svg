@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="card_v2_clubs.svg">
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter4822"
+       x="-0.25"
+       y="-0.25"
+       width="1.5"
+       height="1.5">
+      <feFlood
+         flood-opacity="0.537255"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood4812" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite4814" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.5"
+         result="blur"
+         id="feGaussianBlur4816" />
+      <feOffset
+         dx="1"
+         dy="0.5"
+         result="offset"
+         id="feOffset4818" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite4820" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="31.763858"
+     inkscape:cy="43.98514"
+     inkscape:document-units="px"
+     inkscape:current-layer="cbClubs"
+     showgrid="false"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:window-width="960"
+     inkscape:window-height="950"
+     inkscape:window-x="960"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="false" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Base"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="cbClubs"
+       inkscape:label=""
+       transform="matrix(4,0,0,4,-2.916666,-2.9166495)">
+      <rect
+         transform="matrix(1.5,0,0,1.5,-6.6145829,-412.42708)"
+         ry="1.0441386"
+         rx="1.0725076"
+         y="278.19568"
+         x="9.567522"
+         height="11.150299"
+         width="7.3232884"
+         id="rect4518"
+         style="opacity:1;fill:#efefef;fill-opacity:1;stroke:none;stroke-width:0.34395832;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter4822)" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5785"
+         d="m 13.229168,15.539323 -0.992188,2.910417 1.885156,0.03307 z"
+         style="display:inline;fill:#2f2f2f;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="zscscscszcz"
+         inkscape:connector-curvature="0"
+         id="path4824-3-3"
+         d="m 15.576865,17.288119 c 1.173885,-0.157226 2.476076,-1.344744 1.95254,-3.300721 -0.634368,-2.370051 -2.683938,-1.497114 -2.683938,-1.497114 0,0 1.098276,-0.946989 0.735668,-2.489874 -0.334253,-1.4222311 -1.276392,-1.8888482 -2.351967,-1.8706314 -1.075575,-0.018218 -2.017714,0.4483999 -2.351967,1.8706314 -0.362608,1.542884 0.735668,2.489873 0.735668,2.489873 0,0 -2.0495699,-0.872936 -2.6839378,1.497115 -0.5235369,1.955977 0.7786545,3.143495 1.9525398,3.300721 1.173884,0.157227 2.347697,-1.748796 2.347697,-1.748796 0,0 1.173813,1.906023 2.347697,1.748796 z"
+         style="display:inline;fill:#2f2f2f;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

@@ -5,7 +5,8 @@ import {drawWithAxes} from '../../.storybook/storyUtils';
 export default {
   component: Board,
   title: 'Board',
-  excludeStories: /.*Data$/
+  excludeStories: /.*Data$/,
+  decorators: [storyFn => drawWithAxes(storyFn(), -400, -100, 400, 100)]
 };
 
 export const preflopData = {
@@ -36,15 +37,7 @@ export const riverData = {
   ]
 };
 
-export function preflop() {
-  return drawWithAxes(<Board {...preflopData}/>, -400, -100, 400, 100);
-}
-export function flop() {
-  return drawWithAxes(<Board {...flopData}/>, -400, -100, 400, 100);
-}
-export function turn() {
-  return drawWithAxes(<Board {...turnData}/>, -400, -100, 400, 100);
-}
-export function river() {
-  return drawWithAxes(<Board {...riverData}/>, -400, -100, 400, 100);
-}
+export const preflop = () => <Board {...preflopData}/>;
+export const flop = () => <Board {...flopData}/>;
+export const turn = () => <Board {...turnData}/>;
+export const river = () => <Board {...riverData}/>;

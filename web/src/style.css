@@ -1,9 +1,14 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css?family=Baloo+Paaji+2');
+
 /* Fight Bootstrap */
 input {
+    font-family: 'Baloo Paaji 2', sans-serif;
     font-size: 0.8em;
+    line-height: 1;
 }
 body {
-    font-family: initial;
+    font-family: 'Baloo Paaji 2', sans-serif;
     font-size: initial;
     line-height: initial;
 }
@@ -43,6 +48,12 @@ body {
     width: 250px;
 }
 
+.assets {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
 table.clean-table {
     font-size: .7em;
     width: 100%;
@@ -71,7 +82,6 @@ table.clean-table .neg {
 .control-box {
     border: 1px solid #cccccc;
     border-radius: .2em;
-    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
     background-color: #202020;
     padding-bottom: 10px;
 }
@@ -79,6 +89,7 @@ table.clean-table .neg {
 .control-header {
     border-bottom: 1px solid #cccccc;
     font-size: 0.7em;
+    line-height: 1.2em;
     text-align: center;
     margin-bottom: 10px;
 }
@@ -96,17 +107,17 @@ table.clean-table .neg {
     width: 50px;
     font-size: 1.0em;
 }
-.control-box input[type=text] {
+.control-box input[type=text],input[type=number] {
     width: 100px;
-    height: 26px;
+    height: 23px;
     background-color: #ced4da;
     color: #202020;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
-    padding: 3px 0px 3px 10px;
+    padding: 0px 0px 0px 10px;
     outline: none;
 }
-.control-box input[type=text]:focus {
+.control-box input[type=text]:focus,input[type=number]:focus {
     box-shadow: 0 0 5px #d07030;
     border: 1px solid #d07030;
 }
@@ -177,7 +188,7 @@ input[type=submit]:hover:not([disabled]) {
 }
 
 svg text {
-    font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+    stroke-width: 0;
 }
 svg .pot text {
     fill: #202020;

@@ -25,7 +25,7 @@ class PlayerBadge extends Component {
       </text>
     );
     const stackElt = (
-      <text className={`${meClass} stack`} x="70" y="45">
+      <text className={`${meClass} stack`} x="70" y="40">
         {stack}
       </text>
     );

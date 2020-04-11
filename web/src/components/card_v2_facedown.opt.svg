@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<svg width="100" height="100" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
  <defs>
   <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
    <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
@@ -10,19 +9,10 @@
    <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
  </defs>
- <metadata>
-  <rdf:RDF>
-   <cc:Work rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:title/>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <g transform="translate(0 -270.54)">
-  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -141.89)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#ccc" filter="url(#filter4822)"/>
-  <rect x="8.1336" y="275.85" width="10.191" height="15.848" rx="1.1885" ry="1.2502" fill="#ccc"/>
-  <g transform="matrix(1.2991 0 0 1.2991 -3.9645 -83.95)">
+ <g id="cbFacedown">
+  <rect transform="matrix(6 0 0 6 -29.375 -1652.6)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#ccc" filter="url(#filter4822)"/>
+  <rect x="29.618" y="18.305" width="40.765" height="63.391" rx="4.754" ry="5.0006" fill="#ccc"/>
+  <g transform="matrix(5.1963 0 0 5.1963 -18.775 -1420.9)">
    <g fill="#202020">
     <path d="m14.99 279.9c1.2331-0.0813 1.6172-0.73491 1.8943-1.7072 0.01916 1.3298-0.18204 2.7488-0.63142 3.391z"/>
     <path d="m11.48 279.9c-1.2331-0.0813-1.6172-0.73491-1.8943-1.7072-0.01916 1.3298 0.18204 2.7488 0.63142 3.391z"/>

@@ -1,14 +1,10 @@
 text.username {
     fill: #202020;
-    stroke: #202020;
-    stroke-width: 0.5;
     alignment-baseline: baseline;
     text-anchor: middle;
 }
 text.stack {
     fill: #202020;
-    stroke: #202020;
-    stroke-width: 0.5;
     alignment-baseline: hanging;
     text-anchor: middle;
 }

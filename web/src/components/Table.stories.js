@@ -1,6 +1,7 @@
 import React from 'react';
 import Table from './Table';
 import {includeChips} from './Chips';
+import {includeCardbacks} from './Card';
 import {drawWithAxes} from '../../.storybook/storyUtils';
 import {action} from '@storybook/addon-actions';
 
@@ -87,7 +88,7 @@ const absStyle = {
   left: '0px'
 };
 function absContainer(elt) {
-  return <div style={absStyle}>{includeChips()}{elt}</div>;
+  return <div style={absStyle}>{includeChips()}{includeCardbacks()}{elt}</div>;
 }
 
 export function headsUp() {

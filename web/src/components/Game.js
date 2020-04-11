@@ -10,6 +10,7 @@ import {ToastContainer, Flip} from 'react-toastify';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {includeChips} from './Chips';
+import {includeCardbacks} from './Card';
 
 class Game extends Component {
   constructor() {

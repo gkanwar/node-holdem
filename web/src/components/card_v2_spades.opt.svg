@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="0.5"/>
+   <feOffset dx="1" dy="0.5" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <g id="cbSpades" transform="matrix(4 0 0 4 -2.9167 -2.9166)">
+  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -412.43)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#efefef" filter="url(#filter4822)"/>
+  <path d="m17.529 13.987c0.32313 1.848-0.77865 3.1435-1.9525 3.3007-1.1739 0.15723-2.3477-1.7488-2.3477-1.7488s-1.1738 1.906-2.3477 1.7488c-1.1739-0.15723-2.3749-1.3204-1.9525-3.3007 0.19298-0.90478 1.3524-1.9585 2.416-3.1919 1.0636-1.2334 1.8842-2.6658 1.8842-2.6658s0.68835 1.4324 1.752 2.6658c1.0636 1.2334 2.3889 2.2806 2.5483 3.1919z" fill="#2f2f2f"/>
+  <path d="m13.229 15.539-0.99219 2.9104 1.8852 0.03307z" fill="#2f2f2f"/>
+ </g>
+</svg>

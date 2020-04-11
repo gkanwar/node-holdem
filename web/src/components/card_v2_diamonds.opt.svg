@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <filter id="filter4822" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
+   <feFlood flood-color="rgb(0,0,0)" flood-opacity=".53726" result="flood"/>
+   <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+   <feGaussianBlur in="composite1" result="blur" stdDeviation="0.5"/>
+   <feOffset dx="1" dy="0.5" result="offset"/>
+   <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
+  </filter>
+ </defs>
+ <g id="cbDiamonds" transform="matrix(4 0 0 4 -2.9167 -2.9166)">
+  <rect transform="matrix(1.5 0 0 1.5 -6.6146 -412.43)" x="9.5675" y="278.2" width="7.3233" height="11.15" rx="1.0725" ry="1.0441" fill="#efefef" filter="url(#filter4822)"/>
+  <path d="m13.229 7.8339-3.7902 5.4769 3.7902 5.3181 3.7902-5.3181z" fill="#b80000"/>
+ </g>
+</svg>

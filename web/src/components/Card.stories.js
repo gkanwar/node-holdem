@@ -1,23 +1,32 @@
 import React from 'react';
-import Card from './Card';
+import Card, {EMPTY, HIDDEN} from './Card';
 import {drawWithAxes} from '../../.storybook/storyUtils';
 
 export default {
   component: Card,
   title: 'Card',
-  excludeStories: /.*Data$/
+  excludeStories: /.*Data$/,
+  decorators: [
+    storyFn => drawWithAxes(storyFn(), -100, -100, 100, 100)
+  ]
 };
 
 export const showCardData = {
   card: {rank: 0, suit: 1}
 };
 export const hideCardData = {
-  card: {rank: -1, suit: -1}
+  card: {rank: HIDDEN, suit: HIDDEN}
+};
+export const emptyCardData = {
+  card: {rank: EMPTY, suit: EMPTY}
 };
 
 export function hidden() {
-  return drawWithAxes(<Card {...hideCardData}/>, -100, -100, 100, 100);
+  return <Card {...hideCardData}/>;
 }
 export function shown() {
-  return drawWithAxes(<Card {...showCardData}/>, -100, -100, 100, 100);
+  return <Card {...showCardData}/>;
+}
+export function empty() {
+  return <Card {...emptyCardData}/>;
 }
