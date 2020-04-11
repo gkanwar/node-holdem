@@ -15,6 +15,9 @@
 .player-tag.sitting rect {
     fill: #808080;
 }
+.player-tag.folded rect {
+    fill: #808080;
+}
 .player-tag.next-to-act rect {
     fill: #ff0909;
     animation: 1s your-turn-pulse infinite;
@@ -23,10 +26,10 @@
     0% {
         fill: #ff0909;
     }
-    50% {
+    20% {
         fill: #ff6060;
     }
-    100% {
+    40% {
         fill: #ff0909;
     }
 }

@@ -21,10 +21,11 @@ text.stack.me {
 .player-badge {
     pointer-events: bounding-box;
 }
-.player-badge .cards-in-hand {
-    transition: 0.05s ease-in;
+.player-badge .cards-in-hand.showing {
+    transform: translate(55px,-22px) scale(1);
+    transition: transform 0.05s ease-in;
 }
-.player-badge:hover .cards-in-hand {
-    transform: scale(1.11) translate(50px,0);
-    transition: 0.05s ease-out;
+.player-badge .cards-in-hand.not-showing {
+    transform: translate(55px,5px) scale(0.9);
+    transition: transform 0.05s ease-out;
 }

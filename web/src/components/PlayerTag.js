@@ -32,6 +32,11 @@ export class SittingTag extends Component {
     return <PlayerTag text="SITTING" className="sitting" textDark={true}/>;
   }
 }
+export class FoldedTag extends Component {
+  render() {
+    return <PlayerTag text="FOLDED" className="folded" textDark={true}/>;
+  }
+}
 export class NextTag extends Component {
   static propTypes = {
     isMe: PropTypes.bool

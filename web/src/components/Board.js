@@ -3,7 +3,8 @@ import Card, {cardToString, cardPropType, EMPTY} from './Card';
 import PropTypes from 'prop-types';
 
 const CARD_SPACING = 50;
-const MAX_BOARD = 5;
+export const MAX_BOARD = 5;
+export const STREETS = [0,3,4,5];
 
 class Board extends Component {
   static propTypes = {

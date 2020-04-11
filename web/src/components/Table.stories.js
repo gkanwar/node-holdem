@@ -96,6 +96,44 @@ export const state3Data = {
   bigBlind: 2,
   button: 1,
 };
+export const state4Data = {
+  orderedPlayers: [
+    {sessionId: 'a', active: true, username: 'shoveAlways', stack: 2930,
+     offering: 0, folded: true},
+    {sessionId: 'b', active: true, username: 'helloFriends', stack: 349,
+     offering: 0, folded: false},
+    {sessionId: 'c', active: true, username: 'blahblah', stack: 2394,
+     offering: 0, folded: false},
+    {sessionId: 'd', active: true, username: '99luftballons', stack: 1111,
+     offering: 0, folded: true},
+    {sessionId: 'e', active: false, username: 'username', stack: 0,
+     offering: 0, folded: false},
+    {sessionId: 'f', active: true, username: 'password', stack: 15,
+     offering: 0, folded: true}
+  ],
+  pots: [
+    {eligiblePids: ['b', 'c'], value: 830}
+  ],
+  nextToAct: 1,
+  myIndex: 5,
+  myCards: cards2Data,
+  running: true,
+  board: [{rank: 5, suit: 2}, {rank: 3, suit: 0}, {rank: 4, suit: 0},
+          {rank: 0, suit: 1}, {rank: 0, suit: 2}],
+  toCall: 400,
+  minRaise: 200,
+  bigBlind: 2,
+  button: 2,
+  showdown: {
+    board: [{rank: 5, suit: 2}, {rank: 3, suit: 0}, {rank: 4, suit: 0},
+            {rank: 0, suit: 1}, {rank: 0, suit: 2}],
+    cards: {
+      'b': [{rank: 12, suit: 1}, {rank: 11, suit: 0}],
+      'c': [{rank: 0, suit: 3}, {rank: 12, suit: 3}]
+    }
+  }
+};
+
 
 export function headsUp() {
   return <Table {...state1Data} send={action('send-message')}/>;
@@ -105,4 +143,7 @@ export function headsUpSittingOut() {
 }
 export function full6() {
   return <Table {...state2Data} send={action('send-message')}/>;
+}
+export function showdown() {
+  return <Table {...state4Data} send={action('send-message')}/>;
 }

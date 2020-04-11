@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
 import ActionBar from './ActionBar';
 import {cardPropType} from './Card';
-import Board from './Board';
+import Board, {MAX_BOARD, STREETS} from './Board';
 import Pot from './Pot';
 import Offering from './Offering';
 import PlayerBadge from './PlayerBadge';
@@ -86,33 +86,49 @@ class Table extends Component {
     toCall: PropTypes.number,
     minRaise: PropTypes.number,
     button: PropTypes.number,
+    showdown: PropTypes.object,
     send: PropTypes.func
   };
   constructor() {
     super();
+    this.doShowdown = this.doShowdown.bind(this);
     this.state = {
-      positions: []
+      positions: [],
+      showdown: null
     }
   }
 
   componentDidMount() {
-    const {orderedPlayers} = this.props;
+    const {orderedPlayers, showdown} = this.props;
     this.setState({
       positions: getPositions(orderedPlayers.length)
     });
+    if (showdown !== null && showdown !== undefined) {
+      this.doShowdown(showdown);
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const {orderedPlayers} = this.props;
+    const {orderedPlayers, showdown} = this.props;
     if (prevProps.orderedPlayers.length !== orderedPlayers.length) {
       this.setState({
         positions: getPositions(orderedPlayers.length)
       });
     }
+    // TODO: Need to add state sync from this.props -> this.state to avoid
+    // instant update from server overriding display.
+    if (showdown !== null && prevProps.showdown !== showdown) {
+      this.doShowdown(showdown);
+    }
   }
-  
+
+  doShowdown(showdown) {
+    this.setState({showdown});
+    setTimeout(() => this.setState({showdown: null}), 8000);
+  }
+
   render() {
-    const {positions} = this.state;
+    const {positions, showdown} = this.state;
     const {
       pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button,
       toCall, minRaise, bigBlind, send
@@ -150,10 +166,16 @@ class Table extends Component {
         isShowing: false // TODO
       }
       let cards = myCards;
+      let isShowing = false;
       if (!isMe) {
         // TODO: For now just inferring whether players have cards, is there
         // a better (more robust) way?
-        if (player.active && running) {
+        if (showdown !== null && player.sessionId in showdown.cards) {
+          cards = showdown.cards[player.sessionId];
+          console.log('Player', player.sessionId, 'cards', cards);
+          isShowing = true; // TODO: Muck?
+        }
+        else if (player.active && running) {
           cards = [{rank: -1, suit: -1}, {rank: -1, suit: -1}];
         }
         else {
@@ -166,7 +188,7 @@ class Table extends Component {
       return (
         <g transform={`translate(${badge[0]},${badge[1]})`}>
           <PlayerBadge key={key} username={player.username} stack={player.stack}
-          {...badgeProps} cards={cards}/>
+          {...badgeProps} cards={cards} isShowing={isShowing} isFolded={player.folded}/>
         </g>
       );
     });
@@ -185,7 +207,7 @@ class Table extends Component {
         send, toCall, minRaise, bigBlind,
         offer: myPlayer.offering,
         stack: myPlayer.stack,
-        enabled: (!myPlayer.folded && myPlayer.active)
+        enabled: (!myPlayer.folded && myPlayer.active),
       };
       actionBarElt = <ActionBar {...actionBarProps}/>;
     }

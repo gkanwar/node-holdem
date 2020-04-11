@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './player-badge.css';
 import Card, {cardToString, cardPropType} from './Card';
-import {ReadyTag, SittingTag, NextTag} from './PlayerTag';
+import {ReadyTag, SittingTag, NextTag, FoldedTag} from './PlayerTag';
 import {ReactComponent as PlayerBadgeBg} from './player_badge_v2.opt.svg';
 import PropTypes from 'prop-types';
 
@@ -13,10 +13,29 @@ class PlayerBadge extends Component {
     isActive: PropTypes.bool,
     isNextToAct: PropTypes.bool,
     isShowing: PropTypes.bool,
+    isFolded: PropTypes.bool,
     cards: PropTypes.arrayOf(cardPropType)
   };
+  constructor() {
+    super();
+    this.handleHover = this.handleHover.bind(this);
+    this.handleUnhover = this.handleUnhover.bind(this);
+    this.state = {
+      isHovered: false
+    }
+  }
+
+  handleHover() {
+    this.setState({isHovered: true});
+  }
+  handleUnhover() {
+    this.setState({isHovered: false});
+  }
+  
   render() {
-    const {username, stack, isMe, isActive, isNextToAct, isShowing, cards} = this.props;
+    const {username, stack, isMe, isActive, isNextToAct, isShowing, isFolded, cards} = this.props;
+    const {isHovered} = this.state;
+    const showCards = isShowing || isHovered;
     const meClass = isMe ? "me" : "";
     const usernameElt = (
       <text className={`${meClass} username`} x="55" y="20">
@@ -30,13 +49,13 @@ class PlayerBadge extends Component {
     );
     let cardElt = null;
     if (cards.length === 2) {
-      const overallTransform = isShowing ? "translate(55,-15)" : "translate(55,5)";
-      const cardScale = isShowing ? 1.0 : 0.9;
-      cardElt = <g className={`${meClass} cards-in-hand`} transform={overallTransform}>
-        <g transform={`scale(${cardScale}) translate(-23,0)`}>
+      const showClass = showCards ? "showing" : "not-showing";
+      const classNames = `${meClass} ${showClass} cards-in-hand`;
+      cardElt = <g className={classNames}>
+        <g transform={`translate(-23,0)`}>
           <Card card={cards[0]}/>
         </g>
-        <g transform={`scale(${cardScale}) translate(+23,0)`}>
+        <g transform={`translate(+23,0)`}>
           <Card card={cards[1]}/>
         </g>
       </g>;
@@ -48,7 +67,12 @@ class PlayerBadge extends Component {
       tagElt = <NextTag isMe={isMe}/>;
     }
     else if (isActive) {
-      tagElt = <ReadyTag/>;
+      if (isFolded) {
+        tagElt = <FoldedTag/>;
+      }
+      else {
+        tagElt = <ReadyTag/>;
+      }
     }
     else {
       tagElt = <SittingTag/>;
@@ -56,11 +80,13 @@ class PlayerBadge extends Component {
     const posTagElt = <g transform="translate(55,50)">{tagElt}</g>;
     
     const badgeElt = <>{posTagElt}<PlayerBadgeBg/>{usernameElt}{stackElt}</>;
-    const combinedElt = isShowing ? <>{badgeElt}{cardElt}</> : <>{cardElt}{badgeElt}</>;
+    // const combinedElt = showCards ? <>{badgeElt}{cardElt}</> : <>{cardElt}{badgeElt}</>;
+    const combinedElt = <>{cardElt}{badgeElt}</>;
 
     const opacity = isActive ? 1.0 : 0.5;
     return (
-        <g className="player-badge" transform="translate(-55,-25)" opacity={opacity}>
+        <g className="player-badge" transform="translate(-55,-25)" opacity={opacity}
+         onMouseEnter={this.handleHover} onMouseLeave={this.handleUnhover}>
           {combinedElt}
       </g>
     );
