@@ -6,6 +6,7 @@ import Board from './Board';
 import Pot from './Pot';
 import Offering from './Offering';
 import PlayerBadge from './PlayerBadge';
+import Button from './Button';
 import PropTypes from 'prop-types';
 
 const VIEW_HEIGHT = 600;
@@ -82,6 +83,8 @@ class Table extends Component {
     orderedPlayers: PropTypes.array,
     running: PropTypes.bool,
     board: PropTypes.array,
+    toCall: PropTypes.number,
+    minRaise: PropTypes.number,
     button: PropTypes.number,
     send: PropTypes.func
   };
@@ -111,7 +114,8 @@ class Table extends Component {
   render() {
     const {positions} = this.state;
     const {
-      pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button, send
+      pots, nextToAct, myIndex, myCards, orderedPlayers, running, board, button,
+      toCall, minRaise, send
     } = this.props;
     if (positions.length !== orderedPlayers.length) {
       return null;
@@ -119,8 +123,8 @@ class Table extends Component {
     console.log('myCards =', myCards);
     console.log('board =', board);
     console.log('positions =', positions);
-    const buttonPos = positions[button];
-    // TODO: Render button
+    const buttonPos = positions[button].button;
+    const buttonElt = <g transform={`translate(${buttonPos[0]},${buttonPos[1]})`}><Button/></g>;
 
     const offerElts = orderedPlayers.map((player, index) => {
       const {offer: offerPos} = positions[index];
@@ -138,7 +142,6 @@ class Table extends Component {
         isActive: player.active,
         isShowing: false // TODO
       }
-      const isButton = index == button;
       let cards = myCards;
       if (!isMe) {
         // TODO: For now just inferring whether players have cards, is there
@@ -160,27 +163,31 @@ class Table extends Component {
         </g>
       );
     });
-    const enableActionBar = (
-      myIndex == nextToAct && orderedPlayers[myIndex] !== undefined
-      && !orderedPlayers[myIndex].folded
-    );
     const boardElt = <g transform="translate(400,310)">
       <Board cards={board}/>
           </g>;
     const potElt = <g transform="translate(400,385)">
       <Pot pots={pots}/>
     </g>;
-    
+
+    const myPlayer = orderedPlayers[myIndex];
+    const actionBarProps = {
+      send, toCall, minRaise,
+      offer: myPlayer.offering,
+      stack: myPlayer.stack,
+      enabled: (myPlayer !== undefined && !myPlayer.folded && myPlayer.active)
+    };
     return (
       <div id="table-viewport">
         <svg id="game-canvas">
           <TableBg/>
           {playerBadges}
           {offerElts}
+          {buttonElt}
           {potElt}
           {boardElt}
         </svg>
-        <ActionBar key="actions-bar" send={send} myIndex={myIndex} enabled={enableActionBar}/>
+        <ActionBar key="actions-bar" {...actionBarProps}/>
       </div>
     );
   }

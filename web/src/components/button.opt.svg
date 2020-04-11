@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="30" height="30" version="1.1" viewBox="0 0 7.9375 7.9375" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<svg width="30" height="30" version="1.1" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
  <defs>
   <filter id="filter5241" x="-.25" y="-.25" width="1.5" height="1.5" color-interpolation-filters="sRGB">
    <feFlood flood-color="rgb(0,0,0)" result="flood"/>
@@ -10,17 +9,8 @@
    <feComposite in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
  </defs>
- <metadata>
-  <rdf:RDF>
-   <cc:Work rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:title/>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <g transform="translate(0 -289.06)">
-  <circle cx="3.9688" cy="293.03" r="1.9371" fill="#ebe4dc" filter="url(#filter5241)" stroke-width=".32142"/>
-  <path d="m3.5435 292.34c1.5076-0.2965 1.5321 1.5964 0 1.3229 0-0.27294-0.0042-0.90948 0-1.3229z" fill="none" opacity=".97" stroke="#202020" stroke-width=".34396"/>
+ <g id="button">
+  <circle transform="matrix(4 0 0 4 -.875 -.875)" cx="3.9688" cy="3.9688" r="1.9371" fill="#ebe4dc" filter="url(#filter5241)" stroke-width=".32142"/>
+  <path d="m13.299 12.229c6.0303-1.186 6.1283 6.3858 0 5.2916 0-1.0918-0.0168-3.6379 0-5.2916z" fill="none" opacity=".97" stroke="#202020" stroke-width="1.3758"/>
  </g>
 </svg>

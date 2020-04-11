@@ -121,7 +121,7 @@ table.clean-table .neg {
     box-shadow: 0 0 5px #d07030;
     border: 1px solid #d07030;
 }
-.control-box input[type=text]:disabled {
+.control-box input[type=text]:disabled,input[type=number]:disabled {
     border: 1px solid #808080;
     background-color: #808080;
     color: #444444;

@@ -11,7 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="30"
    height="30"
-   viewBox="0 0 7.9374997 7.9375002"
+   viewBox="0 0 30 30"
    version="1.1"
    id="svg312"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -126,9 +126,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.839192"
-     inkscape:cx="13.80258"
-     inkscape:cy="6.5971684"
+     inkscape:zoom="3.959798"
+     inkscape:cx="24.574462"
+     inkscape:cy="-1.6684028"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -154,19 +154,23 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-289.06249)">
-    <circle
-       style="fill:#ebe4dc;fill-opacity:1;stroke-width:0.32141975;filter:url(#filter5241)"
-       id="path4017"
-       cx="3.96875"
-       cy="293.03125"
-       r="1.9371279" />
-    <path
-       style="opacity:0.97000002;fill:none;stroke:#202020;stroke-width:0.34395832;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 3.5435268,292.33839 c 1.507567,-0.2965 1.5320807,1.59644 0,1.32291 0,-0.27294 -0.0042,-0.90948 0,-1.32291 z"
-       id="path5316"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
+     id="layer1">
+    <g
+       id="button"
+       inkscape:label="">
+      <circle
+         transform="matrix(4,0,0,4,-0.875,-0.875)"
+         r="1.9371279"
+         cy="3.96875"
+         cx="3.96875"
+         id="path4017"
+         style="fill:#ebe4dc;fill-opacity:1;stroke-width:0.32141975;filter:url(#filter5241)" />
+      <path
+         sodipodi:nodetypes="ccc"
+         inkscape:connector-curvature="0"
+         id="path5316"
+         d="m 13.299107,12.22856 c 6.030268,-1.186 6.128323,6.38576 0,5.29164 0,-1.09176 -0.0168,-3.63792 0,-5.29164 z"
+         style="opacity:0.97000002;fill:none;stroke:#202020;stroke-width:1.37583327;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
