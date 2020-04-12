@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ReactComponent as TableBg} from './table.opt.svg';
 import ActionBar from './ActionBar';
+import ActionLog from './ActionLog';
 import {cardPropType} from './Card';
 import Board, {MAX_BOARD, STREETS} from './Board';
 import Pot from './Pot';
@@ -87,6 +88,7 @@ class Table extends Component {
     minRaise: PropTypes.number,
     button: PropTypes.number,
     showdown: PropTypes.object,
+    log: PropTypes.arrayOf(PropTypes.string),
     send: PropTypes.func
   };
   constructor() {
@@ -124,7 +126,7 @@ class Table extends Component {
   }
 
   updateStateFromProps(props, callback) {
-    const {orderedPlayers, showdown, ...restProps} = props;
+    const {orderedPlayers, showdown, log, ...restProps} = props;
     const cloneRestProps = lodash.cloneDeep(restProps);
     this.setState({
       positions: getPositions(orderedPlayers.length),
@@ -175,6 +177,7 @@ class Table extends Component {
       positions, showdown, pots, nextToAct, myIndex, myCards, orderedPlayers,
       running, board, button, toCall, minRaise, bigBlind, send
     } = this.state;
+    const {log} = this.props;
     if (positions.length !== orderedPlayers.length) {
       return null;
     }
@@ -263,6 +266,7 @@ class Table extends Component {
           {boardElt}
         </svg>
         {actionBarElt}
+        <ActionLog log={log}/>
       </div>
     );
   }

@@ -83,7 +83,7 @@ class ActionBar extends Component {
     const checkCall = callValue > 0 ? 'Call' : 'Check';
     const {raiseValue} = this.state;
     return (
-      <div id="actions-bar" className="control-box">
+      <div id="actions-bar" className="control-box action-bar">
         <div className="control-header">Actions</div>
         <div className="control-row">
           <form onSubmit={this.handleFold}>

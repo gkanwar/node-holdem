@@ -89,6 +89,7 @@ export class HoldemState extends Schema {
     this.smallBlind = 1;
     this.bigBlind = 2;
     this.running = false;
+    this.log = new ArraySchema();
   }
 }
 defineTypes(HoldemState, {
@@ -102,5 +103,6 @@ defineTypes(HoldemState, {
   nextToAct: 'uint8',
   smallBlind: 'int64',
   bigBlind: 'int64',
-  running: 'boolean'
+  running: 'boolean',
+  log: ['string']
 });

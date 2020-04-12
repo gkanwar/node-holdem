@@ -1,0 +1,12 @@
+.action-log .scroll-box {
+    height: 150px;
+    overflow: auto;
+    margin: 10px 10px 0px 10px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+.action-log table {
+}
+.action-log tr {
+    line-height: 1;
+}

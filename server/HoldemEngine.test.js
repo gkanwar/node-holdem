@@ -125,7 +125,6 @@ describe('Holdem Engine', () => {
       engine.onBuy(p1.pid, 1000);
       engine.onBuy(p2.pid, 1000);
       engine.onBuy(p3.pid, 1000);
-      console.log(messages);
       expect(messages).to.have.lengthOf(3);
       messages.splice(0,3).map(expectMsgOk);
       engine.onRequest(p1.pid, 'sit');
@@ -147,7 +146,6 @@ describe('Holdem Engine', () => {
       engine.onRequest(p2.pid, 'active');
       engine.onRequest(p3.pid, 'sit'); // just watching
       engine.setRunning(p1.pid, true);
-      console.log(messages);
       expect(messages).to.have.lengthOf(2);
       messages.map(({msg}) => {
         expect(msg).to.include.key('myCards');
@@ -260,7 +258,6 @@ describe('Holdem Engine', () => {
     it('Should let player call', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 2});
       expect(messages).to.have.lengthOf(1);
-      console.log(messages);
       const [msg] = messages;
       expect(msg.pid).to.equal(p1.pid);
       expectMsgOk(msg);
@@ -456,10 +453,8 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 998});
       engine.onAction(p3.pid, {type: 'bet', value: 998});
       engine.onAction(p1.pid, {type: 'bet', value: 998});
-      console.log(messages);
       expect(broadcasts).to.have.lengthOf(1);
       expectMsgShowdown(broadcasts.pop());
-      const {smallBlind, bigBlind} = state;
       expect(allPids.reduce(
         (total, pid) => {
           return total + state.players[pid].stack + state.players[pid].offering;
@@ -556,8 +551,6 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 0});
       expect(messages).to.have.lengthOf(2);
       messages.splice(0).map(expectMsgOk);
-      console.log(messages);
-      console.log(state.nextToAct);
       expect(state.board).to.have.lengthOf(3);
       engine.onAction(p3.pid, {type: 'bet', value: 2});
       engine.onAction(p2.pid, {type: 'bet', value: 4});
@@ -670,7 +663,6 @@ describe('Holdem Engine', () => {
       engine.onAction(p2.pid, {type: 'bet', value: 449});
       engine.onAction(p3.pid, {type: 'bet', value: 798});
       engine.onAction(p2.pid, {type: 'bet', value: 300});
-      console.log(messages);
       messages.splice(0,4).map(expectMsgOk);
       expect(state.board).to.have.lengthOf(0);
       expect(broadcasts).to.have.lengthOf(1);
@@ -681,7 +673,6 @@ describe('Holdem Engine', () => {
       engine.onAction(p1.pid, {type: 'bet', value: 200});
       engine.onAction(p2.pid, {type: 'bet', value: 749});
       engine.onAction(p3.pid, {type: 'bet', value: 998});
-      console.log(messages);
       messages.splice(0,3).map(expectMsgOk);
       expect(state.board).to.have.lengthOf(0);
       expect(broadcasts).to.have.lengthOf(1);
@@ -694,7 +685,6 @@ describe('Holdem Engine', () => {
       engine.onAction(p3.pid, {type: 'bet', value: 148});
       engine.onAction(p1.pid, {type: 'bet', value: 125});
       engine.onAction(p2.pid, {type: 'bet', value: 50});
-      console.log(messages);
       messages.splice(0,5).map(expectMsgOk);
     })
     it('Should not allow raise after incomplete raise', () => {
@@ -703,7 +693,6 @@ describe('Holdem Engine', () => {
       engine.onAction(p3.pid, {type: 'bet', value: 148});
       engine.onAction(p1.pid, {type: 'bet', value: 125});
       engine.onAction(p2.pid, {type: 'bet', value: 125});
-      console.log(messages);
       messages.splice(0,4).map(expectMsgOk);
       expectMsgErr(messages.shift());
     })

@@ -48,6 +48,14 @@ body {
     width: 250px;
 }
 
+#action-log {
+    position: absolute;
+    top: 600px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 500px;
+}
+
 .assets {
     position: absolute;
     width: 0;
@@ -207,4 +215,8 @@ svg .offer text {
     color: #cccccc;
     border: 1px solid #3c3c3c;
     min-height: 32px;
+}
+
+::-moz-scrollbar, ::-webkit-scrollbar {
+    width: 10px;
 }

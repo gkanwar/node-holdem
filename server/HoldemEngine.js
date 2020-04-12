@@ -13,7 +13,7 @@ const MIN_ACTIVE_PLAYERS = 2;
  * Given scores for all non-folded players' hands, allocate the money in this
  * pot to one or more winners out of the eligible players.
  */
-function resolveShowdown(pot, handScores) {
+function resolveShowdown(pot, handScores, players, log) {
   // const {players} = this.state;
   let bestScore = null;
   let bestPlayerIds = [];
@@ -29,6 +29,13 @@ function resolveShowdown(pot, handScores) {
     else if (score === bestScore) {
       bestPlayerIds.push(playerId);
     }
+  }
+  const winnerStr = bestPlayerIds.map((pid) => players[pid].username).join(', ');
+  if (bestPlayerIds.length > 1) {
+    log.push(`${winnerStr} chop pot (${pot.value})`);
+  }
+  else {
+    log.push(`${winnerStr} wins pot (${pot.value})`);
   }
   console.log(`pot winners: ${bestPlayerIds}`);
   return divideValue(bestPlayerIds, pot.value);
@@ -69,12 +76,16 @@ class HoldemEngine {
 
   onJoin(playerId, username) {
     this.state.players[playerId] = new PlayerState(username, playerId);
+    this.state.log.push(`${username} (ID: ${playerId}) joined!`);
   }
 
   onLeave(playerId) {
     const {players, playerOrder, nextToAct} = this.state;
+    const {[playerId]: player} = players;
+    this.state.log.push(`${player.username} (ID: ${playerId}) disconnected`);
     if (players[playerId].active) {
       this.request[playerId] = {state: 'leave'};
+      this.state.log.push(`... ${player.username} folded by default`);
       if (nextToAct === playerOrder.findIndex((pid) => (pid == playerId))) {
         this.onAction(playerId, {type: 'fold'}, true);
       }
@@ -238,7 +249,7 @@ class HoldemEngine {
   }
 
   setRunning(playerId, running) {
-    const {playerOrder, players} = this.state;
+    const {playerOrder, players, log} = this.state;
     const activePlayers = playerOrder.filter(pid => players[pid].active).length;
     console.log(`set running with ${activePlayers} active`);
     if (running && activePlayers < MIN_ACTIVE_PLAYERS) {
@@ -250,16 +261,20 @@ class HoldemEngine {
     this.state.button = this.pushToFirstActive(this.state.button);
     this.state.running = running;
     if (running) {
+      log.push('Starting game!');
       this.broadcast({info: 'Starting game!'});
       this.initRound();
     }
     else {
+      log.push('Pause requested, pausing game after this hand');
       this.broadcast({info: 'Pausing game after this hand'});
     }
   }
 
   initRound() {
-    const {playerOrder, players, button, pots, board, smallBlind, bigBlind} = this.state;
+    const {
+      playerOrder, players, button, pots, board, smallBlind, bigBlind, log
+    } = this.state;
     if (board.length !== 0) {
       throw Error('Board must start empty before round!');
     }
@@ -284,9 +299,13 @@ class HoldemEngine {
     const bigIndex = this.pushToFirstActive(smallIndex+1);
     this.state.toCall = bigBlind;
     this.state.minRaise = bigBlind;
-    players[playerOrder[smallIndex]].addOffer(smallBlind);
-    players[playerOrder[bigIndex]].addOffer(bigBlind);
+    const smallPlayer = players[playerOrder[smallIndex]];
+    const bigPlayer = players[playerOrder[bigIndex]];
+    smallPlayer.addOffer(smallBlind);
+    bigPlayer.addOffer(bigBlind);
     this.state.nextToAct = this.pushToFirstActive(bigIndex+1);
+    log.push(`Starting new round: ${smallPlayer.username} pays small (${smallBlind}), `
+             + `${bigPlayer.username} pays big (${bigBlind})`);
   }
 
   makePlayerPrivateState(playerId, cards) {
@@ -315,22 +334,24 @@ class HoldemEngine {
   }
   
   divideMoneyDefaulted(winnerIds) {
-    const {players, pots} = this.state;
+    const {players, pots, log} = this.state;
     pots.map(pot => {
       const winnings = divideValue(winnerIds, pot.value);
       Object.entries(winnings).map(([pid, value]) => {
         players[pid].stack += value;
+        log.push(`${players[pid].username} won ${value}`);
       });
     });
   }
 
   divideMoneyShowdown(handScores) {
-    const {players, pots} = this.state;
+    const {players, pots, log} = this.state;
     pots.map(pot => {
-      const winnings = resolveShowdown(pot, handScores);
+      const winnings = resolveShowdown(pot, handScores, players, log);
       console.log('winnings', winnings);
       Object.entries(winnings).map(([pid, value]) => {
         players[pid].stack += value;
+        log.push(`${players[pid].username} got ${value}`);
       });
     });
   }
@@ -550,7 +571,7 @@ class HoldemEngine {
   }
 
   initNextStreet() {
-    const {board, button, playerOrder, players} = this.state;
+    const {board, button, playerOrder, players, log} = this.state;
     const {players: privatePlayers, deck} = this.privateState;
     this.state.toCall = 0;
     this.state.minRaise = 0;
@@ -563,6 +584,7 @@ class HoldemEngine {
       // showdown!
       const handScores = {};
       const allCards = {};
+      log.push('Showdown!');
       Object.entries(privatePlayers).filter(
         ([pid]) => !players[pid].folded
       ).forEach(([pid, privatePlayer]) => {
@@ -570,6 +592,8 @@ class HoldemEngine {
         if (cards !== undefined && cards.length === 2) {
           allCards[pid] = cards;
           handScores[pid] = getHandScore(board, cards);
+          log.push(`${players[pid].username} shows ${cards[0].toString()} `
+                   + `${cards[1].toString()} (score ${handScores[pid]})`);
         }
       });
       this.broadcast({
@@ -585,9 +609,18 @@ class HoldemEngine {
       board.push(randomDraw(deck));
       board.push(randomDraw(deck));
       board.push(randomDraw(deck));
+      log.push(`Flop: ${board[0].toString()} ${board[1].toString()} `
+               + `${board[2].toString()}`);
     }
-    else if (board.length == 3 || board.length == 4) {
+    else if (board.length == 3) {
       board.push(randomDraw(deck));
+      log.push(`Turn: ${board[0].toString()} ${board[1].toString()} `
+               + `${board[2].toString()} ${board[3].toString()}`);
+    }
+    else if (board.length == 4) {
+      board.push(randomDraw(deck));
+      log.push(`River: ${board[0].toString()} ${board[1].toString()} `
+               + `${board[2].toString()} ${board[3].toString()} ${board[4].toString()}`);
     }
     else {
       throw Error(`Invalid board state, ${board.length} cards dealt`);
@@ -607,7 +640,7 @@ class HoldemEngine {
   // }
 
   onBuy(playerId, value) {
-    const {players: {[playerId]: player}} = this.state;
+    const {players: {[playerId]: player}, log} = this.state;
     if (player.active) {
       this.send(playerId, {
         error: 'Cannot buy while actively playing'
@@ -633,6 +666,7 @@ class HoldemEngine {
     this.send(playerId, {
       message: 'OK'
     });
+    log.push(`${player.username} bought in for ${value}`);
   }
 
   playersThatCanAct() {
@@ -648,7 +682,7 @@ class HoldemEngine {
   }
 
   onAction(playerId, action, silent=false) {
-    const {running, nextToAct, playerOrder} = this.state;
+    const {running, nextToAct, playerOrder, log} = this.state;
     if (!running) {
       this.send(playerId, {
         error: 'Game is not running'
@@ -663,8 +697,9 @@ class HoldemEngine {
       return;
     }
     console.log('Got action:', playerId, action);
-    
-    const {players: {[playerId]: player}} = this.state;
+
+    const {players} = this.state;
+    const {[playerId]: player} = players;
     const {players: {[playerId]: privatePlayer}} = this.privateState;
     const {type, value} = action;
     if (!player.active) {
@@ -676,6 +711,7 @@ class HoldemEngine {
       pots.map((pot) => {
         pot.eligiblePids.filter(pid => pid !== playerId);
       });
+      log.push(`${player.username} folded`);
     }
     else if (type === 'bet') {
       if (!Number.isInteger(value)) {
@@ -698,14 +734,17 @@ class HoldemEngine {
       }
       const {toCall, minRaise, bigBlind} = this.state;
       if (value + player.offering < toCall) {
-        if (value !== player.stack) { // not all in
+        // not all in
+        if (value !== player.stack) {
           this.send(playerId, {
             error: `Must at least call ${toCall - player.offering} (you bet ${value})`
           });
           return;
         }
+        // all in
+        log.push(`${player.username} went all in for ${value + player.offering}`);
       }
-      if (toCall === player.offering && value !== 0) { // bet
+      else if (toCall === player.offering && value !== 0) { // bet
         if (value < bigBlind && value !== player.stack) {
           this.send(playerId, {
             error: `Min bet value is big blind ${bigBlind} (you bet ${value})`
@@ -714,6 +753,7 @@ class HoldemEngine {
         }
         this.privateState.lastAggressor = playerId;
         this.state.minRaise = value;
+        log.push(`${player.username} bet to ${value + player.offering}`);
       }
       else if (value + player.offering > toCall) { // raise
         const raise = player.offering + value - toCall;
@@ -729,10 +769,23 @@ class HoldemEngine {
           });
           return;
         }
+        log.push(`${player.username} raised to ${value + player.offering}`);
         if (raise >= minRaise) {
           this.state.minRaise = raise;
           this.privateState.lastAggressor = playerId;
           // this.reopenBetting();
+          log.push(`... new min raise = ${minRaise}`);
+        }
+      }
+      else { // call / check
+        if (player.offering + value !== toCall) {
+          throw Error('Player must have called');
+        }
+        if (value > 0) {
+          log.push(`${player.username} called ${toCall}`);
+        }
+        else {
+          log.push(`${player.username} checked`);
         }
       }
       player.addOffer(value);
@@ -758,6 +811,15 @@ class HoldemEngine {
 
     const winners = this.isRoundDefaulted();
     if (winners !== false) {
+      if (winners.length === 1) {
+        log.push(`Hand folded to ${players[winners[0]].username}`);
+      }
+      else if (winners.length === 0) {
+        log.push(`Hand folded by default (maybe a player left?)`);
+      }
+      else {
+        throw Error('Should not have multiple defaulted winners');
+      }
       this.finishStreet();
       this.divideMoneyDefaulted(winners);
       this.finishRound();
@@ -779,11 +841,12 @@ class HoldemEngine {
       }
     }
     // Special FF clause to avoid hang on 0/1 actionable players
-    const {players, toCall} = this.state;
+    const {toCall} = this.state;
     const pidsThatCanAct = this.playersThatCanAct();
     console.log('pidsThatCanAct', pidsThatCanAct);
     if (pidsThatCanAct.length === 0 ||
         (pidsThatCanAct.length === 1 && players[pidsThatCanAct.pop()].offering >= toCall)) {
+      log.push('No actions left, fast-forwarding to showdown');
       console.log('Less than 2 actionable players left, and all have paid the '
                   + 'price, FF to showdown');
       let handScores;

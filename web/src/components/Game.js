@@ -66,14 +66,14 @@ class Game extends Component {
       const {room, myIndex, myCards, showdown} = this.state;
       const {
         pots, nextToAct, players, playerOrder, running, board, button,
-        toCall, minRaise, bigBlind
+        toCall, minRaise, bigBlind, log
       } = room.state;
       console.log('Game render', showdown);
       const orderedPlayers = playerOrder.map((pid) => players[pid]);
       const send = (msg) => {return room.send(msg);}
       const tableProps = {
         pots, nextToAct, running, board, button, toCall, minRaise, bigBlind,
-        orderedPlayers, myIndex, myCards, showdown, send
+        orderedPlayers, myIndex, myCards, showdown, send, log
       };
       // TODO: Should reduce passed prop to only relevant piece of state
       return (
