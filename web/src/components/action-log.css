@@ -1,5 +1,5 @@
 .action-log .scroll-box {
-    height: 150px;
+    height: 100px;
     overflow: auto;
     margin: 10px 10px 0px 10px;
     display: flex;

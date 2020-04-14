@@ -50,7 +50,7 @@ body {
 
 #action-log {
     position: absolute;
-    top: 600px;
+    top: 575px;
     left: 50%;
     transform: translate(-50%);
     width: 500px;
