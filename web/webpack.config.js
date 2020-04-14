@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   module: {
@@ -38,7 +39,10 @@ module.exports = {
       template: "./public/index.html",
       filename: "./index.html",
       favicon: "./public/favicon.png"
-    })
+    }),
+    new CopyPlugin([
+      {from: "./public/robots.txt", to: "robots.txt"}
+    ])
   ],
   output: {
     publicPath: "/static/"

@@ -12,6 +12,9 @@ const app = express();
 const webApp = express();
 
 webApp.use('/static', express.static(path.join(__dirname, '/../web/dist')));
+webApp.get('/robots.txt', (req, res) => {
+  res.sendFile('robots.txt', {root: path.join(__dirname, '/../web/dist')});
+});
 webApp.get('/info', (req, res) => {
   res.json({
     port: port,
