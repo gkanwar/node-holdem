@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Card, {cardToString, cardPropType, EMPTY} from './Card';
 import PropTypes from 'prop-types';
+import cardFlip from '../../sounds/card_flip.mp3';
 
 const CARD_SPACING = 50;
 export const MAX_BOARD = 5;
@@ -10,6 +11,23 @@ class Board extends Component {
   static propTypes = {
     cards: PropTypes.arrayOf(cardPropType)
   };
+  constructor() {
+    super();
+    this.cardFlip = new Audio(cardFlip);
+  }
+  componentDidMount() {
+    const {cards} = this.props;
+    if (cards !== undefined && cards.length > 0) {
+      this.cardFlip.play();
+    }
+  }
+  componentDidUpdate(prevProps) {
+    const {cards} = this.props;
+    if (cards !== undefined && prevProps.cards !== undefined &&
+        cards.length > prevProps.cards.length) {
+      this.cardFlip.play();
+    }
+  }
   render() {
     const {cards} = this.props;
     if (cards === undefined) {

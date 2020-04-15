@@ -30,6 +30,10 @@ module.exports = {
       {
         test: /\.opt\.svg$/,
         use: ["@svgr/webpack", "svg-inline-loader"]
+      },
+      {
+        test: /\.mp3$/,
+        use: ["file-loader"]
       }
     ]
   },
