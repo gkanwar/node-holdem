@@ -7,6 +7,11 @@ const RECONNECT_TIMEOUT = 60;
 // Patch every 200ms
 const PATCH_RATE = 200;
 
+const ALPHA_KEY = process.env.ALPHA_KEY;
+if (ALPHA_KEY !== undefined) {
+  console.log(`Running in alpha test mode, with key ${ALPHA_KEY}`);
+}
+
 /**
  * Colyseus room for holdem game. Thin wrapper around HoldemEngine.
  */
@@ -34,6 +39,13 @@ class HoldemRoom extends Room {
     );
   }
   /* eslint-enable no-unused-vars */
+
+  onAuth(client, options) {
+    if (ALPHA_KEY !== undefined) {
+      return options.alphaKey === ALPHA_KEY;
+    }
+    return true;
+  }
 
   onJoin(client, options) {
     this.clientsById[client.sessionId] = client;

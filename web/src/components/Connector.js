@@ -14,6 +14,7 @@ class Connector extends Component {
       server: '',
       port: '',
       username: '',
+      alphaKey: '', // Alpha test
       roomId: '',
       sessionId: '',
       trying: false,
@@ -57,25 +58,27 @@ class Connector extends Component {
     const {server, port, username} = this.state;
     console.log('Setting local storage hostInfo', this.state);
     localStorage.setItem('hostInfo', JSON.stringify({
-      server: server,
-      port: port,
-      username: username
+      server, port, username,
     }));
+    // Alpha test
+    const {alphaKey} = this.state;
+    localStorage.setItem('alphaInfo', JSON.stringify({alphaKey}));
     this.tryConnect();
   }
 
   makeConnection() {
     console.log('makeConnection', this.state);
     const {server, port, username, sessionId, roomId} = this.state;
+    const {alphaKey} = this.state;
     const client = new Colyseus.Client(`ws://${server}:${port}`);
     if (sessionId !== '') {
       return client.reconnect(roomId, sessionId);
     }
     else if (roomId !== '') {
-      return client.joinById(roomId, {username: username});
+      return client.joinById(roomId, {username, alphaKey});
     }
     else {
-      return client.joinOrCreate('lobby', {username: username});
+      return client.joinOrCreate('lobby', {username, alphaKey});
     }
   }
 
@@ -122,6 +125,7 @@ class Connector extends Component {
     }
     else {
       const {server, port, username} = this.state;
+      const {alphaKey} = this.state;
       const form = (
         <div id="connector">
           <form onSubmit={this.onSubmit}>
@@ -133,6 +137,9 @@ class Connector extends Component {
             </label>
             <label> <span className="label">Nick</span>
               <input type="text" name="username" value={username} onChange={this.handleChange}/>
+            </label>
+            <label> <span className="label">&alpha; key</span>
+              <input type="text" name="alphaKey" value={alphaKey} onChange={this.handleChange}/>
             </label>
             <div id="submit-container"><input type="submit" value="Connect"/></div>
           </form>
