@@ -150,7 +150,7 @@ class Connector extends Component {
           <div>
             {form}
             <div id="message">
-              <div className="error">Error: {err.toString()}</div>
+              <div className="error">{err.toString()}</div>
             </div>
           </div>
         );

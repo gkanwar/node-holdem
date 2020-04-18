@@ -110,7 +110,8 @@ class Table extends Component {
       toCall: 0,
       minRaise: 0,
       button: 0,
-      send: () => {}
+      send: () => {},
+      chipElts: null
     }
   }
 
@@ -191,10 +192,13 @@ class Table extends Component {
       }
     }
 
+    const street = board.length;
     const offerElts = orderedPlayers.map((player, index) => {
       const {offer: offerPos} = positions[index];
-      return <g transform={`translate(${offerPos[0]}, ${offerPos[1]})`}>
-        <Offering offer={player.offering}/>
+      const key = `offer-${player.sessionId}-${street}`;
+      console.log('Create g with key', key);
+      return <g key={'g-'+key} transform={`translate(${offerPos[0]}, ${offerPos[1]})`}>
+        <Offering key={key} offer={player.offering}/>
       </g>;
     });
     
@@ -227,10 +231,10 @@ class Table extends Component {
           cards = [];
         }
       }
-      const key = `player-${index}`;
+      const key = `player-${player.sessionId}`;
       const {badge} = pos;
       return (
-        <g transform={`translate(${badge[0]},${badge[1]})`}>
+        <g key={'g-'+key} transform={`translate(${badge[0]},${badge[1]})`}>
           <PlayerBadge key={key} username={player.username} stack={player.stack}
           {...badgeProps} cards={cards} isShowing={isShowing} isFolded={player.folded}/>
         </g>
