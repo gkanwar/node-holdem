@@ -10,6 +10,9 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {includeChips} from './Chips';
 import {includeCardbacks} from './Card';
+import betSmallSound from '../../sounds/bet_small.mp3';
+import betLargeSound from '../../sounds/bet_large.mp3';
+import checkSound from '../../sounds/check_table.mp3';
 
 class Game extends Component {
   constructor() {
@@ -22,6 +25,11 @@ class Game extends Component {
       myCards: []
     };
     this.onConnect = this.onConnect.bind(this);
+    this.sounds = {
+      betSmall: new Audio(betSmallSound),
+      betLarge: new Audio(betLargeSound),
+      check: new Audio(checkSound)
+    };
   }
 
   onConnect(room) {
@@ -37,6 +45,27 @@ class Game extends Component {
       if (message.showdown !== undefined) {
         this.setState({showdown: message.showdown});
       }
+      if (message.action !== undefined) {
+        const {type, value} = message.action;
+        const {actionHint} = message;
+        if (type === 'fold') {
+          // TODO: fold sound
+        }
+        else if (type === 'bet') {
+          if (actionHint === 'check') {
+            this.sounds.check.play();
+          }
+          else if (actionHint === 'call' || actionHint === 'raise' ||
+                   actionHint === 'bet' || actionHint === 'all in') {
+            if (value >= 20) {
+              this.sounds.betLarge.play();
+            }
+            else {
+              this.sounds.betSmall.play();
+            }
+          }
+        }
+      }
       if (message.error !== undefined) {
         toast.error(message.error);
       }
@@ -45,9 +74,12 @@ class Game extends Component {
       }
     });
     room.onStateChange((state) => {
-      const {playerOrder, ...residualState} = state;
+      const {playerOrder, running} = state;
       const myIndex = playerOrder.findIndex((sessionId) => sessionId == room.sessionId);
       this.setState({myIndex});
+      if (!running) {
+        this.setState({myCards: []});
+      }
     });
   }
 
@@ -86,7 +118,7 @@ class Game extends Component {
           <ActiveStateController room={room}/>
           <Standings room={room}/>
           <Table {...tableProps}/>
-          <Attention value={myIndex === nextToAct}/>
+          <Attention value={myIndex === nextToAct && running}/>
         </>
       );
     }

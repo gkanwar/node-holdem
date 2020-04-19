@@ -42,11 +42,17 @@ class ActionBar extends Component {
   }
 
   computeMinRaiseValue() {
-    const {toCall, minRaise, bigBlind} = this.props;
+    const {toCall, minRaise, bigBlind, stack} = this.props;
     if (toCall === undefined || minRaise === undefined || bigBlind === undefined) {
       return 0;
     }
-    return toCall + Math.max(minRaise, bigBlind);
+    const minRaiseValue = toCall + Math.max(minRaise, bigBlind);
+    if (stack > toCall) {
+      return Math.min(minRaiseValue, stack);
+    }
+    else {
+      return minRaiseValue;
+    }
   }
 
   componentDidUpdate(lastProps) {
@@ -72,8 +78,8 @@ class ActionBar extends Component {
 
   handleCheckCall(event) {
     event.preventDefault();
-    const {toCall, offer} = this.props;
-    const callValue = toCall - offer;
+    const {toCall, offer, stack} = this.props;
+    const callValue = Math.min(toCall - offer, stack);
     this.sendBet(callValue);
   }
 
@@ -96,7 +102,7 @@ class ActionBar extends Component {
           <form onSubmit={this.handleRaise}>
             <input type="submit" value="Raise to" disabled={!enabled}/>
             <input type="text" name="raiseValue" value={raiseValue} type="number"
-             min={this.computeMinRaiseValue()} max={stack} //step={minRaise}
+             min={this.computeMinRaiseValue()} max={stack+offer}
              disabled={!enabled}
              onChange={this.handleChange} style={{width: '50px'}}/>
           </form>

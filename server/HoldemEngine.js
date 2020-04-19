@@ -363,7 +363,7 @@ class HoldemEngine {
    */
   finishRound() {
     // Reset/update state
-    const {playerOrder, players, bigBlind} = this.state;
+    const {playerOrder, players, bigBlind, log} = this.state;
     this.state.button = this.pushToFirstActive(this.state.button+1);
     this.state.pots = new ArraySchema();
     this.state.board = new ArraySchema();
@@ -377,6 +377,7 @@ class HoldemEngine {
         this.send(playerId, {
           info: 'You are bust! Buy back in and toggle active state to rejoin'
         });
+        log.push(`${player.username} is broke, they will be inactive until they buy back in`);
       }
       if (player.offering !== 0) {
         throw Error('Player must not have an active offering when ending round');
@@ -390,6 +391,7 @@ class HoldemEngine {
       this.broadcast({
         info: 'Fewer than two players active, pausing the game'
       });
+      log.push('Fewer than two players active, pausing the game');
     }
   }
 
@@ -711,6 +713,7 @@ class HoldemEngine {
       pots.map((pot) => {
         pot.eligiblePids.filter(pid => pid !== playerId);
       });
+      this.broadcast({action});
       log.push(`${player.username} folded`);
     }
     else if (type === 'bet') {
@@ -733,6 +736,7 @@ class HoldemEngine {
         return;
       }
       const {toCall, minRaise, bigBlind} = this.state;
+      let actionHint; // hint to clients whether action was check/call/raise/etc
       if (value + player.offering < toCall) {
         // not all in
         if (value !== player.stack) {
@@ -743,6 +747,7 @@ class HoldemEngine {
         }
         // all in
         log.push(`${player.username} went all in for ${value + player.offering}`);
+        actionHint = 'all in';
       }
       else if (toCall === player.offering && value !== 0) { // bet
         if (value < bigBlind && value !== player.stack) {
@@ -754,6 +759,7 @@ class HoldemEngine {
         this.privateState.lastAggressor = playerId;
         this.state.minRaise = value;
         log.push(`${player.username} bet to ${value + player.offering}`);
+        actionHint = 'bet';
       }
       else if (value + player.offering > toCall) { // raise
         const raise = player.offering + value - toCall;
@@ -770,6 +776,7 @@ class HoldemEngine {
           return;
         }
         log.push(`${player.username} raised to ${value + player.offering}`);
+        actionHint = 'raise';
         if (raise >= minRaise) {
           this.state.minRaise = raise;
           this.privateState.lastAggressor = playerId;
@@ -783,11 +790,14 @@ class HoldemEngine {
         }
         if (value > 0) {
           log.push(`${player.username} called ${toCall}`);
+          actionHint = 'call';
         }
         else {
           log.push(`${player.username} checked`);
+          actionHint = 'check';
         }
       }
+      this.broadcast({action, actionHint});
       player.addOffer(value);
       this.state.toCall = player.offering;
     }
