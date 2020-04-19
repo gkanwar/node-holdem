@@ -103,7 +103,7 @@ class ActionBar extends Component {
             <input type="submit" value="Raise to" disabled={!enabled}/>
             <input type="text" name="raiseValue" value={raiseValue} type="number"
              min={this.computeMinRaiseValue()} max={stack+offer}
-             disabled={!enabled}
+             disabled={!enabled || stack <= toCall}
              onChange={this.handleChange} style={{width: '50px'}}/>
           </form>
         </div>
